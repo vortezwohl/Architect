@@ -4,7 +4,7 @@
   <img src="assets/agent-architect-wordmark.svg" alt="Agent Architect" width="560" />
 </h1>
 
-**Give your coding agent architectural judgment.**
+**Fast code is easy. A codebase that survives its next hundred changes is harder.**
 
 *Build codebases that stay coherent as they grow -- without giant modules, speculative abstractions, or accidental breaking changes.*
 
@@ -374,7 +374,7 @@ MIT. See [LICENSE](LICENSE).
 
 <div align="center">
 
-### Fast code is easy. A codebase that survives its next hundred changes is harder.
+### Give your coding agent architectural judgment.
 
 <strong>Give your coding agent the judgment to build one.</strong>
 
