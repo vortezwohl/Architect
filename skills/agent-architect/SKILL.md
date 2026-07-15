@@ -27,6 +27,7 @@ Design for the next verified change, not for a pattern name. Treat patterns as t
 - Do not inspect the repository, select an architecture, or propose implementation details before resolving the user's compatibility intent when the task can affect an existing contract or behavior.
 - Do not assume backward compatibility merely because a system may be in production, and do not assume a breaking redesign is acceptable merely because the repository appears unfinished.
 - Treat compatibility as a scoped contract. Name the preserved and intentionally changed behaviors; do not merely state that a design is compatible.
+- Do not impose English or any other fixed language on user-facing questions, proposals, or reports. Use the user's current interaction language unless the user explicitly requests a different language.
 - Do not implement an architecture that the user has not approved, except when the user has explicitly authorized a default approval policy or has validly advanced the presented proposal to implementation.
 - Do not introduce an interface, factory, wrapper, event, inheritance hierarchy, global object, or framework layer without naming the concrete variation it isolates and the cost it adds.
 - Do not claim a pattern is appropriate because its class diagram resembles the code. Decide by intent, collaborators, lifecycle, and failure modes.

@@ -1,5 +1,11 @@
 # Binding design and refactoring protocol
 
+## Language neutrality
+
+Write this skill's maintainer-facing instructions and canonical templates in English. This does not constrain user-facing output. Render every user-facing question, architecture proposal, approval request, and final report in the user's current interaction language unless the user explicitly requests a different language.
+
+The numbered templates below prescribe decision semantics, not a required output language. Translate or adapt their wording while preserving the same 1 and 2 meanings. Accept a numeric reply or free-form feedback in any language, and treat explicit user language preferences as authoritative.
+
 ## Gate 0: Compatibility intent before design
 
 Apply this gate before repository inspection, architectural analysis, pattern selection, or implementation planning when the request may affect behavior, contracts, data, configuration, integrations, or extension points.
