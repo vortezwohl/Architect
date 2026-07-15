@@ -73,7 +73,7 @@ It makes the agent inspect reality, choose the smallest justified design, and re
 
 ---
 
-## What it changes
+## See the difference
 
 ### Before Agent Architect
 
