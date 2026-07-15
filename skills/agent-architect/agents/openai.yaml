@@ -1,4 +1,4 @@
 interface:
   display_name: "Agent Architect"
-  short_description: "Architecture guardrails for non-trivial coding work"
-  default_prompt: "Use $agent-architect before implementing or reviewing a non-trivial feature, refactor, integration, or structural change. Inspect the repository, choose the smallest justified design, then implement and verify it."
+  short_description: "Architecture guardrails with compatibility and consent gates"
+  default_prompt: "Use $agent-architect to resolve compatibility intent, inspect the repository, propose the smallest justified architecture, obtain approval, and verify the result."
