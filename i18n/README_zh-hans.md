@@ -376,6 +376,6 @@ MIT。详见 [LICENSE](../LICENSE)。
 
 ### 给你的编码智能体补上架构判断力。
 
-<strong>把这种判断力，交给你的编码智能体。</strong>
+<strong>让它在变化中持续构建一致的代码库。</strong>
 
 </div>

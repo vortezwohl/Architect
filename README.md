@@ -376,6 +376,6 @@ MIT. See [LICENSE](LICENSE).
 
 ### Give your coding agent architectural judgment.
 
-<strong>Give your coding agent the judgment to build one.</strong>
+<strong>Build code that stays coherent through change.</strong>
 
 </div>
