@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Architect"
+  short_description: "Design software with the smallest justified pattern set"
+  default_prompt: "Use $agent-architect to design or refactor this software with the smallest justified pattern set."

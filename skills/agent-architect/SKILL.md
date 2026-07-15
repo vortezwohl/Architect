@@ -1,15 +1,15 @@
 ---
-name: software-design
+name: agent-architect
 description: Teach and govern software design-pattern decisions for new features, architecture, refactoring, and optimization. Use when Codex must choose, justify, apply, reject, or review GoF design patterns; remove structural code smells; define extension boundaries; integrate frameworks or legacy APIs; or prevent AI-generated code from becoming over-abstracted, tightly coupled, or hard to evolve.
 ---
 
-# Software Design
+# Agent Architect
 
 Design for the next verified change, not for a pattern name. Treat patterns as tools for managing observed or strongly evidenced variation—not as decorations.
 
 ## Mandatory operating protocol
 
-1. Read `references/source-article.md` before the first design decision in every invocation. It is the agent-oriented fidelity guide; `references/source-original.md` is the complete unmodified source evidence.
+1. Read `references/source-article.md` before the first design decision in every invocation. It is the complete English source article and primary reference for the skill.
 2. Read `references/decision-protocol.md` before proposing a design or refactor. Follow every gate; do not skip a gate because the answer appears obvious.
 3. Read the relevant entries in `references/gof-patterns.md` before choosing, rejecting, implementing, or reviewing a GoF pattern. Read all candidate entries when candidates are easily confused.
 4. Inspect the repository before changing code. Identify callers, current tests, error paths, ownership, state, framework conventions, and existing abstractions.
@@ -62,8 +62,7 @@ For any non-trivial design, optimization, or refactor, include this record in th
 
 ## Reference map
 
-- `references/source-article.md`: Agent-oriented fidelity guide for the original ten-pattern framing, examples, misuse warnings, framework examples, and bibliography.
-- `references/source-original.md`: Complete unmodified source article, retained for exact source-level evidence and all original details.
+- `references/source-article.md`: Complete English source article for the ten-pattern framing, examples, misuse warnings, framework mappings, and bibliography.
 - `references/gof-patterns.md`: Teaching catalog for all 23 Gang of Four patterns. Each entry explains intent, problem, structure, collaboration, trade-offs, neighboring patterns, misuse, and verification.
 - `references/decision-protocol.md`: Binding diagnostic questions, selection matrix, refactoring sequence, review gates, and anti-pattern controls.
 
