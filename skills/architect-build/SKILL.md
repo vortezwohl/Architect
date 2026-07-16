@@ -1,6 +1,6 @@
 ---
 name: architect-build
-description: "Implement a validated architecture change package produced by Architect Propose. Use when the user wants to build or continue a named .agent-architect/changes/<change-name>/ package with strict baseline checks, task-scoped edits, task-level verification, and implementation logging."
+description: "Implement a validated architecture change package produced by Architect Propose. Use when the user wants to build or continue a named .architect/<change-name>/ package with strict baseline checks, task-scoped edits, task-level verification, and implementation logging."
 ---
 
 # Architect Build
@@ -19,7 +19,7 @@ Build only what the approved change package specifies. The package is the implem
 Accept an optional kebab-case change name. If omitted:
 
 1. Infer it from explicit conversation context.
-2. Auto-select only when exactly one active package exists under `.agent-architect/changes/`.
+2. Auto-select only when exactly one active package exists under `.architect/`.
 3. Otherwise ask the user to select a package.
 
 Always announce the selected package and the way to override it.

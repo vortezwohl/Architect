@@ -73,7 +73,7 @@ def working_tree_state(repository_root: Path, change_name: str) -> str:
     Returns:
         Filtered `git status --porcelain=v1` output.
     """
-    prefix = f".agent-architect/changes/{change_name}/"
+    prefix = f".architect/{change_name}/"
     status_lines = run_git(
         repository_root,
         "status",
@@ -164,7 +164,7 @@ def main() -> int:
     arguments = parser.parse_args()
 
     repository_root = arguments.repo_root.resolve()
-    package_root = repository_root / ".agent-architect" / "changes" / arguments.change
+    package_root = repository_root / ".architect" / arguments.change
     errors = validate_documents(package_root)
     if not errors and package_root.is_dir():
         try:

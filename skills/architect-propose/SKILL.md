@@ -1,6 +1,6 @@
 ---
 name: architect-propose
-description: "Create a build-ready architecture change package from a user-approved Architect Design decision. Use when the architecture, compatibility intent, and scope are confirmed and the user wants precise Markdown artifacts, source baseline capture, impact mapping, atomic tasks, and verification criteria under .agent-architect/changes/."
+description: "Create a build-ready architecture change package from a user-approved Architect Design decision. Use when the architecture, compatibility intent, and scope are confirmed and the user wants precise Markdown artifacts, source baseline capture, impact mapping, atomic tasks, and verification criteria under .architect/."
 ---
 
 # Architect Propose
@@ -10,7 +10,7 @@ Convert an approved architecture decision into a project-local, build-ready chan
 ## Strict boundary
 
 - Do not edit application code, tests, runtime configuration, or unrelated documentation.
-- Create or update only `.agent-architect/changes/<change-name>/` after explicit user authorization.
+- Create or update only `.architect/<change-name>/` after explicit user authorization.
 - Do not silently make an architecture decision. If approval evidence or compatibility intent is missing, return to `$architect-design`.
 - Do not mark a package build-ready while placeholders, unresolved decisions, incomplete task scope, or missing verification remain.
 
@@ -30,7 +30,7 @@ If a change directory already exists, ask whether the user wants to continue it 
 Create this directory under the target project root:
 
 ```text
-.agent-architect/changes/<change-name>/
+.architect/<change-name>/
 |-- 00-overview.md
 |-- 01-context-and-baseline.md
 |-- 02-compatibility-contract.md
@@ -49,7 +49,7 @@ Use the bundled `templates/` files as the initial structure. The templates are i
 ## Workflow
 
 1. Confirm the input contract and the target project root.
-2. Create `.agent-architect/changes/<change-name>/` and `.state/` using the repository's controlled file-operation tool.
+2. Create `.architect/<change-name>/` and `.state/` using the repository's controlled file-operation tool.
 3. Copy every Markdown template into the package.
 4. Run `python scripts/capture_baseline.py --repo-root <project-root>` and write its JSON output to `.state/source-snapshot.json` using the controlled file-operation tool.
 4. Run `python scripts/capture_baseline.py --repo-root <project-root> --change <change-name>` and write its JSON output to `.state/source-snapshot.json` using the controlled file-operation tool.

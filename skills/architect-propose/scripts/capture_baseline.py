@@ -36,7 +36,7 @@ def run_git(repository_root: Path, *arguments: str) -> str:
 def working_tree_state(repository_root: Path, change_name: str) -> str:
     """Return the working tree state while ignoring the change package path.
 
-    The proposal stage creates or updates files under `.agent-architect/changes/`.
+    The proposal stage creates or updates files under `.architect/`.
     Those package files should not be treated as unrelated working tree drift.
 
     Args:
@@ -46,7 +46,7 @@ def working_tree_state(repository_root: Path, change_name: str) -> str:
     Returns:
         Filtered `git status --porcelain=v1` output.
     """
-    prefix = f".agent-architect/changes/{change_name}/"
+    prefix = f".architect/{change_name}/"
     status_lines = run_git(
         repository_root,
         "status",
@@ -74,7 +74,7 @@ def build_snapshot(repository_root: Path, change_name: str) -> dict[str, object]
         "head": run_git(repository_root, "rev-parse", "HEAD"),
         "branch": run_git(repository_root, "branch", "--show-current"),
         "working_tree": working_tree_state(repository_root, change_name),
-        "ignored_change_path": f".agent-architect/changes/{change_name}/",
+        "ignored_change_path": f".architect/{change_name}/",
     }
 
 

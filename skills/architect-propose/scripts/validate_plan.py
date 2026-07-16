@@ -79,8 +79,7 @@ def main() -> int:
 
     package_root = (
         arguments.repo_root.resolve()
-        / ".agent-architect"
-        / "changes"
+        / ".architect"
         / arguments.change
     )
     errors = validate_package(package_root)
