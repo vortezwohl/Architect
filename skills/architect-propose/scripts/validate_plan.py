@@ -1,4 +1,8 @@
-"""Validate an Architect change package before build."""
+"""Validate whether an Architect change package satisfies build prerequisites.
+
+This script validates only the completeness and executability of proposal-stage
+artifacts. It no longer saves or compares a workspace snapshot.
+"""
 
 from __future__ import annotations
 
@@ -16,7 +20,6 @@ REQUIRED_FILES = (
     "06-task-plan.md",
     "07-verification-plan.md",
     "08-implementation-log.md",
-    ".state/source-snapshot.json",
 )
 UNRESOLVED_MARKERS = (
     "[REQUIRED]",
@@ -32,18 +35,24 @@ TASK_FIELDS = (
     "- Change steps:",
     "- Prohibited changes:",
     "- Verification:",
+    "  - Command:",
+    "  - Expected result:",
     "- Completion condition:",
 )
+REQUIRED_SECTION_MARKERS = {
+    "00-overview.md": ("## Build entry condition",),
+    "01-context-and-baseline.md": ("## Execution Preconditions",),
+}
 
 
 def validate_package(package_root: Path) -> list[str]:
-    """Validate the required artifacts and task fields in a change package.
+    """Validate required documents, required sections, and task fields.
 
     Args:
-        package_root: Root directory of the change package.
+        package_root: Change package root directory.
 
     Returns:
-        A list of validation errors. The list is empty when the package passes.
+        Validation error list. An empty list means the package passes.
     """
     errors: list[str] = []
     for relative_path in REQUIRED_FILES:
@@ -55,6 +64,12 @@ def validate_package(package_root: Path) -> list[str]:
         for marker in UNRESOLVED_MARKERS:
             if marker.casefold() in content.casefold():
                 errors.append(f"Unresolved marker '{marker}' in {document_path.name}")
+        for required_heading in REQUIRED_SECTION_MARKERS.get(document_path.name, ()):
+            if required_heading not in content:
+                errors.append(
+                    f"Missing required section '{required_heading}' in "
+                    f"{document_path.name}"
+                )
 
     task_plan = package_root / "06-task-plan.md"
     if task_plan.is_file():

@@ -359,13 +359,12 @@ skills/
 |   `-- templates/
 `-- architect-build/
     |-- SKILL.md
-    |-- agents/openai.yaml
-    `-- scripts/
+    `-- agents/openai.yaml
 ```
 
 - `architect-design` -- evidence-based architecture diagnosis and explicit consent
 - `architect-propose` -- project-local, validated change packages
-- `architect-build` -- baseline-checked, task-scoped implementation and verification
+- `architect-build` -- task-scoped implementation and verification
 
 ---
 

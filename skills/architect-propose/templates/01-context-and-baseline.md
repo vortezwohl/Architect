@@ -12,9 +12,8 @@
 
 [REQUIRED]
 
-## Source baseline
+## Execution Preconditions
 
-The machine-readable source snapshot is stored at `.state/source-snapshot.json`.
-
-- Baseline scope: [REQUIRED]
-- Working-tree policy: [REQUIRED]
+- Required repository or environment state: [REQUIRED]
+- Required existing files, symbols, or contracts: [REQUIRED]
+- Stop conditions that must return to propose instead of building: [REQUIRED]

@@ -1,6 +1,6 @@
 ---
 name: architect-build
-description: "Implement a validated architecture change package produced by Architect Propose. Use when the user wants to build or continue a named .architect/<change-name>/ package with strict baseline checks, task-scoped edits, task-level verification, and implementation logging."
+description: "Implement a validated architecture change package produced by Architect Propose. Use when the user wants to build or continue a named .architect/<change-name>/ package with task-scoped edits, task-level verification, and implementation logging."
 ---
 
 # Architect Build
@@ -12,7 +12,7 @@ Build only what the approved change package specifies. The package is the implem
 - Do not select a new architecture, introduce unplanned abstractions, or expand file scope.
 - Do not implement when the change package fails preflight.
 - Do not mark a task complete before its specified verification succeeds.
-- Do not continue after a baseline mismatch, design contradiction, missing detail, or task-scope expansion. Return to `$architect-propose` with a precise discrepancy.
+- Do not continue after a precondition mismatch, design contradiction, missing detail, or task-scope expansion. Return to `$architect-propose` with a precise discrepancy.
 
 ## Input and selection
 
@@ -28,10 +28,10 @@ Always announce the selected package and the way to override it.
 
 Before editing any project file:
 
-1. Read every package artifact and `.state/source-snapshot.json`.
-2. Run `python scripts/preflight_change.py --repo-root <project-root> --change <change-name>`.
-3. Stop if preflight reports missing artifacts, unresolved markers, incomplete task fields, Git `HEAD` drift, branch drift, or working-tree drift.
-4. Confirm that the next unfinished task has one exact scope and verification path.
+1. Read every package artifact.
+2. Confirm the package still has no unresolved markers, the build entry condition is explicit, and the next unfinished task still has one exact scope and verification path.
+3. Confirm the documented package-level and task-level preconditions still hold in the current repository and environment.
+4. Stop if any required artifact is missing, any unresolved marker remains, or any recorded precondition no longer holds.
 
 ## Task execution loop
 
@@ -49,7 +49,7 @@ For one pending task at a time:
 
 Pause and return to `architect-propose` when any of the following occurs:
 
-- The source baseline changed after proposal.
+- A recorded build entry condition or task precondition no longer holds.
 - A caller, contract, state transition, error path, or migration surface was omitted.
 - The task requires an additional file, symbol, dependency, or abstraction.
 - The package does not define a relevant behavior or verification result.
