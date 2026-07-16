@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architect Propose"
+  short_description: "Create a validated, build-ready architecture package"
+  default_prompt: "Use $architect-propose to turn the approved architecture into a validated change package under .agent-architect/changes/."

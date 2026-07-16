@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architect Build"
+  short_description: "Build one validated architecture package at a time"
+  default_prompt: "Use $architect-build to preflight the approved change package, implement one bounded task, run its verification, and log the result."

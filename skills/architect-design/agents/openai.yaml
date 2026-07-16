@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architect Design"
+  short_description: "Diagnose architecture, patterns, and compatibility"
+  default_prompt: "Use $architect-design to resolve compatibility intent, inspect the repository, compare direct and pattern-based architectures, and obtain explicit design approval."

@@ -8,7 +8,7 @@
 
 *Build codebases that stay coherent as they grow -- without giant modules, speculative abstractions, or accidental breaking changes.*
 
-[![Agent Skill](https://img.shields.io/badge/Agent%20Skill-agent--architect-111827?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/tree/main/skills/agent-architect)
+[![Architect Workflow](https://img.shields.io/badge/Architect-design%20%2B%20propose%20%2B%20build-111827?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/tree/main/skills/architect-design)
 [![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/blob/main/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/vortezwohl/Agent-Architect?style=flat-square&label=Stars)](https://github.com/vortezwohl/Agent-Architect/stargazers)
 
@@ -201,40 +201,43 @@ Install the skill directly with the Skills CLI:
 npx skills add vortezwohl/Agent-Architect
 ```
 
-Or copy `skills/agent-architect/` into your agent's supported skills directory, then invoke:
+Or copy `skills/` into your agent's supported skills directory, then invoke the stage that matches the current decision state:
 
 ```text
-agent-architect
+architect-design
+architect-propose
+architect-build
 ```
 
 > [!IMPORTANT]
-> Read a skill before installing it. A skill is executable agent guidance: inspect its instructions, bundled references, scripts, and trust boundary.
+> Read a skill before installing it. A skill is executable agent guidance: inspect its instructions, bundled references, scripts, templates, and trust boundary.
 
 ---
 
 ## Use it
 
-Ask your coding agent:
+Use the explicit three-stage workflow:
 
 ```text
-Use $agent-architect before implementing or reviewing this non-trivial change.
-Inspect the repository, make compatibility intent explicit where it matters,
-choose the smallest durable architecture, then implement and verify it.
+Use $architect-design to inspect this non-trivial change, make compatibility intent explicit,
+and obtain approval for the smallest justified architecture.
+
+After approval, use $architect-propose <change-name> to create and validate the project-local change package.
+
+Only after package validation passes, use $architect-build <change-name> to implement one bounded task at a time.
 ```
 
 Examples:
 
 ```text
-Use $agent-architect before adding this payment provider.
+Use $architect-design before adding this payment provider.
 
-Use $agent-architect to review this feature for accidental architecture,
+Use $architect-design to review this feature for accidental architecture,
 speculative abstractions, and an unclear compatibility boundary.
 
-Use $agent-architect before refactoring this service boundary.
-Preserve or intentionally change behavior only after the contract is explicit.
+Use $architect-propose add-payment-provider after the user approves the design.
 
-Use $agent-architect to decide whether this integration needs an adapter,
-a direct dependency, or a framework extension.
+Use $architect-build add-payment-provider only after the proposal package passes validation.
 ```
 
 ---
@@ -342,20 +345,27 @@ assets/
 `-- agent-architect-wordmark.svg
 
 skills/
-`-- agent-architect/
+|-- architect-design/
+|   |-- SKILL.md
+|   |-- agents/openai.yaml
+|   `-- references/
+|       |-- decision-protocol.md
+|       |-- gof-patterns.md
+|       `-- source-article.md
+|-- architect-propose/
+|   |-- SKILL.md
+|   |-- agents/openai.yaml
+|   |-- scripts/
+|   `-- templates/
+`-- architect-build/
     |-- SKILL.md
-    |-- agents/
-    |   `-- openai.yaml
-    `-- references/
-        |-- decision-protocol.md
-        |-- gof-patterns.md
-        `-- source-article.md
+    |-- agents/openai.yaml
+    `-- scripts/
 ```
 
-- `SKILL.md` -- operating rules and the required architecture record
-- `decision-protocol.md` -- compatibility intent, architecture consent, diagnostic, selection, refactoring, and review gates
-- `gof-patterns.md` -- pattern intent, trade-offs, misuse cases, and verification guidance
-- `source-article.md` -- architecture principles for the AI coding era
+- `architect-design` -- evidence-based architecture diagnosis and explicit consent
+- `architect-propose` -- project-local, validated change packages
+- `architect-build` -- baseline-checked, task-scoped implementation and verification
 
 ---
 

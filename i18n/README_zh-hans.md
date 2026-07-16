@@ -8,7 +8,7 @@
 
 *让代码库在持续增长时依然保持一致性，不再被巨型模块、预支未来的抽象、或意外引入的破坏性变更拖垮。*
 
-[![Agent Skill](https://img.shields.io/badge/Agent%20Skill-agent--architect-111827?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/tree/main/skills/agent-architect)
+[![Architect Workflow](https://img.shields.io/badge/Architect-design%20%2B%20propose%20%2B%20build-111827?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/tree/main/skills/architect-design)
 [![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/blob/main/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/vortezwohl/Agent-Architect?style=flat-square&label=Stars)](https://github.com/vortezwohl/Agent-Architect/stargazers)
 
@@ -201,40 +201,39 @@ codex plugin install architect@architect
 npx skills add vortezwohl/Agent-Architect
 ```
 
-或者将 `skills/agent-architect/` 复制到 Agent 支持的 skills 目录，然后调用：
+??? `skills/` ??? Agent ??? skills ??????????????? Skill?
 
 ```text
-agent-architect
+architect-design
+architect-propose
+architect-build
 ```
 
 > [!IMPORTANT]
-> 安装前请先阅读 skill。Skill 是可执行的 Agent 指引：请检查其说明、附带的参考资料、脚本以及信任边界。
+> ??????? Skill?Skill ????? Agent ????????????????????????????
 
 ---
 
-## 使用方式
+## ????
 
-你可以这样对编码智能体下达指令：
+????????????
 
 ```text
-在实现或评审这项非平凡变更之前，先使用 $agent-architect。
-检查仓库，在必要处明确兼容性意图，
-选择最小但耐用的架构，然后再实现并验证。
+?? $architect-design ???????????????????????????????
+
+???????? $architect-propose <change-name> ???????????????
+
+??????????????? $architect-build <change-name> ????????????
 ```
 
-示例：
+???
 
 ```text
-在接入这个支付服务商之前，先使用 $agent-architect。
+???????????????? $architect-design?
 
-用 $agent-architect 评审这个功能，
-找出偶然形成的架构、猜测式抽象，以及不清晰的兼容性边界。
+???????? $architect-propose add-payment-provider?
 
-在重构这个服务边界之前，先使用 $agent-architect。
-只有在契约被明确之后，才允许保留或有意改变行为。
-
-用 $agent-architect 判断这项集成到底需要适配器、
-直接依赖，还是框架扩展。
+?????????????? $architect-build add-payment-provider?
 ```
 
 ---
@@ -342,7 +341,7 @@ assets/
 `-- agent-architect-wordmark.svg
 
 skills/
-`-- agent-architect/
+`-- architect-design/
     |-- SKILL.md
     |-- agents/
     |   `-- openai.yaml
