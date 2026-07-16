@@ -1,108 +1,353 @@
-"""Validate whether an Architect plan package satisfies build prerequisites.
+"""Validate a sealed Markdown-first Architect plan package before Build.
 
-This script validates only the completeness and executability of proposal-stage
-artifacts. It no longer saves or compares a workspace snapshot.
+Validation is intentionally fail-closed. It verifies deterministic structure,
+English metadata fields, cross-document references, centralized execution state,
+and encoding safety before Build can interpret any agent-authored prose.
 """
 
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import re
+
+from plan_protocol import (
+    ROOT_DOCUMENTS,
+    PlanProtocolError,
+    compute_plan_digest,
+    find_placeholders,
+    load_state,
+    parse_metadata,
+    read_utf8,
+)
 
 
-REQUIRED_FILES = (
-    "00-overview.md",
-    "01-context-and-baseline.md",
-    "02-compatibility-contract.md",
-    "03-architecture-decision.md",
-    "04-impact-map.md",
-    "05-detailed-design.md",
-    "06-task-plan.md",
-    "07-verification-plan.md",
-    "08-implementation-log.md",
-)
-UNRESOLVED_MARKERS = (
-    "[REQUIRED]",
-    "TODO",
-    "TBD",
-    "to be decided",
-    "as needed",
-)
-TASK_FIELDS = (
-    "- Allowed files:",
-    "- Exact symbols or contracts:",
-    "- Preconditions:",
-    "- Change steps:",
-    "- Prohibited changes:",
-    "- Verification:",
-    "  - Command:",
-    "  - Expected result:",
-    "- Completion condition:",
-)
-REQUIRED_SECTION_MARKERS = {
-    "00-overview.md": ("## Build entry condition",),
-    "01-context-and-baseline.md": ("## Execution Preconditions",),
-}
+DESIGN_FILE_PATTERN = re.compile(r"^(D-\d{3})-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
+TASK_FILE_PATTERN = re.compile(r"^(T-\d{3})-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
+DESIGN_RULE_PATTERN = re.compile(r"^- R-D\d{3}(?:-N\d{3}|-\d{3}): .+$", re.MULTILINE)
+TASK_MUST_DO_PATTERN = re.compile(r"^- M-T\d{3}-\d{3}: .+$", re.MULTILINE)
+TASK_MUST_NOT_PATTERN = re.compile(r"^- N-T\d{3}-\d{3}: .+$", re.MULTILINE)
+RULE_REFERENCE_PATTERN = re.compile(r"R-D\d{3}(?:-N\d{3}|-\d{3})")
+TASK_RULE_PATTERN = re.compile(r"[MN]-T\d{3}-\d{3}")
+
+
+def validate_required_headings(path: Path, headings: tuple[str, ...]) -> list[str]:
+    """Return missing fixed English headings for one plan document.
+
+    Args:
+        path: Markdown document to inspect.
+        headings: Required heading strings.
+
+    Returns:
+        Validation errors for absent headings.
+    """
+
+    content = read_utf8(path)
+    return [
+        f"Missing heading '{heading}' in {path.relative_to(path.parents[1])}"
+        for heading in headings
+        if heading not in content
+    ]
+
+
+def table_rows(content: str, heading: str) -> list[list[str]]:
+    """Parse non-header Markdown table rows in one fixed plan section.
+
+    Args:
+        content: Complete Markdown document content.
+        heading: Exact section heading that owns the table.
+
+    Returns:
+        Parsed table cells without header or separator rows.
+    """
+
+    lines = content.splitlines()
+    collecting = False
+    rows: list[list[str]] = []
+    for line in lines:
+        if line == heading:
+            collecting = True
+            continue
+        if collecting and line.startswith("## "):
+            break
+        if not collecting or not line.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if not cells or cells[0] in {"ApprovalId", "DesignId", "TaskId", "---"}:
+            continue
+        if set(cells[0]) == {"-"}:
+            continue
+        rows.append(cells)
+    return rows
 
 
 def validate_package(package_root: Path) -> list[str]:
-    """Validate required documents, required sections, and task fields.
+    """Validate one complete plan package without changing its contents.
 
     Args:
-        package_root: Plan package root directory.
+        package_root: Selected plan package root.
 
     Returns:
-        Validation error list. An empty list means the package passes.
+        Validation error messages. An empty list means the package is buildable.
     """
+
     errors: list[str] = []
-    for relative_path in REQUIRED_FILES:
-        if not (package_root / relative_path).is_file():
-            errors.append(f"Missing required artifact: {relative_path}")
+    manifest_path = package_root / "00-plan-manifest.md"
+    if not manifest_path.is_file():
+        return [f"Missing required document: {manifest_path.name}"]
+    try:
+        manifest = parse_metadata(manifest_path)
+    except PlanProtocolError as error:
+        return [str(error)]
 
-    for document_path in package_root.glob("*.md"):
-        content = document_path.read_text(encoding="utf-8")
-        for marker in UNRESOLVED_MARKERS:
-            if marker.casefold() in content.casefold():
-                errors.append(f"Unresolved marker '{marker}' in {document_path.name}")
-        for required_heading in REQUIRED_SECTION_MARKERS.get(document_path.name, ()):
-            if required_heading not in content:
-                errors.append(
-                    f"Missing required section '{required_heading}' in "
-                    f"{document_path.name}"
+    for filename, (document_type, document_id) in ROOT_DOCUMENTS.items():
+        path = package_root / filename
+        if not path.is_file():
+            errors.append(f"Missing required document: {filename}")
+            continue
+        try:
+            metadata = parse_metadata(path)
+            if metadata.document_type != document_type:
+                errors.append(f"Invalid DocumentType in {filename}")
+            if metadata.document_id != document_id:
+                errors.append(f"Invalid DocumentId in {filename}")
+            if metadata.plan_name != manifest.plan_name:
+                errors.append(f"PlanName mismatch in {filename}")
+            if metadata.document_language != manifest.document_language:
+                errors.append(f"DocumentLanguage mismatch in {filename}")
+            if path.name != "08-execution-log.md" and find_placeholders(path):
+                errors.append(f"Unresolved placeholders in {filename}")
+        except PlanProtocolError as error:
+            errors.append(str(error))
+
+    design_directory = package_root / "03-designs"
+    task_directory = package_root / "06-tasks"
+    if not design_directory.is_dir():
+        errors.append("Missing required directory: 03-designs")
+    if not task_directory.is_dir():
+        errors.append("Missing required directory: 06-tasks")
+    design_paths = sorted(design_directory.glob("*.md")) if design_directory.is_dir() else []
+    task_paths = sorted(task_directory.glob("*.md")) if task_directory.is_dir() else []
+    if not design_paths:
+        errors.append("Plan must contain at least one design document.")
+    if not task_paths:
+        errors.append("Plan must contain at least one task document.")
+
+    try:
+        design_catalog = read_utf8(package_root / "02-design-catalog.md")
+        task_catalog = read_utf8(package_root / "05-task-catalog.md")
+    except (OSError, PlanProtocolError) as error:
+        return errors + [str(error)]
+    approval_sets = {
+        row[0]: {design_id.strip() for design_id in row[1].split(",")}
+        for row in table_rows(design_catalog, "## ApprovalSets")
+        if len(row) == 4 and row[0] and row[1] and row[2] and row[3]
+    }
+    design_catalog_rows = {
+        row[0]: row
+        for row in table_rows(design_catalog, "## Designs")
+        if len(row) == 5
+    }
+    task_catalog_rows = {
+        row[0]: row
+        for row in table_rows(task_catalog, "## Tasks")
+        if len(row) == 5
+    }
+    design_ids: set[str] = set()
+    design_rule_ids: set[str] = set()
+    rule_owners: dict[str, str] = {}
+    task_ids: set[str] = set()
+    for path in design_paths:
+        match = DESIGN_FILE_PATTERN.fullmatch(path.name)
+        if not match:
+            errors.append(f"Invalid design filename: {path.name}")
+            continue
+        design_id = match.group(1)
+        design_ids.add(design_id)
+        try:
+            metadata = parse_metadata(path)
+            if metadata.document_type != "Design" or metadata.document_id != design_id:
+                errors.append(f"Design metadata mismatch: {path.name}")
+            if metadata.plan_name != manifest.plan_name:
+                errors.append(f"PlanName mismatch: {path.name}")
+            if find_placeholders(path):
+                errors.append(f"Unresolved placeholders in {path.name}")
+            errors.extend(
+                validate_required_headings(
+                    path,
+                    (
+                        "## Concept",
+                        "## Counterexamples",
+                        "## AntiPatterns",
+                        "### MUST DO",
+                        "### MUST NOT DO",
+                    ),
+                ),
+            )
+            content = read_utf8(path)
+            if not DESIGN_RULE_PATTERN.search(content):
+                errors.append(f"Missing generated design rule in {path.name}")
+            expected_rule_prefix = f"R-{design_id.replace('-', '')}"
+            for rule_id in RULE_REFERENCE_PATTERN.findall(content):
+                if not rule_id.startswith(expected_rule_prefix):
+                    errors.append(
+                        f"Design rule does not belong to {design_id} in {path.name}: "
+                        f"{rule_id}",
+                    )
+                design_rule_ids.add(rule_id)
+                rule_owners[rule_id] = design_id
+            catalog_row = design_catalog_rows.get(design_id)
+            if catalog_row is None:
+                errors.append(f"Design catalog does not reference {path.name}")
+            elif catalog_row[1] != path.relative_to(package_root).as_posix():
+                errors.append(f"Design catalog path mismatch for {design_id}")
+            elif catalog_row[3] not in approval_sets:
+                errors.append(f"Design catalog has unknown approval for {design_id}")
+            elif design_id not in approval_sets[catalog_row[3]]:
+                errors.append(f"Approval set does not cover {design_id}")
+            if design_id not in design_catalog or path.relative_to(package_root).as_posix() not in design_catalog:
+                errors.append(f"Design catalog does not reference {path.name}")
+        except PlanProtocolError as error:
+            errors.append(str(error))
+
+    for path in task_paths:
+        match = TASK_FILE_PATTERN.fullmatch(path.name)
+        if not match:
+            errors.append(f"Invalid task filename: {path.name}")
+            continue
+        task_id = match.group(1)
+        task_ids.add(task_id)
+        try:
+            metadata = parse_metadata(path)
+            if metadata.document_type != "Task" or metadata.document_id != task_id:
+                errors.append(f"Task metadata mismatch: {path.name}")
+            if metadata.plan_name != manifest.plan_name:
+                errors.append(f"PlanName mismatch: {path.name}")
+            if find_placeholders(path):
+                errors.append(f"Unresolved placeholders in {path.name}")
+            errors.extend(
+                validate_required_headings(
+                    path,
+                    (
+                        "## DesignSources",
+                        "## ExactChangeBoundary",
+                        "## MUST DO",
+                        "## MUST NOT DO",
+                        "## ScopeCheckAndBreachRecovery",
+                        "## LocalVerification",
+                    ),
+                ),
+            )
+            content = read_utf8(path)
+            if not TASK_MUST_DO_PATTERN.search(content):
+                errors.append(f"Missing generated MUST DO rule in {path.name}")
+            if not TASK_MUST_NOT_PATTERN.search(content):
+                errors.append(f"Missing generated MUST NOT DO rule in {path.name}")
+            expected_task_rule_prefixes = (f"M-{task_id.replace('-', '')}", f"N-{task_id.replace('-', '')}")
+            for rule_id in TASK_RULE_PATTERN.findall(content):
+                if not rule_id.startswith(expected_task_rule_prefixes):
+                    errors.append(
+                        f"Task rule does not belong to {task_id} in {path.name}: {rule_id}",
+                    )
+            references: set[str] = set()
+            if not re.search(r"^- DesignRefs: D-\d{3}(?:, D-\d{3})*$", content, re.MULTILINE):
+                errors.append(f"Invalid DesignRefs in {path.name}")
+            else:
+                design_reference_line = re.search(
+                    r"^- DesignRefs: (.+)$",
+                    content,
+                    re.MULTILINE,
                 )
+                if design_reference_line:
+                    references = {
+                        item.strip()
+                        for item in design_reference_line.group(1).split(",")
+                    }
+                    unknown_designs = references - design_ids
+                    if unknown_designs:
+                        errors.append(
+                            f"Task references unknown designs in {path.name}: "
+                            f"{', '.join(sorted(unknown_designs))}",
+                        )
+            rule_reference_line = re.search(
+                r"^- RuleRefs: (.+)$",
+                content,
+                re.MULTILINE,
+            )
+            if not rule_reference_line:
+                errors.append(f"Missing RuleRefs in {path.name}")
+            else:
+                rule_references = {
+                    item.strip()
+                    for item in rule_reference_line.group(1).split(",")
+                }
+                unknown_rules = rule_references - design_rule_ids
+                if unknown_rules:
+                    errors.append(
+                        f"Task references unknown design rules in {path.name}: "
+                        f"{', '.join(sorted(unknown_rules))}",
+                    )
+                unrelated_rules = {
+                    rule_id
+                    for rule_id in rule_references
+                    if rule_owners.get(rule_id) not in references
+                }
+                if unrelated_rules:
+                    errors.append(
+                        f"Task references rules outside DesignRefs in {path.name}: "
+                        f"{', '.join(sorted(unrelated_rules))}",
+                    )
+            if not re.search(r"^\| [^|]+ \| [^|]+ \| (?:create|modify|delete) \| [^|]+ \|$", content, re.MULTILINE):
+                errors.append(f"Missing exact path/symbol/operation boundary in {path.name}")
+            catalog_row = task_catalog_rows.get(task_id)
+            if catalog_row is None:
+                errors.append(f"Task catalog does not reference {path.name}")
+            elif catalog_row[1] != path.relative_to(package_root).as_posix():
+                errors.append(f"Task catalog path mismatch for {task_id}")
+        except PlanProtocolError as error:
+            errors.append(str(error))
 
-    task_plan = package_root / "06-task-plan.md"
-    if task_plan.is_file():
-        content = task_plan.read_text(encoding="utf-8")
-        tasks = [section for section in content.split("\n## T-") if section.strip()]
-        if len(tasks) < 2:
-            errors.append("Task plan must contain at least one '## T-' task heading.")
-        for field in TASK_FIELDS:
-            if field not in content:
-                errors.append(f"Task plan is missing required field: {field}")
+    try:
+        state = load_state(package_root)
+        if state.get("PlanDigest") != compute_plan_digest(package_root):
+            errors.append("Execution state PlanDigest does not match immutable documents.")
+        tasks = state.get("Tasks")
+        if not isinstance(tasks, dict) or set(tasks) != task_ids:
+            errors.append("Execution state Tasks do not exactly match task documents.")
+    except PlanProtocolError as error:
+        errors.append(str(error))
+
+    manifest_content = read_utf8(manifest_path)
+    match = re.search(r"^- PlanDigest: ([0-9a-f]{64})$", manifest_content, re.MULTILINE)
+    if not match:
+        errors.append("PlanManifest must contain a sealed SHA-256 PlanDigest.")
+    elif match.group(1) != compute_plan_digest(package_root):
+        errors.append("PlanManifest PlanDigest does not match immutable documents.")
     return errors
 
 
 def main() -> int:
-    """Parse CLI arguments and print the package validation result."""
+    """Parse arguments, print all validation failures, and return an exit status.
+
+    Returns:
+        Process exit status.
+    """
+
     parser = argparse.ArgumentParser(
-        description="Validate an Architect plan package before build.",
+        description="Validate a sealed Markdown-first Architect plan package.",
     )
     parser.add_argument("--repo-root", required=True, type=Path)
     parser.add_argument("--plan", required=True)
     arguments = parser.parse_args()
-
-    package_root = (
-        arguments.repo_root.resolve()
-        / ".architect"
-        / arguments.plan
-    )
-    errors = validate_package(package_root)
+    package_root = arguments.repo_root.resolve() / ".architect" / arguments.plan
+    try:
+        errors = validate_package(package_root)
+    except (OSError, PlanProtocolError) as error:
+        errors = [str(error)]
     if errors:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-
     print(f"VALID: {package_root}")
     return 0
 

@@ -1,62 +1,106 @@
 ---
 name: architect-build
-description: "Implement a validated architecture plan package produced by Architect Propose. Use when the user wants to build or continue a named .architect/<plan-name>/ package with task-scoped edits, task-level verification, and implementation logging."
+description: "Implement one sealed Markdown-first Architect plan task at a time with centralized task state, exact file-boundary checks, checkpoint rollback, and interruption recovery. Use only after Architect Propose validation succeeds."
 ---
 
 # Architect Build
 
-Build only what the approved plan package specifies. The package is the implementation contract; it is not a suggestion or a starting point for new architecture work.
+Build only the sealed design and task contract. Build does not design, extend,
+reinterpret, migrate, or repair the plan. It either executes one bounded task
+exactly as written or restores the task checkpoint and reports the discrepancy.
 
-## Strict boundary
+## Strict Boundary
 
-- Do not select a new architecture, introduce unplanned abstractions, or expand file scope.
-- Do not implement when the plan package fails preflight.
-- Do not mark a task complete before its specified verification succeeds.
-- Do not continue after a precondition mismatch, design contradiction, missing detail, or task-scope expansion. Return to `$architect-propose` with a precise discrepancy.
-
-## Input and selection
-
-Accept an optional kebab-case plan name. If omitted:
-
-1. Infer it from explicit conversation context.
-2. Auto-select only when exactly one active package exists under `.architect/`.
-3. Otherwise ask the user to select a package.
-
-Always announce the selected package and the way to override it.
+- Do not select a new architecture, pattern, concept, dependency direction, or
+  lifecycle behavior.
+- Do not edit task or design Markdown files after the plan is sealed.
+- Do not modify a source path outside the active task's exact boundary.
+- Do not continue after a scope breach, incomplete detail, design contradiction,
+  missing approval, or failed recovery.
+- Do not mark a task complete before scope validation and the task's actual
+  verification evidence are recorded.
 
 ## Preflight
 
-Before editing any project file:
+Before any source edit, select one plan and run:
 
-1. Read every package artifact.
-2. Confirm the package still has no unresolved markers, the build entry condition is explicit, and the next unfinished task still has one exact scope and verification path.
-3. Confirm the documented package-level and task-level preconditions still hold in the current repository and environment.
-4. Stop if any required artifact is missing, any unresolved marker remains, or any recorded precondition no longer holds.
+```text
+python scripts/build_control.py preflight --repo-root <root> --plan <name>
+```
 
-## Task execution loop
+Preflight requires an exclusive Git worktree, a valid sealed package, valid
+encoding, matching plan digest, complete centralized state, and exact task
+documents. Read the manifest, context, design catalog, impact boundaries, task
+catalog, verification plan, active task, and every `D-xxx` document referenced
+by that task.
 
-For one pending task at a time:
+If `.state/execution-state.json` reports an active task, do not inspect partial
+implementation as a continuation point. First run:
 
-1. Announce the task ID and its allowed files.
-2. Make only the specified changes to the listed files and symbols.
-3. Compare the changed-file set with the task's allowed-file set. Stop on any extra file.
-4. Run the task's verification commands and record the actual result.
-5. If verification succeeds, update the task status in `06-task-plan.md` and append an entry to `08-implementation-log.md` using the repository's controlled file-operation tool.
-6. If verification fails, do not update status. Diagnose the failure within the task boundary; stop if resolving it needs a design or scope change.
-7. Move to the next task only after the current one is complete and logged.
+```text
+python scripts/build_control.py recover --repo-root <root> --plan <name>
+```
 
-## Required discrepancy response
+Recovery restores the task checkpoint and marks the attempt rolled back so a
+memoryless agent resumes only from verified completed tasks.
 
-Pause and return to `architect-propose` when any of the following occurs:
+## Task Execution Loop
 
-- A recorded build entry condition or task precondition no longer holds.
-- A caller, contract, state transition, error path, or migration surface was omitted.
-- The task requires an additional file, symbol, dependency, or abstraction.
-- The package does not define a relevant behavior or verification result.
-- Existing code or framework constraints contradict the detailed design.
+For exactly one pending task:
 
-Report the exact artifact section, task ID, observed code evidence, and the smallest required package correction. Do not repair the package silently while building.
+1. Announce its `T-xxx` ID, cited `D-xxx` units, allowed paths, symbols,
+   operations, `MUST DO`, and `MUST NOT DO` rules.
+2. Create a checkpoint and acquire the exclusive lock:
 
-## Completion standard
+   ```text
+   python scripts/build_control.py start --repo-root <root> --plan <name> --task <T-xxx>
+   ```
 
-Finish only when all tasks are verified and logged, package-level verification passes, compatibility and rollback checks have been run as specified, and the final report distinguishes actual validation from remaining risk.
+3. Perform one declared atomic step. Do not add an unapproved helper, wrapper,
+   pattern, file, state transition, or error behavior.
+4. After every atomic edit, check scope:
+
+   ```text
+   python scripts/build_control.py scope-check --repo-root <root> --plan <name> --task <T-xxx>
+   ```
+
+5. Run the task's listed verification command and compare the actual result with
+   its expected result.
+6. Record actual evidence only after scope and verification pass:
+
+   ```text
+   python scripts/build_control.py complete --repo-root <root> --plan <name> --task <T-xxx> --evidence <actual-result>
+   ```
+
+7. Continue only with the next pending task after the current task is completed.
+
+## Mandatory Scope-Breach Recovery
+
+When scope checking reports any unexpected path, the controller immediately
+records the breach and restores the task checkpoint. Do not manually repair the
+extra file and keep the task attempt alive.
+
+```text
+python scripts/build_control.py rollback --repo-root <root> --plan <name> --task <T-xxx> --reason <manual-recovery-cause>
+```
+
+The controller restores the entire source tree to the task checkpoint, verifies
+the restoration digest, records the event, releases the lock, and marks the
+attempt rolled back. The explicit rollback command exists for manual recovery
+after another detected failure. If restoration fails, the task is blocked and
+Build must return the exact evidence to Propose or Design.
+
+## Required Return to Design
+
+Return to `architect-design` when a task requires a concept or rule not covered
+by an approved `D-xxx` unit. Return to `architect-propose` when the approved
+design remains valid but the plan omitted a file, symbol, task, precondition,
+verification rule, or impact boundary. Report the document, ID, code evidence,
+and smallest required correction. Do not modify the sealed plan silently.
+
+## Completion Standard
+
+Finish only after all centralized task states are `completed`, the verification
+plan's required checks have actual recorded results, the final plan preflight
+succeeds, and the final report distinguishes completed evidence from remaining
+risk.

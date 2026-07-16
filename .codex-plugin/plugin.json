@@ -1,7 +1,7 @@
 {
   "name": "architect",
-  "version": "1.1.0",
-  "description": "Three-stage architecture design, proposal, and controlled build workflow.",
+  "version": "2.0.0",
+  "description": "Three-stage approved design, sealed Markdown planning, and checkpoint-controlled build workflow.",
   "author": {
     "name": "vortezwohl",
     "url": "https://github.com/vortezwohl"
@@ -19,14 +19,14 @@
   "interface": {
     "displayName": "Architect",
     "shortDescription": "Design, propose, and build consequential code changes safely.",
-    "longDescription": "Makes compatibility explicit, obtains architecture consent, records a validated project-local change package, and builds it through scoped tasks and verification.",
+    "longDescription": "Makes design concepts, boundaries, anti-patterns, and MUST rules explicit; seals Markdown-first plans; and builds atomic tasks with scope checks and checkpoint rollback.",
     "developerName": "vortezwohl",
     "category": "Productivity",
     "capabilities": [
       "Interactive"
     ],
     "defaultPrompt": [
-      "Use $architect-design before planning this non-trivial change."
+      "Use $architect-design before planning this consequential change."
     ]
   }
 }

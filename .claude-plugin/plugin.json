@@ -1,7 +1,7 @@
 {
   "name": "architect",
-  "version": "1.1.0",
-  "description": "Three-stage architecture design, proposal, and controlled build workflow.",
+  "version": "2.0.0",
+  "description": "Three-stage approved design, sealed Markdown planning, and checkpoint-controlled build workflow.",
   "author": {
     "name": "vortezwohl"
   },

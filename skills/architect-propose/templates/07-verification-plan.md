@@ -1,12 +1,16 @@
 # Verification Plan
 
-| Category | Scenario | Command or procedure | Expected result | Task IDs |
+## Metadata
+- DocumentType: VerificationPlan
+- DocumentId: VERIFICATION
+- PlanName: {{GENERATED:PlanName}}
+- CreatedAt: {{GENERATED:CreatedAt}}
+- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+
+## VerificationMatrix
+| Category | Scenario | CommandOrProcedure | ExpectedResult | TaskIds |
 | --- | --- | --- | --- | --- |
-| normal | [REQUIRED] | [REQUIRED] | [REQUIRED] | [REQUIRED] |
-| boundary | [REQUIRED] | [REQUIRED] | [REQUIRED] | [REQUIRED] |
-| failure | [REQUIRED] | [REQUIRED] | [REQUIRED] | [REQUIRED] |
-| integration | [REQUIRED] | [REQUIRED] | [REQUIRED] | [REQUIRED] |
+| {{AGENT:Category}} | {{AGENT:Scenario}} | {{AGENT:CommandOrProcedure}} | {{AGENT:ExpectedResult}} | {{AGENT:TaskIds}} |
 
-## Compatibility, migration, concurrency, and rollback checks
-
-[REQUIRED]
+## CompatibilityMigrationConcurrencyAndRollback
+{{AGENT:CompatibilityMigrationConcurrencyAndRollback}}

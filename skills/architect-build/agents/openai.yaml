@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Build"
-  short_description: "Build one validated architecture plan package at a time"
-  default_prompt: "Use $architect-build to preflight the approved plan package, implement one bounded task, run its verification, and log the result."
+  short_description: "Build sealed tasks with checkpoint rollback"
+  default_prompt: "Use $architect-build to preflight a sealed plan, execute one T-xxx task inside its exact boundary, verify scope after each atomic edit, and rollback every breach."

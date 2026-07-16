@@ -199,7 +199,7 @@ class LightThemeFactory:
 
 **Keywords:** a unique instance, global access, risk of state pollution.
 
-Singleton is one of the most easily misused patterns. It should express a semantically global resource, such as process-level configuration, a registry, or a resource facade. It should not mean, ?I do not want to pass this dependency, so I will make it global.?
+Singleton is one of the most easily misused patterns. It should express a semantically global resource, such as process-level configuration, a registry, or a resource facade. It should not mean, "I do not want to pass this dependency, so I will make it global."
 
 Modern engineering usually prefers a container-managed singleton scope instead of having every business class implement a singleton. Hand-written singletons readily create test pollution, residual state, and unclear concurrency semantics.
 
@@ -397,7 +397,7 @@ The implication for AI Coding is direct: without understanding the structure a f
 
 ## 7. Final judgment: The valuable skill is not writing version one, but surviving version five
 
-Design patterns matter today not simply because they are classics, but because they provide a stable, cross-era set of tools for structural judgment. When AI makes code generation extremely fast, the most valuable human capability is no longer ?I can type this code.? It is ?I know how this code will decay and how to block that decay path from the beginning.?
+Design patterns matter today not simply because they are classics, but because they provide a stable, cross-era set of tools for structural judgment. When AI makes code generation extremely fast, the most valuable human capability is no longer "I can type this code." It is "I know how this code will decay and how to block that decay path from the beginning."
 
 Understanding design patterns is not about making a system resemble a textbook. It is about preserving the essentials of software engineering in the face of AI-generated speed: boundaries, substitution, evolution, testing, and collaboration.
 

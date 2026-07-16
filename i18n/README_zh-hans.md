@@ -1,396 +1,62 @@
-<div align="center">
+# Agent Architect
 
-<h1>
-  <img src="../assets/agent-architect-wordmark.svg" alt="Agent Architect" width="560" />
-</h1>
+Agent Architect 为编码 agent 提供严格的三阶段架构工作流：先批准设计，再生成可执行计划，最后在受控边界内实施。
 
-**快速写代码很容易。真正更难的，是构建一个能撑过下一百次变更的代码库。**
-
-*让代码库在持续增长时依然保持一致性，不再被巨型模块、预支未来的抽象、或意外引入的破坏性变更拖垮。*
-
-[![Architect Workflow](https://img.shields.io/badge/Architect-design%20%2B%20propose%20%2B%20build-111827?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/tree/main/skills/architect-design)
-[![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](https://github.com/vortezwohl/Agent-Architect/blob/main/LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/vortezwohl/Agent-Architect?style=flat-square&label=Stars)](https://github.com/vortezwohl/Agent-Architect/stargazers)
-
-<br />
-
-**不要让架构靠偶然形成。** &nbsp; **不要让抽象靠猜测生长。** &nbsp; **不要让兼容性靠想当然决定。**
-
-[安装](#安装) &middot; [前后对比](#前后对比) &middot; [它如何构建更好的架构](#它如何构建更好的架构) &middot; [适用场景](#适用场景)
-
-</div>
-
-<h4 align="center">
-  <p>
-    <a href="https://github.com/vortezwohl/Agent-Architect/blob/main/README.md">English</a> |
-    <a href="https://github.com/vortezwohl/Agent-Architect/blob/main/i18n/README_zh-hant.md">繁體中文</a> |
-    <b>简体中文</b> |
-    <a href="https://github.com/vortezwohl/Agent-Architect/blob/main/i18n/README_ja-jp.md">日本語</a>
-  </p>
-</h4>
-
----
-
-## 你的智能体会写代码。它也会设计系统吗？
-
-大多数人不会明确要求编码智能体去做架构决策。
-
-他们要求的，通常只是普通开发工作：
-
-```text
-新增一个发票下载端点。
-接入第二个支付服务商。
-重构这个服务。
-让这个功能更易扩展。
-```
-
-但在第一行代码落下之前，智能体其实已经在做架构选择：
-
-- 哪个模块拥有这段行为和状态。
-- 哪些依赖会跨越边界。
-- 哪些错误会变成对外可见的行为。
-- 哪些行为必须保持兼容，哪些可以被有意修改。
-- 直接实现、抽象层、还是框架扩展，哪一种才有真实依据。
-
-如果没有架构判断力，智能体往往会朝两个代价都很高的方向之一失控。
-
-| 失败方式 | 代码库会变成什么样 |
-| --- | --- |
-| **疏于架构** | 功能被塞进最近的文件。职责边界越来越模糊，规则开始重复，分支不断增殖，少数服务或包逐渐膨胀到没人愿意再碰。 |
-| **猜测式架构** | 在真实变化出现之前，一个“可能的未来”就先变成了接口、工厂、注册表、事件、包装器，甚至继承层次。 |
-
-而在这两种失败里，还藏着第三种常被忽视的问题：
-
-> **想当然的兼容性。** 智能体不是默认把过时行为全部保留下来，就是在没有先讲清边界的情况下，直接改写本来运行正常的行为。
-
-结果也许能编译，也许甚至能演示成功。
-
-但它仍会在之后的每一次变更里，变得更难理解、更难测试、更难扩展，也更难信任。
-
-**Agent Architect 给编码智能体一套有纪律的结构判断方式，让复杂度在扩散之前先被看见。**
-
----
-
-## 前后对比
-
-### 没有 Agent Architect
-
-```text
-用户：“接入第二个支付服务商。”
-
-智能体：往 CheckoutService 里继续加服务商分支，
-复制一套 Webhook 处理逻辑，在处理器里直接访问持久层，
-为了“未来可能还会有更多服务商”提前造一个 PaymentProviderFactory，
-并悄悄改掉了现有集成正在依赖的重试行为。
-```
-
-### 有 Agent Architect
-
-```text
-用户：“接入第二个支付服务商。”
-
-智能体：
-1. 梳理现有支付生命周期、调用方、重试归属、
-   Webhook、持久化、错误路径和测试。
-2. 不再默认旧契约必须保留，或者可以随便打破，
-   而是先把兼容性意图说清楚。
-3. 把已被证明会变化的部分（服务商执行）与稳定策略
-   （结算、鉴权、重试归属）拆开。
-4. 比较最小直接方案和引入服务商边界的方案。
-5. 只引入那些足以隔离已证实变化点的结构。
-6. 在约定好的兼容性边界内，验证成功、拒绝、超时、
-   Webhook、重试、迁移和回滚路径。
-```
-
-结果不是多了一层仪式感。
-
-而是 **更小的影响半径、更耐用的设计，以及在代码库为这个决定付出代价之前，就能被检查的解释路径。**
-
----
-
-## Agent Architect 改变了什么
-
-Agent Architect **不会** 把架构变成用户必须参与的委员会流程。
-
-它做的是：把一个高速代码生成器，变成一个更负责任的软件设计者；当判断会影响行为、结构或兼容性时，让它的推理过程变得可见。
-
-| 不再是 | Agent Architect 会帮助智能体 |
-| --- | --- |
-| 在最近的文件里直接写代码 | 找出真正的归属者、边界、调用方、依赖关系和失败路径。 |
-| 为每一种可能的未来都提前抽象 | 在独立变化被明确命名并被证据证明之前，保持直接设计。 |
-| 想当然地默认向后兼容，或默认可以直接重写 | 在设计前先明确真正想维持的兼容性边界。 |
-| 把一次重构简单称作“更干净了” | 明确替代方案、结构成本、已完成验证和剩余风险。 |
-
-> 兼容性意图不是官僚流程。它防止两种同样昂贵的错误：保留没人需要的遗留行为，或者打破有人依赖的行为。
-
----
-
-## 它如何构建更好的架构
-
-### 1. 先读现实，再做设计
-
-智能体在提出结构前，会先检查仓库里的实际证据：受影响的调用方、归属关系、依赖、状态、失败路径、生命周期、事务、并发、框架约束以及现有测试。
-
-### 2. 让兼容性变成有意选择
-
-当变更可能影响契约、数据、配置、外部集成或扩展点时，智能体会先追问：哪些必须兼容，哪些可以有意修改。然后把实际边界、迁移或回滚影响、以及尚未解决的风险记录下来。
-
-它不会偷偷选择“全部保留”或“直接重写更干净”。
-
-### 3. 选择最小但耐用的结构
-
-直接方案永远都是一个真实候选项。接口、适配器、策略、事件、工厂、包装器或框架扩展，只有在它们确实能隔离某个具体且独立的变化点时，才配得上自己的复杂度成本。
-
-### 4. 解释并验证这个决策
-
-智能体会产出一份可审计的架构记录，并在受影响的边界上验证行为。它会说明跑了什么、哪些地方仍不确定、以及为什么被否决的替代方案不值得承担那笔结构成本。
-
----
-
-## 智能体会交付什么
-
-对于每一个非平凡的功能、集成、设计、重构或评审，Agent Architect 都会生成一份架构记录：
-
-```text
-01. 设计诊断
-    目标、非目标、仓库证据、调用方、稳定核心、
-    变化点、失败模式与约束。
-
-02. 兼容性意图
-    需要保留与有意修改的契约、使用方、
-    迁移或回滚边界，以及未解决风险。
-
-03. 备选方案与决策
-    最小直接设计、被论证成立的结构、被拒绝的选项、
-    API 影响、依赖方向与持续成本。
-
-04. 验证
-    正常路径、边界路径、失败路径、集成、并发与运维检查，
-    实际执行过的验证，以及剩余不确定性。
-```
-
-这样，架构决策就不再只是“一堆今天碰巧能跑的生成文件”，而是可以被解释、被审查的工程判断。
-
----
-
-## 安装
-
-### 插件
-
-#### Codex
-
-```text
-codex plugin marketplace add vortezwohl/Agent-Architect
-codex plugin install architect@architect
-```
-
-#### Claude Code
-
-```text
-/plugin marketplace add vortezwohl/Agent-Architect
-/plugin install architect@architect
-```
-
-安装后请开启新的会话，以便 Agent 发现该插件。
-
-### 独立 Skill
-
-使用 Skills CLI 直接安装此 skill：
-
-```text
-npx skills add vortezwohl/Agent-Architect
-```
-
-??? `skills/` ??? Agent ??? skills ??????????????? Skill?
+## 三阶段流程
 
 ```text
 architect-design
-architect-propose
-architect-build
+-> architect-propose
+-> architect-build
 ```
 
-> [!IMPORTANT]
-> ??????? Skill?Skill ????? Agent ????????????????????????????
+### Architect Design
 
----
+Design 阶段先确认兼容性边界，再基于仓库证据拆分并批准 `D-xxx` 设计单元。每个设计单元必须说明：
 
-## ????
+- 规范的软件工程概念或设计模式及参考来源；
+- 选择依据、替代方案、职责边界和依赖方向；
+- 具体反例和反模式；
+- 针对设计细节的 `MUST DO` 与 `MUST NOT DO`；
+- 覆盖该设计的用户批准证据。
 
-????????????
+设计的目标不是机械追求最少抽象，而是在兼容性和明确演进范围内，选择最易于理解、维护、验证且有充分依据的结构。
+
+### Architect Propose
+
+Propose 阶段只能把已批准的设计写入 `.architect/<plan-name>/`。计划主体由多个职责单一的 Markdown 文件组成：
 
 ```text
-?? $architect-design ???????????????????????????????
-
-???????? $architect-propose <change-name> ???????????????
-
-??????????????? $architect-build <change-name> ????????????
+00-plan-manifest.md
+01-context-and-contract.md
+02-design-catalog.md
+03-designs/D-xxx-<slug>.md
+04-impact-and-boundaries.md
+05-task-catalog.md
+06-tasks/T-xxx-<slug>.md
+07-verification-plan.md
+08-execution-log.md
+.state/execution-state.json
 ```
 
-???
+所有字段、标识、时间戳和目录由程序生成并校验。字段名使用固定英文，正文默认使用用户提问语言。设计和任务 Markdown 是唯一的静态合同；状态只保存在 `.state/execution-state.json`。
+
+### Architect Build
+
+Build 每次只执行一个 `T-xxx` 原子任务。任务必须引用已批准的 `D-xxx` 和设计规则，并明确允许路径、符号、操作、范围外行为、`MUST DO`、`MUST NOT DO`、局部验证和完成条件。
+
+每次原子编辑后都要检查范围。越界或中断时必须回退到任务检查点，不能修补后继续推测。新的无记忆 agent 会先恢复活跃任务，再从已完成状态继续。
+
+## 使用方式
 
 ```text
-???????????????? $architect-design?
+Use $architect-design to define and approve D-xxx design units.
 
-???????? $architect-propose add-payment-provider?
+Use $architect-propose <plan-name> to create and seal the Markdown-first plan.
 
-?????????????? $architect-build add-payment-provider?
+Use $architect-build <plan-name> to execute one task with scope checks and rollback.
 ```
 
----
+## 编码约束
 
-## 适用场景
-
-当一次变更可能重塑代码库时，就该使用 Agent Architect：
-
-- 一个功能跨越多个模块、层、服务、数据库或第三方服务商。
-- 你正准备“重构”“扩展”“抽象”“解耦”“泛化”或“为未来做准备”。
-- 智能体开始提议接口、工厂、事件、注册表、包装器、继承体系或全局状态。
-- 你不确定现有行为是否必须保持兼容。
-- 你已经看到巨型服务、巨型包、重复规则、跨层依赖，或没人能自信解释的分支逻辑。
-- 一个 PR 看起来能工作，但其中的结构性决策仍然是隐含的。
-
-> [!TIP]
-> 把 Agent Architect 放进处理功能开发和结构性变更的工作流里。不要等偶发复杂度已经扩散之后再补救。
-
----
-
-## 模式是最后一步，不是起点
-
-Agent Architect 覆盖全部 23 个 GoF 设计模式。
-
-但它更重要的能力，是知道 **什么时候不该使用某个模式**。
-
-它从证据出发：**什么在变化，谁拥有它，什么会失败，什么必须保持稳定，以及直接方案已经解决了什么。**
-
-<details>
-<summary><b>创建型决策</b></summary>
-
-- Factory Method
-- Abstract Factory
-- Builder
-- Prototype
-- Singleton scope
-
-</details>
-
-<details>
-<summary><b>结构型决策</b></summary>
-
-- Adapter
-- Bridge
-- Composite
-- Decorator
-- Facade
-- Flyweight
-- Proxy
-
-</details>
-
-<details>
-<summary><b>行为型决策</b></summary>
-
-- Chain of Responsibility
-- Command
-- Interpreter
-- Iterator
-- Mediator
-- Memento
-- Observer
-- State
-- Strategy
-- Template Method
-- Visitor
-
-</details>
-
-<details>
-<summary><b>关键模式边界</b></summary>
-
-| 不要混淆 | 应区分于 |
-| --- | --- |
-| Decorator | Proxy 或 Adapter |
-| Facade | Mediator |
-| Factory Method | Abstract Factory、Builder 或 Prototype |
-| Strategy | State 或 Template Method |
-| Observer | Chain of Responsibility 或 Command |
-| Composite | Decorator |
-
-模式应根据 **意图、协作者、生命周期、变化方式和失败行为** 来选择，而不是只看类图。
-
-</details>
-
----
-
-## 这个 skill 不是什么
-
-| 不是这个 | 而是这个 |
-| --- | --- |
-| 设计模式百科 | 面向编码智能体的架构判断系统 |
-| 仪式生成器 | 一种把恰当程度的结构变得显式且可验证的方法 |
-| 默认套用“整洁架构” | 基于证据分析边界、归属、依赖和生命周期 |
-| 增加更多层级的理由 | 当没有证据时，允许保留直接设计 |
-| 卡住人工审批的瓶颈 | 当兼容性或架构变得重要时，让人类保持知情的方法 |
-| 工程责任的替代品 | 让智能体产出的结构更负责任、可审计、可维护的方法 |
-
----
-
-## 仓库结构
-
-```text
-assets/
-`-- agent-architect-wordmark.svg
-
-skills/
-`-- architect-design/
-    |-- SKILL.md
-    |-- agents/
-    |   `-- openai.yaml
-    `-- references/
-        |-- decision-protocol.md
-        |-- gof-patterns.md
-        `-- source-article.md
-```
-
-- `SKILL.md` -- 运行规则与必需的架构记录
-- `decision-protocol.md` -- 兼容性意图、架构共识、诊断、选择、重构与评审关卡
-- `gof-patterns.md` -- 模式意图、权衡、误用案例与验证指引
-- `source-article.md` -- AI 编码时代的架构原则
-
----
-
-## 贡献
-
-贡献应当提升 **架构判断力**，而不是增加仪式。
-
-有价值的贡献包括：
-
-- 面向真实功能和架构决策的证据关卡。
-- 更清晰的兼容性边界、迁移指引和回滚标准。
-- 更清晰的模式边界与拒绝条件。
-- 可复现的偶然架构与猜测式抽象案例。
-- 面向生命周期、并发、事务、迁移和回滚的验证指引。
-- 让智能体更不容易扩散结构复杂度的修正。
-
-在发起变更前，先问自己：
-
-```text
-这是否提升了智能体在代码扩散之前能做出的判断？
-这项改进能被验证吗？
-它是否在不增加猜测式流程的前提下提供了指导？
-```
-
----
-
-## 许可证
-
-MIT。详见 [LICENSE](../LICENSE)。
-
----
-
-<div align="center">
-
-### 给你的编码智能体补上架构判断力。
-
-<strong>让它在变化中持续构建一致的代码库。</strong>
-
-</div>
+计划文档必须使用 UTF-8 without BOM。创建、封存和验证流程会拒绝无效 UTF-8、BOM、replacement character、连续异常问号以及已知乱码标记。遇到编码问题必须停止、修正文本并重新校验。

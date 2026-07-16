@@ -1,83 +1,107 @@
 ---
 name: architect-propose
-description: "Create a build-ready architecture plan package from a user-approved Architect Design decision. Use when the architecture, compatibility intent, and scope are confirmed and the user wants precise Markdown artifacts, execution preconditions, impact mapping, atomic tasks, and verification criteria under .architect/."
+description: "Create a sealed Markdown-first plan package from an approved Architect Design bundle. Use when every design unit, compatibility boundary, and approval evidence is known and the user wants deterministic artifacts, atomic implementation tasks, centralized state, and build-ready validation under .architect/."
 ---
 
 # Architect Propose
 
-Convert an approved architecture decision into a project-local, build-ready plan package. The package is the contract consumed by `architect-build`; it must remove operational ambiguity instead of restating a high-level design.
+Convert approved design units into a dense, Markdown-first implementation
+contract. Markdown files are the single source of truth for design and task
+intent. `.state/execution-state.json` is the only mutable task-status source.
 
-## Strict boundary
+## Strict Boundary
 
-- Do not edit application code, tests, runtime configuration, or unrelated documentation.
-- Create or update only `.architect/<plan-name>/` after explicit user authorization.
-- Do not silently make an architecture decision. If approval evidence or compatibility intent is missing, return to `$architect-design`.
-- Do not mark a package build-ready while placeholders, unresolved decisions, incomplete task scope, or missing verification remain.
+- Create or update only `.architect/<plan-name>/` after user authorization.
+- Do not edit application code, tests, runtime configuration, or unrelated
+  documentation.
+- Do not invent a design unit, concept, boundary, anti-pattern, or rule.
+- Do not create a task that cannot cite approved `D-xxx` design units and their
+  concrete rules.
+- Do not mark a package buildable while a placeholder, encoding error, unknown
+  decision, incomplete boundary, or unresolved approval remains.
 
-## Input contract
+## Required Input
 
-Require all of the following before creating artifacts:
+Before creating a package, require all of the following:
 
-1. A user-approved architecture decision.
-2. Recorded compatibility intent and contract boundary.
-3. Objective, non-goals, and known affected surfaces.
-4. A unique kebab-case plan name, either user-provided or derived during propose.
+1. The complete approved Design bundle with `D-xxx` identifiers.
+2. Approval evidence that explicitly covers every referenced design unit.
+3. Compatibility intent, objective, non-goals, affected surfaces, and risks.
+4. A kebab-case plan name, provided by the user or safely derived from the
+   approved design.
+5. The user's document language, inferred from the current interaction unless
+   the user explicitly requests another language.
 
-When the user does not provide a plan name, derive one from the approved design and use the package-creation script to allocate the first non-conflicting name under `.architect/`. Do not ask the user to confirm the derived name unless they explicitly request naming control.
+## Deterministic Package Creation
 
-If a plan directory already exists, continue only when it is the selected package path. Never overwrite an existing package without explicit authorization.
+Use the bundled commands rather than manually creating identifiers, timestamps,
+directories, state records, or hashes:
 
-## Package layout
+```text
+python scripts/make_plan.py --repo-root <root> --plan <name> --language <tag>
+python scripts/plan_control.py add-design --repo-root <root> --plan <name> --slug <slug>
+python scripts/plan_control.py add-task --repo-root <root> --plan <name> --slug <slug>
+```
 
-Create this directory under the target project root:
+The commands generate English metadata fields, IDs, filenames, timestamps,
+state records, and content digests. Agent-authored prose fills only
+`{{AGENT:...}}` areas in the user's document language. Do not add or rename
+fields, headings, files, identifiers, or directories manually.
+
+## Package Layout
 
 ```text
 .architect/<plan-name>/
-|-- 00-overview.md
-|-- 01-context-and-baseline.md
-|-- 02-compatibility-contract.md
-|-- 03-architecture-decision.md
-|-- 04-impact-map.md
-|-- 05-detailed-design.md
-|-- 06-task-plan.md
+|-- 00-plan-manifest.md
+|-- 01-context-and-contract.md
+|-- 02-design-catalog.md
+|-- 03-designs/D-001-<slug>.md
+|-- 04-impact-and-boundaries.md
+|-- 05-task-catalog.md
+|-- 06-tasks/T-001-<slug>.md
 |-- 07-verification-plan.md
-`-- 08-implementation-log.md
+|-- 08-execution-log.md
+`-- .state/
+    |-- execution-state.json
+    `-- checkpoints/
 ```
 
-Use the bundled `templates/` files as the initial structure. The templates are intentionally incomplete; replace every `[REQUIRED]` marker with evidence-backed content before validation.
+`02-design-catalog.md` provides design navigation and approval coverage.
+`03-designs/` holds complete design units. `05-task-catalog.md` provides task
+order and dependencies without duplicating task content. `06-tasks/` contains
+one atomic implementation intention per file. `07-verification-plan.md` stays
+whole because it is supporting evidence, not the source of design decisions.
 
-## Workflow
+## Task Contract
 
-1. Confirm the input contract and the target project root.
-2. Determine the plan name. If the user omitted it, derive a kebab-case base name from the approved design and let the package-creation script allocate the first non-conflicting plan name.
-3. Run `python scripts/make_plan.py --repo-root <project-root> --plan <plan-name>` to create the package directory and copy every Markdown template deterministically. If the requested name already exists, the script must allocate the first available `-2`, `-3`, ... suffix automatically.
-4. Complete the package in dependency order:
-   - Context and execution preconditions.
-   - Compatibility contract.
-   - Architecture decision.
-   - Impact map.
-   - Detailed design.
-   - Atomic task plan.
-   - Verification plan.
-5. Record the package-level build entry condition and every task's execution preconditions explicitly. Only record conditions that must hold for the planned modification to execute safely.
-6. Make every task independently executable. Each task must state allowed files, exact symbols, change steps, preconditions, prohibited changes, verification command, expected result, and completion condition.
-7. Run `python scripts/validate_plan.py --repo-root <project-root> --plan <plan-name>`.
-8. If validation fails, repair the package only; do not begin implementation.
-9. Report the package path, actual validation result, remaining risks, and the `$architect-build <plan-name>` handoff.
+Every `T-xxx` document must state exact paths, symbols, operations, permitted
+design changes, out-of-scope changes, approved design references, approved rule
+references, task-specific `MUST DO`, task-specific `MUST NOT DO`, atomic steps,
+scope recovery, local verification, and a completion condition.
 
-## Operational ambiguity gate
+Task rules must express design constraints. For example, "the state machine is
+the only transition owner" is valid; "make the feature work" is not. A task
+that needs a new pattern, dependency direction, state transition, error
+contract, or file outside the approved boundary must return to Design.
 
-A package is not build-ready when any of the following is true:
+## Sealing and Validation
 
-- A required document is missing.
-- A `[REQUIRED]`, `TODO`, `TBD`, `to be decided`, `as needed`, or equivalent unresolved marker remains.
-- The package omits a build entry condition or any task-level execution precondition that must hold before editing.
-- A task lacks explicit file scope, symbol scope, implementation steps, verification command, expected result, or completion condition.
-- Compatibility behavior, migration, rollback, error handling, concurrency semantics, or state transitions are relevant but undocumented.
-- The design needs an unrecorded judgment during implementation.
+After all placeholders are filled, seal the package and validate it:
 
-Use ?operationally unambiguous? to mean that `architect-build` can either execute a bounded task exactly as written or stop with a precise discrepancy. It is not a claim that future code or external systems can never change.
+```text
+python scripts/plan_control.py seal --repo-root <root> --plan <name>
+python scripts/validate_plan.py --repo-root <root> --plan <name>
+```
 
-## Completion standard
+Sealing assigns deterministic rule IDs and a plan digest. Validation rejects
+invalid UTF-8, BOMs, suspicious encoding markers, unresolved placeholders,
+incorrect English metadata fields, missing counterexamples or anti-patterns,
+unapproved design references, incomplete task boundaries, state drift, and
+digest drift. Do not automatically rewrite semantic prose; stop, inspect the
+reported text, correct it from evidence, then validate again.
 
-Finish only after the validator passes, the package contains a user-approved architecture decision, the build entry condition and task preconditions are explicit, every task has a bounded verification path, and all known uncertainty is either resolved or explicitly blocks build.
+## Completion Standard
+
+Finish only after validation succeeds and report the package path, actual
+validation result, remaining risk, and the `$architect-build <plan-name>`
+handoff. Do not imply that a sealed package proves the implementation is done.

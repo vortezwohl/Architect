@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Propose"
-  short_description: "Create a validated, build-ready architecture plan package"
-  default_prompt: "Use $architect-propose to turn the approved architecture into a validated plan package under .architect/."
+  short_description: "Create a sealed Markdown-first implementation contract"
+  default_prompt: "Use $architect-propose to turn approved D-xxx design units into a sealed Markdown-first plan package with atomic T-xxx tasks and centralized execution state."

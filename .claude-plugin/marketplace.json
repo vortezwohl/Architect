@@ -4,15 +4,15 @@
     "name": "vortezwohl"
   },
   "metadata": {
-    "description": "Three-stage architecture design, proposal, and controlled build workflow.",
-    "version": "1.1.0"
+    "description": "Three-stage approved design, sealed Markdown planning, and checkpoint-controlled build workflow.",
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "architect",
       "source": "./",
-      "description": "Architecture design, validated proposals, and controlled builds.",
-      "version": "1.1.0",
+      "description": "Approved design units, sealed Markdown plans, and checkpoint-controlled builds.",
+      "version": "2.0.0",
       "author": {
         "name": "vortezwohl"
       }

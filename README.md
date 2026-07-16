@@ -137,9 +137,13 @@ When a change may affect contracts, data, configuration, integrations, or extens
 
 It does not silently choose "always preserve everything" or "rewrite it cleanly."
 
-### 3. Choose the smallest durable structure
+### 3. Choose the best justified structure
 
-The direct solution is always a real alternative. An interface, adapter, strategy, event, factory, wrapper, or framework extension must earn its cost by isolating a concrete independent variation.
+The direct solution is always a real alternative, but it does not win merely
+because it is smaller. The agent weighs maintainability, comprehensibility,
+dependency direction, lifecycle, verified evolution needs, compatibility, and
+operational risk. An interface, adapter, strategy, event, factory, wrapper, or
+framework extension must still earn its cost with concrete evidence.
 
 ### 4. Explain and verify the decision
 
@@ -160,13 +164,13 @@ For each non-trivial feature, integration, design, refactor, or review, Agent Ar
     Preserved and intentionally changed contracts, consumers,
     migration or rollback boundaries, and unresolved risk.
 
-03. Alternatives and decision
-    The smallest direct design, justified structure, rejected options,
-    API impact, dependency direction, and ongoing cost.
+03. Approved design units
+    Named engineering concepts, rationale, alternatives, counterexamples,
+    anti-patterns, boundaries, MUST rules, and approval evidence.
 
-04. Verification
-    Normal, boundary, failure, integration, concurrency, and operational
-    checks; validation actually run; and remaining uncertainty.
+04. Sealed implementation plan
+    Atomic Markdown tasks with exact boundaries, centralized state, checkpoint
+    rollback, actual verification evidence, and remaining uncertainty.
 ```
 
 This is how an architectural decision becomes explainable -- not just a pile of generated files that happens to work today.
@@ -220,11 +224,11 @@ Use the explicit three-stage workflow:
 
 ```text
 Use $architect-design to inspect this non-trivial change, make compatibility intent explicit,
-and obtain approval for the smallest justified architecture.
+and obtain approval for explicit D-xxx design units, concepts, boundaries, anti-patterns, and rules.
 
-After approval, use $architect-propose [plan-name] to create and validate the project-local plan package.
+After approval, use $architect-propose [plan-name] to create and seal the project-local Markdown-first plan package.
 
-Only after package validation passes, use $architect-build [plan-name] to implement one bounded task at a time.
+Only after package validation passes, use $architect-build [plan-name] to implement one bounded task at a time with checkpoint rollback.
 ```
 
 Examples:
@@ -355,16 +359,16 @@ skills/
 |-- architect-propose/
 |   |-- SKILL.md
 |   |-- agents/openai.yaml
-|   |-- scripts/
-|   `-- templates/
+|   |-- scripts/       # Creation, sealing, validation, checkpoints, recovery
+|   `-- templates/     # Fixed English fields and agent-authored placeholders
 `-- architect-build/
     |-- SKILL.md
     `-- agents/openai.yaml
 ```
 
-- `architect-design` -- evidence-based architecture diagnosis and explicit consent
-- `architect-propose` -- project-local, validated plan packages
-- `architect-build` -- task-scoped implementation and verification
+- `architect-design` -- approved design units with concepts, anti-patterns, and rules
+- `architect-propose` -- sealed Markdown-first plan packages with centralized state
+- `architect-build` -- task-scoped implementation, exact scope checks, and rollback
 
 ---
 
