@@ -1,0 +1,17 @@
+{
+  "name": "architect",
+  "version": "1.0.0",
+  "description": "Architecture guardrails with compatibility and consent gates.",
+  "author": {
+    "name": "vortezwohl"
+  },
+  "homepage": "https://github.com/vortezwohl/Agent-Architect",
+  "repository": "https://github.com/vortezwohl/Agent-Architect",
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "compatibility",
+    "refactoring",
+    "verification"
+  ]
+}

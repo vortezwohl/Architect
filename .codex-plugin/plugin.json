@@ -1,0 +1,32 @@
+{
+  "name": "architect",
+  "version": "1.0.0",
+  "description": "Architecture guardrails with compatibility and consent gates.",
+  "author": {
+    "name": "vortezwohl",
+    "url": "https://github.com/vortezwohl"
+  },
+  "homepage": "https://github.com/vortezwohl/Agent-Architect",
+  "repository": "https://github.com/vortezwohl/Agent-Architect",
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "compatibility",
+    "refactoring",
+    "verification"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Architect",
+    "shortDescription": "Architecture guardrails for consequential code changes.",
+    "longDescription": "Makes compatibility explicit, selects the smallest justified design, and requires verification before completion.",
+    "developerName": "vortezwohl",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "Use $agent-architect before implementing this non-trivial change."
+    ]
+  }
+}

@@ -175,17 +175,33 @@ This is how an architectural decision becomes explainable -- not just a pile of 
 
 ## Install
 
-### Codex
+### Plugin
+
+#### Codex
 
 ```text
-$skill-installer install https://github.com/vortezwohl/Agent-Architect/tree/main/skills/agent-architect
+codex plugin marketplace add vortezwohl/Agent-Architect
+codex plugin install architect@architect
 ```
 
-Restart Codex after installation.
+#### Claude Code
 
-### Other Agent Skills-compatible tools
+```text
+/plugin marketplace add vortezwohl/Agent-Architect
+/plugin install architect@architect
+```
 
-Copy `skills/agent-architect/` into the tool's supported skills location, then invoke:
+Start a new session after installation so your agent discovers the plugin.
+
+### Standalone skill
+
+Install the skill directly with the Skills CLI:
+
+```text
+npx skills add vortezwohl/Agent-Architect
+```
+
+Or copy `skills/agent-architect/` into your agent's supported skills directory, then invoke:
 
 ```text
 agent-architect
