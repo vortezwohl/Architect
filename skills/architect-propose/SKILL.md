@@ -31,17 +31,17 @@ Create this directory under the target project root:
 
 ```text
 .agent-architect/changes/<change-name>/
-??? 00-overview.md
-??? 01-context-and-baseline.md
-??? 02-compatibility-contract.md
-??? 03-architecture-decision.md
-??? 04-impact-map.md
-??? 05-detailed-design.md
-??? 06-task-plan.md
-??? 07-verification-plan.md
-??? 08-implementation-log.md
-??? .state/
-    ??? source-snapshot.json
+|-- 00-overview.md
+|-- 01-context-and-baseline.md
+|-- 02-compatibility-contract.md
+|-- 03-architecture-decision.md
+|-- 04-impact-map.md
+|-- 05-detailed-design.md
+|-- 06-task-plan.md
+|-- 07-verification-plan.md
+|-- 08-implementation-log.md
+`-- .state/
+    `-- source-snapshot.json
 ```
 
 Use the bundled `templates/` files as the initial structure. The templates are intentionally incomplete; replace every `[REQUIRED]` marker with evidence-backed content before validation.

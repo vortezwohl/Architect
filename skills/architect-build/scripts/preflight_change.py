@@ -1,4 +1,4 @@
-"""?????? Architect ?????????????????"""
+"""Preflight an Architect change package before implementation."""
 
 from __future__ import annotations
 
@@ -39,17 +39,17 @@ TASK_FIELDS = (
 
 
 def run_git(repository_root: Path, *arguments: str) -> str:
-    """?????????? Git ???
+    """Run a Git command and return its standard output.
 
     Args:
-        repository_root: Git ??????
-        *arguments: Git ????????
+        repository_root: Root directory of the Git repository.
+        *arguments: Arguments passed to the Git command.
 
     Returns:
-        ?????????????
+        The command stdout with surrounding whitespace removed.
 
     Raises:
-        RuntimeError: Git ????????
+        RuntimeError: Raised when the Git command exits with a non-zero status.
     """
     result = subprocess.run(
         ["git", *arguments],
@@ -64,14 +64,14 @@ def run_git(repository_root: Path, *arguments: str) -> str:
 
 
 def working_tree_state(repository_root: Path, change_name: str) -> str:
-    """?????????????????
+    """Return the working tree state while ignoring the change package path.
 
     Args:
-        repository_root: Git ??????
-        change_name: ????????
+        repository_root: Root directory of the Git repository.
+        change_name: Name of the Architect change package.
 
     Returns:
-        ??????????? Git porcelain ???
+        Filtered `git status --porcelain=v1` output.
     """
     prefix = f".agent-architect/changes/{change_name}/"
     status_lines = run_git(
@@ -88,13 +88,13 @@ def working_tree_state(repository_root: Path, change_name: str) -> str:
 
 
 def validate_documents(package_root: Path) -> list[str]:
-    """????????????????????
+    """Validate that the package documents exist and contain required fields.
 
     Args:
-        package_root: ???????
+        package_root: Root directory of the change package.
 
     Returns:
-        ????????????
+        A list of document validation errors.
     """
     errors: list[str] = []
     for relative_path in REQUIRED_FILES:
@@ -123,15 +123,15 @@ def validate_baseline(
     package_root: Path,
     change_name: str,
 ) -> list[str]:
-    """???? Git ??????????????
+    """Validate the recorded Git baseline against the current repository state.
 
     Args:
-        repository_root: ??????????
-        package_root: ???????
-        change_name: ????????
+        repository_root: Root directory of the current repository.
+        package_root: Root directory of the change package.
+        change_name: Name of the Architect change package.
 
     Returns:
-        ????????????
+        A list of baseline drift errors.
     """
     snapshot_path = package_root / ".state" / "source-snapshot.json"
     try:
@@ -155,7 +155,7 @@ def validate_baseline(
 
 
 def main() -> int:
-    """????????????????????????"""
+    """Parse CLI arguments and print the preflight result."""
     parser = argparse.ArgumentParser(
         description="Preflight an Architect change package before implementation.",
     )

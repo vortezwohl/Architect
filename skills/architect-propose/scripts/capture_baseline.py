@@ -1,4 +1,4 @@
-"""???????????????????????????"""
+"""Capture a Git baseline snapshot for an Architect change package."""
 
 from __future__ import annotations
 
@@ -9,17 +9,17 @@ from pathlib import Path
 
 
 def run_git(repository_root: Path, *arguments: str) -> str:
-    """????????? Git ??????????
+    """Run a Git command and return its standard output.
 
     Args:
-        repository_root: Git ??????
-        *arguments: ??? Git ????
+        repository_root: Root directory of the Git repository.
+        *arguments: Arguments passed to the Git command.
 
     Returns:
-        ?????????????
+        The command stdout with surrounding whitespace removed.
 
     Raises:
-        RuntimeError: Git ?????????????????
+        RuntimeError: Raised when the Git command exits with a non-zero status.
     """
     result = subprocess.run(
         ["git", *arguments],
@@ -34,17 +34,17 @@ def run_git(repository_root: Path, *arguments: str) -> str:
 
 
 def working_tree_state(repository_root: Path, change_name: str) -> str:
-    """?????????????????
+    """Return the working tree state while ignoring the change package path.
 
-    ??????????????????????????????????????
-    ???????????????????????
+    The proposal stage creates or updates files under `.agent-architect/changes/`.
+    Those package files should not be treated as unrelated working tree drift.
 
     Args:
-        repository_root: Git ??????
-        change_name: ????????
+        repository_root: Root directory of the Git repository.
+        change_name: Name of the Architect change package.
 
     Returns:
-        ??????????? Git porcelain ???
+        Filtered `git status --porcelain=v1` output.
     """
     prefix = f".agent-architect/changes/{change_name}/"
     status_lines = run_git(
@@ -61,14 +61,14 @@ def working_tree_state(repository_root: Path, change_name: str) -> str:
 
 
 def build_snapshot(repository_root: Path, change_name: str) -> dict[str, object]:
-    """???????????????????
+    """Build the JSON-serializable baseline snapshot payload.
 
     Args:
-        repository_root: ?????????????
-        change_name: ????????
+        repository_root: Root directory used to collect Git metadata.
+        change_name: Name of the Architect change package.
 
     Returns:
-        ???????????????????? JSON ??????
+        A JSON-ready dictionary describing the baseline revision and worktree.
     """
     return {
         "head": run_git(repository_root, "rev-parse", "HEAD"),
@@ -79,7 +79,7 @@ def build_snapshot(repository_root: Path, change_name: str) -> dict[str, object]
 
 
 def main() -> int:
-    """??????????????????"""
+    """Parse CLI arguments and print the baseline snapshot JSON."""
     parser = argparse.ArgumentParser(
         description="Emit a Git baseline snapshot for an Architect change package.",
     )

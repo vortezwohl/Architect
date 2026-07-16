@@ -1,4 +1,4 @@
-"""?? Architect ???????????????????"""
+"""Validate an Architect change package before build."""
 
 from __future__ import annotations
 
@@ -37,13 +37,13 @@ TASK_FIELDS = (
 
 
 def validate_package(package_root: Path) -> list[str]:
-    """?????????????????
+    """Validate the required artifacts and task fields in a change package.
 
     Args:
-        package_root: ???????
+        package_root: Root directory of the change package.
 
     Returns:
-        ????????????????????????
+        A list of validation errors. The list is empty when the package passes.
     """
     errors: list[str] = []
     for relative_path in REQUIRED_FILES:
@@ -69,7 +69,7 @@ def validate_package(package_root: Path) -> list[str]:
 
 
 def main() -> int:
-    """???????????????????????"""
+    """Parse CLI arguments and print the package validation result."""
     parser = argparse.ArgumentParser(
         description="Validate an Architect change package before build.",
     )
