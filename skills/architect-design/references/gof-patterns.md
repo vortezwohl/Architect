@@ -2,11 +2,41 @@
 
 ## Coverage Contract
 
-This catalog teaches all 23 Gang of Four patterns: 5 creational, 7 structural,
-and 11 behavioral. "All design patterns" is not a finite category; treat GoF as
-the canonical catalog and evaluate architectural styles and framework idioms
-separately. For every candidate, identify a proven variation, choose by intent
-rather than shape, state the cost, compare neighbors, and test the seam.
+This catalog teaches all 23 Gang of Four patterns: 5 creational, 7 structural, and 11 behavioral. "All design patterns" is not a finite category; treat GoF as the canonical catalog and evaluate architectural styles and framework idioms separately. For every candidate, identify a proven variation, choose by intent rather than shape, state the cost, compare neighbors, and test the seam.
+
+## How to Use This Catalog
+
+- Read this file after `source-article.md` has already framed the design problem.
+- Read neighboring candidates together whenever their structure is visually similar or their responsibilities are often confused.
+- Extract teaching material, not just labels: stable core, true variation, cost, rejected neighbors, misuse risk, and required verification.
+- Treat this file as a routing and comparison reference; do not force every task into a GoF pattern when a direct design remains better justified.
+
+## Quick Routing by Design Question
+
+| If the design question is about... | Start with | Compare with |
+| --- | --- | --- |
+| One goal, many algorithms | Strategy | State, Template Method |
+| One lifecycle, many valid states | State | Strategy, Template Method |
+| One fixed process, varying local steps | Template Method | Strategy, Facade |
+| One object versus one compatible family | Factory Method | Abstract Factory, Builder, Prototype |
+| Legacy translation versus layered control or enhancement | Adapter | Decorator, Proxy |
+| Responsibility enhancement versus access control | Decorator | Proxy, Facade |
+| Many consumers reacting to one fact | Observer | Chain of Responsibility, Command |
+| Orchestration entry point versus peer coordination | Facade | Mediator |
+| Ordered optional handling | Chain of Responsibility | Observer, Command |
+| Semantic uniqueness scope | Singleton | Factory Method, container lifetime |
+
+## Design Unit Mapping
+
+When a GoF pattern is selected or rejected, map what you learned into the design-unit fields:
+
+- `Concept`: canonical pattern name, category, and reference.
+- `Intent`: the problem the pattern solves in the current task.
+- `StableCoreAndVariation`: what stays fixed and what changes independently.
+- `Rationale`: why the pattern beats the direct design here.
+- `Alternatives`: the neighboring patterns or simpler structures that were rejected.
+- `Counterexamples` and `AntiPatterns`: what would make the pattern a bad fit.
+- `Rules`: lifecycle, dependency, ownership, transaction, error, and verification constraints that Build must obey.
 
 ## Creational Patterns
 
@@ -48,18 +78,12 @@ rather than shape, state the cost, compare neighbors, and test the seam.
 
 ## Teaching Checklist
 
-For each candidate, explain the changing thing, stable core, collaborators and
-dependency direction, lifecycle and ownership, direct alternative, nearest
-patterns rejected, failure semantics, and normal, boundary, failure,
-integration, concurrency, and performance tests where relevant.
+For each candidate, explain the changing thing, stable core, collaborators and dependency direction, lifecycle and ownership, direct alternative, nearest patterns rejected, failure semantics, and normal, boundary, failure, integration, concurrency, and performance tests where relevant.
 
 ## Non-Negotiable Distinctions
 
 - Decorator / Proxy / Adapter: enhancement / control / translation.
-- Factory Method / Abstract Factory / Builder / Prototype: one product choice /
-  family choice / staged assembly / copying.
-- Strategy / State / Template Method: selected algorithm / lifecycle behavior /
-  fixed skeleton.
-- Observer / Chain / Command: broadcast fact / ordered propagation /
-  represented operation.
+- Factory Method / Abstract Factory / Builder / Prototype: one product choice / family choice / staged assembly / copying.
+- Strategy / State / Template Method: selected algorithm / lifecycle behavior / fixed skeleton.
+- Observer / Chain / Command: broadcast fact / ordered propagation / represented operation.
 - Facade / Mediator: simplify subsystem access / coordinate peers.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Design"
-  short_description: "Approve explicit design units, rules, and anti-patterns"
-  default_prompt: "Use $architect-design to resolve compatibility intent, define approved D-xxx design units with named concepts, design boundaries, counterexamples, anti-patterns, and MUST rules."
+  short_description: "Learn references, then approve design units"
+  default_prompt: "Use $architect-design to study the architecture references first, resolve compatibility intent, and define approved D-xxx design units with named concepts, boundaries, counterexamples, anti-patterns, and MUST rules."
