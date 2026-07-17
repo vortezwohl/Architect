@@ -72,16 +72,26 @@ reinterpreting design intent:
 
 ## Deterministic Package Creation
 
-Use repository-provided Python plan tooling, not manual package creation, for
-all initial package structure, identifier allocation, sealing, and final
-validation. The agent must not hand-create the initial package directory tree,
-the initial package files, task state, or plan digest. In this repository's
-native setup, the required helper commands are:
+Use the Python plan tooling bundled with this skill, not manual package
+creation, for all initial package structure, identifier allocation, sealing,
+and final validation. The agent must not hand-create the initial package
+directory tree, the initial package files, task state, or plan digest.
+
+For this section, use these path terms consistently:
+
+- `skill root`: the directory that contains this `SKILL.md`
+- `repo root`: the target project root passed to `--repo-root`
+
+Resolve every helper script from `skill root`, never from `repo root`, the
+current workspace, or the user project tree. `--repo-root` only tells the
+script which repository to operate on; it does not change where the script
+itself is searched for. In this skill's native setup, the required helper
+commands are:
 
 ```text
-python scripts/make_plan.py --repo-root <root> --plan <name> --language <tag>
-python scripts/plan_control.py add-design --repo-root <root> --plan <name> --slug <slug>
-python scripts/plan_control.py add-task --repo-root <root> --plan <name> --slug <slug>
+python <skill-root>/scripts/make_plan.py --repo-root <repo-root> --plan <name> --language <tag>
+python <skill-root>/scripts/plan_control.py add-design --repo-root <repo-root> --plan <name> --slug <slug>
+python <skill-root>/scripts/plan_control.py add-task --repo-root <repo-root> --plan <name> --slug <slug>
 ```
 
 Initialize the package root with `make_plan.py`, allocate design documents and
@@ -93,6 +103,11 @@ The agent may fill only script-created files and script-created document slots.
 The agent must not manually create the initial package directory tree, initial
 package files, initial task state, or plan digest. Do not add or rename
 fields, headings, files, identifiers, or directories manually.
+
+If any required helper script is missing under `<skill-root>/scripts/`, stop
+and report a skill installation or runtime issue. Do not search the target
+repository for replacement scripts, and do not fall back to manual package
+creation.
 
 If any script or validator reports invalid UTF-8, a UTF-8 BOM, or suspicious
 encoding markers, immediately correct the corrupted content and rerun the
@@ -146,8 +161,8 @@ not record unapproved design content as if it were approved.
 After all placeholders are filled, seal the package and validate it:
 
 ```text
-python scripts/plan_control.py seal --repo-root <root> --plan <name>
-python scripts/validate_plan.py --repo-root <root> --plan <name>
+python <skill-root>/scripts/plan_control.py seal --repo-root <repo-root> --plan <name>
+python <skill-root>/scripts/validate_plan.py --repo-root <repo-root> --plan <name>
 ```
 
 Do not redesign the package after a validation failure. Stop, inspect the
