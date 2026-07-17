@@ -6,7 +6,8 @@ description: "Manual-only skill. Use only when the user explicitly invokes the a
 # Architect Design
 
 Use this skill only as a manually selected architecture decision stage. Its job
-is to make the agent learn first, then produce one approved design decision
+is to extract the minimum required repository context first, then learn the
+required architecture knowledge, then produce one approved design decision
 bundle. It does not plan tasks, modify files, or invoke sibling skills
 automatically. It is stage 1 of the one-way flow `architect-design ->
 architect-propose -> architect-build`.
@@ -16,6 +17,16 @@ architect-propose -> architect-build`.
 - `architect-design`: the manual stage that studies the codebase, learns the
   relevant architecture knowledge, asks for the compatibility boundary, and
   produces one approved design bundle.
+- `minimal context extraction`: the smallest repository-focused evidence pass
+  required before any knowledge injection or design reasoning begins. It
+  extracts only the facts needed to identify what the system is, where the
+  requested change lands, what currently owns the behavior, which callers and
+  tests matter, and which constraints already exist.
+- `basic repository understanding`: the post-extraction state in which the
+  agent can state the system purpose, relevant entry points, affected modules,
+  current behavior owner, caller path, state flow, constraints, and current
+  tests for the requested change. This is a required gate, not a vague
+  impression.
 - `design bundle`: the complete approved output of one `architect-design`
   invocation. One bundle may contain multiple `D-xxx` subdesigns.
 - `D-xxx subdesign`: one independently explainable architectural decision
@@ -37,7 +48,8 @@ Produce an approved, bounded design bundle that later stages can consume
 without guessing:
 
 - establish the minimum required understanding of the current system and
-  codebase before abstract design begins;
+  codebase before knowledge injection or abstract design begins;
+- perform minimal context extraction before any architecture learning starts;
 - learn the required architecture method, source concepts, and supporting best
   practices before deciding;
 - clarify the compatibility target with the user before design is locked;
@@ -47,7 +59,8 @@ without guessing:
   compatibility or intentionally replaces it;
 - define one or more explicit `D-xxx` subdesigns with boundaries, counterexamples,
   anti-patterns, and design rules;
-- obtain explicit user approval for the displayed design bundle.
+- obtain approval for the displayed design bundle under the default
+  non-rejection rule defined by this skill.
 
 ## Strict Boundary
 
@@ -55,9 +68,14 @@ without guessing:
   write, patch, generate, or overwrite repository content.
 - Do not create a plan package or implementation task.
 - Do not convert an unapproved assumption into a design unit.
-- Do not let silence count as approval.
+- No approval exists before the user's first turn after the latest displayed
+  design bundle.
 - Do not continue while compatibility intent, design detail, or approval
   coverage remains unresolved.
+- Do not begin `source-article.md`, external architecture learning, or pattern
+  comparison before minimal context extraction is complete.
+- Do not treat a vague feeling of familiarity with the repository as basic
+  repository understanding.
 - Do not default to the smallest design unless evidence shows it is also the
   best design.
 - Do not use a pattern because its shape looks familiar.
@@ -66,49 +84,58 @@ without guessing:
 
 1. Classify the request only far enough to decide whether architecture design
    is needed.
-2. Build the minimum required system understanding before deep design work. Do
-   not proceed until you can name the relevant entry points, callers, state
-   flow, dependencies, tests, ownership boundaries, and operational
-   constraints.
-3. Read `references/decision-protocol.md` and apply Gate 0 after that basic
-   system understanding is established and before design is locked.
-4. Read `references/source-article.md` before the first design decision.
-5. Continue learning beyond the local references. Before proposing a design,
+2. Perform minimal context extraction before any knowledge injection. Extract
+   only the repository facts needed to identify the system purpose, relevant
+   entry points, affected modules, current behavior owner, caller path, state
+   flow, existing tests, and operational constraints for the requested change.
+3. Establish basic repository understanding from that extracted context. Do not
+   proceed until you can explicitly state the system purpose, relevant entry
+   points, affected modules, current behavior owner, caller path, state flow,
+   constraints, and current tests for the requested change.
+4. Read `references/decision-protocol.md` after basic repository understanding
+   is established and use it as the binding rule set for the remaining Design
+   stage.
+5. Read `references/source-article.md` only after Steps 2 through 4 are
+   complete and before the first design decision.
+6. Continue learning beyond the local references. Before proposing a design,
    gather enough external knowledge to cite concrete supporting evidence from
    primary English-language internet sources first. Use other reliable language
-   sources only as a fallback. Prioritize academic material, industry
-   references, framework documentation, and broadly accepted best practices
-   over generic opinion.
-6. Learn the relevant entries in `references/gof-patterns.md` before choosing,
+   sources only as a fallback. Prioritize English-language academic papers
+   first, best-practice articles from top-tier engineering organizations
+   second, and other reliable supporting sources third. Do not treat framework
+   documentation as a default theory source.
+7. Learn the relevant entries in `references/gof-patterns.md` before choosing,
    rejecting, or comparing a GoF pattern. Read neighboring candidates together
    whenever two or more candidate patterns could reasonably fit the same
    problem.
-7. Deepen repository understanding only where the design decision needs more
+8. Deepen repository understanding only where the design decision needs more
    evidence: lifecycle, failures, transactions, concurrency, framework
    constraints, and operational risk.
-8. Ask the user whether backward compatibility is required and what exactly
+9. Ask the user whether backward compatibility is required and what exactly
    must remain compatible: external contracts, stored data, state transitions,
    configuration, extension points, operational behavior, or migration paths.
    Do this before recommending the design.
-9. Define the compatibility boundary, evolution horizon, real variation,
+10. Define the compatibility boundary, evolution horizon, real variation,
    stable core, collaborators, lifecycle, and likely failure mode from
    evidence, not imagination.
-10. Compare the direct design with architectural alternatives using
+11. Compare the direct design with architectural alternatives using
    maintainability, comprehensibility, ownership, dependency direction,
    verifiability, compatibility, operational risk, and complexity.
-11. Recommend the globally best design under the current code reality, the
+12. Recommend the globally best design under the current code reality, the
     user-confirmed compatibility boundary, and the strongest supporting
     external evidence. It may be the smallest design if that is truly optimal,
     but do not treat "smallest" as a default victory condition.
-12. Split the approved solution into one or more independently understandable
+13. Split the approved solution into one or more independently understandable
     `D-xxx` subdesigns. One `D-xxx` subdesign owns one architectural decision.
     The full approved design bundle may therefore contain multiple `D-xxx`
     subdesigns.
-13. For every `D-xxx` subdesign, record the supporting engineering concept or
+14. For every `D-xxx` subdesign, record the supporting engineering concept or
     pattern, reliable references, counterexamples, anti-patterns, design
     boundaries, and design-level `MUST DO` / `MUST NOT DO` rules.
-14. Present the complete design bundle and obtain explicit user approval for
-    the displayed `D-xxx` identifiers.
+15. Present the complete design bundle. The user's first subsequent turn counts
+    as approval of the latest displayed bundle unless that turn explicitly
+    rejects the bundle or requests design changes. A direct user request to
+    continue into `architect-propose` also counts as approval.
 
 ## Teaching Standard
 
@@ -129,6 +156,21 @@ Before asking for approval, explain for every non-trivial decision:
 
 Do not cite the references mechanically. Convert them into reasoning that the
 later stages can reapply.
+
+## Approval Rule
+
+Apply this exact approval rule after the complete design bundle is displayed:
+
+- The user's first subsequent turn counts as approval of the latest displayed
+  bundle unless that turn explicitly rejects the bundle or requests design
+  changes.
+- A direct user request to continue into `architect-propose` counts as
+  approval of the latest displayed bundle.
+- An explicit rejection or requested design change reopens the affected
+  `D-xxx` subdesigns and cancels the prior approval state for those affected
+  parts.
+- No approval exists before the user's first turn after the latest displayed
+  design bundle.
 
 ## Subdesign Contract
 
@@ -161,8 +203,9 @@ Rules must constrain implementation details, not merely desired outcomes.
 ## Completion Standard
 
 Finish only when the user can inspect the approved design bundle, understand
-what the agent learned, what minimum system understanding the design depends
-on, which compatibility boundary was chosen, why the recommended design is the
-globally best supported option rather than merely the smallest one, and see
-which one or more `D-xxx` subdesigns will later be recorded into one new
-independent plan by `architect-propose`.
+what repository context was minimally extracted before learning began, what
+basic repository understanding the design depends on, what the agent learned
+after that gate, which compatibility boundary was chosen, why the recommended
+design is the globally best supported option rather than merely the smallest
+one, and see which one or more `D-xxx` subdesigns will later be recorded into
+one new independent plan by `architect-propose`.

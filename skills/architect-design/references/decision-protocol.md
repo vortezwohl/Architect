@@ -8,14 +8,22 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
 
 1. Read this file first for the gates, approval boundaries, and non-negotiable output requirements.
 2. Treat Architect Design as a read-only stage. Inspect repository files and think through the design, but do not edit, create, or overwrite files at this stage.
-3. Build the minimum required understanding of the current codebase before design is recommended. At minimum, identify the relevant entry points, callers, state flow, dependencies, tests, ownership boundaries, and operational constraints.
-4. Read `source-article.md` before the first design decision for methodology, pattern framing, and AI-era misuse warnings.
-5. Read `gof-patterns.md` for candidate patterns and neighboring comparisons before selecting, rejecting, or reviewing a GoF pattern.
-6. Convert what those references teach into explicit reasoning. Do not cite them mechanically or treat a pattern name as sufficient evidence.
+3. Perform minimal context extraction before any knowledge injection. Extract only the repository facts needed to identify the system purpose, relevant entry points, affected modules, current behavior owner, caller path, state flow, current tests, and operational constraints for the requested change.
+4. Establish basic repository understanding from that extracted context before design is recommended. This gate is satisfied only when you can explicitly state the system purpose, relevant entry points, affected modules, current behavior owner, caller path, state flow, constraints, and current tests for the requested change.
+5. Read `source-article.md` only after Step 4 is satisfied and before the first design decision for methodology, pattern framing, and AI-era misuse warnings.
+6. Read `gof-patterns.md` for candidate patterns and neighboring comparisons before selecting, rejecting, or reviewing a GoF pattern.
+7. Convert what those references teach into explicit reasoning. Do not cite them mechanically or treat a pattern name as sufficient evidence.
+8. When gathering external evidence beyond the local references, prioritize English-language academic papers first, best-practice articles from top-tier engineering organizations second, and other reliable supporting sources third. Do not treat framework documentation as a default theory source.
 
 ## Defined Terms
 
 - `architect-design`: the manual stage that produces one approved design bundle.
+- `minimal context extraction`: the smallest repository-focused evidence pass
+  required before any knowledge injection or design reasoning begins.
+- `basic repository understanding`: the post-extraction state in which the
+  agent can explicitly state the system purpose, relevant entry points,
+  affected modules, current behavior owner, caller path, state flow,
+  constraints, and current tests for the requested change.
 - `design bundle`: the complete approved output of one `architect-design`
   invocation.
 - `D-xxx subdesign`: one independently explainable architectural decision inside
@@ -25,7 +33,7 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
 
 ## Gate 0: Compatibility Intent
 
-After the minimum required repository understanding is established and before any design recommendation that can affect behavior, contracts, data, configuration, integrations, or extension points, ask the user to choose:
+After basic repository understanding is established and before any design recommendation that can affect behavior, contracts, data, configuration, integrations, or extension points, ask the user to choose:
 
 1. Preserve the affected existing contracts.
 2. Allow intentional breaking changes for a better long-term design.
@@ -38,6 +46,7 @@ Do not infer an answer from repository age, deployment status, silence, or task 
 After Gate 0, inspect and deepen only the evidence relevant to the change: callers, existing tests, ownership, dependencies, state, lifecycle, error paths, transactions, concurrency, framework rules, and operational constraints.
 
 Design remains read-only while collecting this evidence. You may read, inspect, compare, and reason about repository files, but you must not edit code, tests, configuration, documentation, plans, or generated artifacts in this stage.
+Do not treat external architecture learning as a substitute for minimal context extraction or for basic repository understanding. The repository gate comes first.
 
 Choose the globally best justified architecture for the stated evolution horizon under the current code reality, the user-approved compatibility boundary, and the strongest supporting external evidence. Compare the direct alternative, but do not grant it automatic priority merely because it is smaller. The approved design bundle may contain multiple `D-xxx` subdesigns. Every chosen `D-xxx` subdesign must include:
 - A recognized engineering concept or pattern, canonical name, category, and reliable reference.
@@ -63,7 +72,7 @@ When possible, map the teaching explanation directly onto the design-unit fields
 
 ## Gate 1: Design Approval
 
-Present the full design bundle and ask the user to approve or request changes. Approval must identify the covered `D-xxx` subdesigns directly or unambiguously refer to the displayed bundle. Silence is not approval. If feedback changes one decision, revisit the affected `D-xxx` subdesign and obtain approval again.
+Present the full design bundle. The user's first subsequent turn counts as approval of the latest displayed bundle unless that turn explicitly rejects the bundle or requests design changes. A direct user request to continue into `architect-propose` also counts as approval of the latest displayed bundle. If feedback changes one decision, revisit the affected `D-xxx` subdesign and obtain approval again under the same rule.
 
 Record approval evidence and a digest of the approved bundle. One later `architect-propose` invocation must copy the approved bundle into one new independent plan package. It may record multiple approved `D-xxx` subdesigns and later derive multiple `T-xxx` tasks from them, but it may not change, add, or infer a subdesign.
 

@@ -61,7 +61,7 @@ class PlanProtocolTests(unittest.TestCase):
         root_replacements = {
             "Objective": "集中支付状态迁移。",
             "NonGoals": "不改变外部支付接口。",
-            "ApprovedDesignBundle": "A-001 covers D-001.",
+            "ApprovedDesignBundle": "DesignIds: D-001\n- ApprovalEvidence: 用户在展示后的下一轮未拒绝该设计。\n- BundleSummary: 支付状态迁移设计已锁定。",
             "BuildEntryConditions": "现有状态文件存在且工作区独占。",
             "ObservedFacts": "状态由多个调用方直接写入。",
             "Assumptions": "没有未记录的状态消费者。",
@@ -69,12 +69,12 @@ class PlanProtocolTests(unittest.TestCase):
             "PreservedContracts": "保留支付结果字段。",
             "ExplicitlyBreakableContracts": "允许内部状态帮助函数变更。",
             "StopConditions": "发现新状态所有者时返回 Design。",
-            "ApprovalId": "A-001",
             "DesignIds": "D-001",
-            "ApprovalEvidence": "User approved D-001.",
-            "ContentDigest": "recorded-by-seal",
+            "ApprovalEvidence": "用户在展示后的下一轮未拒绝 D-001。",
+            "BundleDigest": "recorded-bundle",
             "DesignId": "D-001",
             "CanonicalConcept": "Finite State Machine",
+            "DesignDigest": "recorded-design",
             "TaskId": "T-001",
             "DependsOn": "None",
             "DesignRefs": "D-001",
@@ -178,17 +178,17 @@ class PlanProtocolTests(unittest.TestCase):
         errors = validate_package(package)
         self.assertTrue(any("unknown design rules" in error for error in errors))
 
-    def test_approval_coverage_fails_closed(self) -> None:
-        """Every design catalog entry must point to a set that approves its ID."""
+    def test_declared_bundle_designs_fail_closed(self) -> None:
+        """The approved bundle must declare exactly the design documents that exist."""
 
         temporary_directory, _, package = self.create_filled_plan()
         self.addCleanup(temporary_directory.cleanup)
         catalog_path = package / "02-design-catalog.md"
-        content = read_utf8(catalog_path).replace("| A-001 |", "| A-999 |", 1)
+        content = read_utf8(catalog_path).replace("- DesignIds: D-001", "- DesignIds: D-999", 1)
         write_utf8(catalog_path, content)
         plan_control.seal_plan(package)
         errors = validate_package(package)
-        self.assertTrue(any("unknown approval" in error for error in errors))
+        self.assertTrue(any("ApprovedDesignBundle DesignIds reference unknown designs" in error for error in errors))
 
     def test_scope_breach_restores_complete_task_checkpoint(self) -> None:
         """A boundary breach must restore both allowed and unexpected source edits."""

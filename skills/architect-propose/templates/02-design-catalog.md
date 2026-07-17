@@ -7,12 +7,12 @@
 - CreatedAt: {{GENERATED:CreatedAt}}
 - DocumentLanguage: {{GENERATED:DocumentLanguage}}
 
-## ApprovalSets
-| ApprovalId | DesignIds | ApprovalEvidence | ContentDigest |
-| --- | --- | --- | --- |
-| {{AGENT:ApprovalId}} | {{AGENT:DesignIds}} | {{AGENT:ApprovalEvidence}} | {{AGENT:ContentDigest}} |
+## ApprovedDesignBundle
+- DesignIds: {{AGENT:DesignIds}}
+- ApprovalEvidence: {{AGENT:ApprovalEvidence}}
+- BundleDigest: {{AGENT:BundleDigest}}
 
 ## Designs
-| DesignId | Path | CanonicalConcept | ApprovalId | ContentDigest |
-| --- | --- | --- | --- | --- |
-| {{AGENT:DesignId}} | {{AGENT:Path}} | {{AGENT:CanonicalConcept}} | {{AGENT:ApprovalId}} | {{AGENT:ContentDigest}} |
+| DesignId | Path | CanonicalConcept | DesignDigest |
+| --- | --- | --- | --- |
+| {{AGENT:DesignId}} | {{AGENT:Path}} | {{AGENT:CanonicalConcept}} | {{AGENT:DesignDigest}} |

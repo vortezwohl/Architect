@@ -29,6 +29,7 @@ TASK_MUST_DO_PATTERN = re.compile(r"^- M-T\d{3}-\d{3}: .+$", re.MULTILINE)
 TASK_MUST_NOT_PATTERN = re.compile(r"^- N-T\d{3}-\d{3}: .+$", re.MULTILINE)
 RULE_REFERENCE_PATTERN = re.compile(r"R-D\d{3}(?:-N\d{3}|-\d{3})")
 TASK_RULE_PATTERN = re.compile(r"[MN]-T\d{3}-\d{3}")
+BUNDLE_DESIGN_ID_PATTERN = re.compile(r"^D-\d{3}$")
 
 
 def validate_required_headings(path: Path, headings: tuple[str, ...]) -> list[str]:
@@ -73,12 +74,50 @@ def table_rows(content: str, heading: str) -> list[list[str]]:
         if not collecting or not line.startswith("|"):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if not cells or cells[0] in {"ApprovalId", "DesignId", "SubdesignId", "TaskId", "---"}:
+        if not cells or cells[0] in {"DesignId", "SubdesignId", "TaskId", "---"}:
             continue
         if set(cells[0]) == {"-"}:
             continue
         rows.append(cells)
     return rows
+
+
+def section_fields(content: str, heading: str) -> dict[str, str]:
+    """Parse bullet-style ``- Key: Value`` fields under one exact section heading.
+
+    Args:
+        content: Complete Markdown document content.
+        heading: Exact section heading that owns the bullet fields.
+
+    Returns:
+        Parsed field mapping. Wrapped continuation lines are folded into the
+        previous field value with spaces.
+    """
+
+    lines = content.splitlines()
+    collecting = False
+    current_key: str | None = None
+    fields: dict[str, str] = {}
+    for line in lines:
+        if line == heading:
+            collecting = True
+            continue
+        if collecting and line.startswith("## "):
+            break
+        if not collecting:
+            continue
+        if line.startswith("- "):
+            payload = line[2:]
+            if ": " not in payload:
+                current_key = None
+                continue
+            key, value = payload.split(": ", 1)
+            fields[key.strip()] = value.strip()
+            current_key = key.strip()
+            continue
+        if current_key and line.startswith("  "):
+            fields[current_key] = f"{fields[current_key]} {line.strip()}".strip()
+    return fields
 
 
 def validate_package(package_root: Path) -> list[str]:
@@ -138,15 +177,40 @@ def validate_package(package_root: Path) -> list[str]:
         task_catalog = read_utf8(package_root / "05-task-catalog.md")
     except (OSError, PlanProtocolError) as error:
         return errors + [str(error)]
-    approval_sets = {
-        row[0]: {design_id.strip() for design_id in row[1].split(",")}
-        for row in table_rows(design_catalog, "## ApprovalSets")
-        if len(row) == 4 and row[0] and row[1] and row[2] and row[3]
+    approved_bundle_fields = section_fields(
+        design_catalog,
+        "## ApprovedDesignBundle",
+    )
+    required_bundle_fields = ("DesignIds", "ApprovalEvidence", "BundleDigest")
+    missing_bundle_fields = [
+        field_name
+        for field_name in required_bundle_fields
+        if not approved_bundle_fields.get(field_name, "").strip()
+    ]
+    if missing_bundle_fields:
+        errors.append(
+            "ApprovedDesignBundle is missing required fields: "
+            f"{', '.join(missing_bundle_fields)}",
+        )
+    declared_design_ids = {
+        item.strip()
+        for item in approved_bundle_fields.get("DesignIds", "").split(",")
+        if item.strip()
     }
+    invalid_declared_design_ids = {
+        design_id
+        for design_id in declared_design_ids
+        if not BUNDLE_DESIGN_ID_PATTERN.fullmatch(design_id)
+    }
+    if invalid_declared_design_ids:
+        errors.append(
+            "ApprovedDesignBundle contains invalid DesignIds: "
+            f"{', '.join(sorted(invalid_declared_design_ids))}",
+        )
     design_catalog_rows = {
         row[0]: row
         for row in table_rows(design_catalog, "## Designs")
-        if len(row) == 5
+        if len(row) == 4
     }
     task_catalog_rows = {
         row[0]: row
@@ -201,14 +265,39 @@ def validate_package(package_root: Path) -> list[str]:
                 errors.append(f"Design catalog does not reference {path.name}")
             elif catalog_row[1] != path.relative_to(package_root).as_posix():
                 errors.append(f"Design catalog path mismatch for {design_id}")
-            elif catalog_row[3] not in approval_sets:
-                errors.append(f"Design catalog has unknown approval for {design_id}")
-            elif design_id not in approval_sets[catalog_row[3]]:
-                errors.append(f"Approval set does not cover {design_id}")
+            elif not catalog_row[3].strip():
+                errors.append(f"Design catalog is missing DesignDigest for {design_id}")
             if design_id not in design_catalog or path.relative_to(package_root).as_posix() not in design_catalog:
                 errors.append(f"Design catalog does not reference {path.name}")
         except PlanProtocolError as error:
             errors.append(str(error))
+
+    catalog_design_ids = set(design_catalog_rows)
+    extra_catalog_designs = catalog_design_ids - design_ids
+    if extra_catalog_designs:
+        errors.append(
+            "Design catalog references design files that do not exist: "
+            f"{', '.join(sorted(extra_catalog_designs))}",
+        )
+    missing_catalog_designs = design_ids - catalog_design_ids
+    if missing_catalog_designs:
+        errors.append(
+            "Design catalog is missing design rows for: "
+            f"{', '.join(sorted(missing_catalog_designs))}",
+        )
+    if declared_design_ids != design_ids:
+        missing_from_bundle = design_ids - declared_design_ids
+        extra_in_bundle = declared_design_ids - design_ids
+        if missing_from_bundle:
+            errors.append(
+                "ApprovedDesignBundle DesignIds are missing design documents for: "
+                f"{', '.join(sorted(missing_from_bundle))}",
+            )
+        if extra_in_bundle:
+            errors.append(
+                "ApprovedDesignBundle DesignIds reference unknown designs: "
+                f"{', '.join(sorted(extra_in_bundle))}",
+            )
 
     for path in task_paths:
         match = TASK_FILE_PATTERN.fullmatch(path.name)

@@ -47,7 +47,7 @@ flow `architect-design -> architect-propose -> architect-build`.
 Before creating a package, require all of the following:
 
 1. The complete approved design bundle with `D-xxx` identifiers.
-2. Approval evidence that explicitly covers every referenced design unit.
+2. Recorded approval evidence that covers every referenced design unit.
 3. Compatibility intent, objective, non-goals, affected surfaces, and risks.
 4. A kebab-case plan name, provided by the user or safely derived from the
    approved design.
@@ -72,9 +72,11 @@ reinterpreting design intent:
 
 ## Deterministic Package Creation
 
-Use repository-provided plan tooling rather than manually creating identifiers,
-timestamps, directories, state records, or hashes. In this repository's native
-setup, the helper commands are:
+Use repository-provided Python plan tooling, not manual package creation, for
+all initial package structure, identifier allocation, sealing, and final
+validation. The agent must not hand-create the initial package directory tree,
+the initial package files, task state, or plan digest. In this repository's
+native setup, the required helper commands are:
 
 ```text
 python scripts/make_plan.py --repo-root <root> --plan <name> --language <tag>
@@ -82,10 +84,19 @@ python scripts/plan_control.py add-design --repo-root <root> --plan <name> --slu
 python scripts/plan_control.py add-task --repo-root <root> --plan <name> --slug <slug>
 ```
 
-Use the tooling to create the package structure, task records, initial state,
-and initial log entries. In another runtime, use an equivalent repository
-wrapper if one exists, but preserve the same package contract. Do not add or
-rename fields, headings, files, identifiers, or directories manually.
+Initialize the package root with `make_plan.py`, allocate design documents and
+task documents with `plan_control.py`, seal with `plan_control.py seal`, and
+perform final validation with `validate_plan.py`. In another runtime, use an
+equivalent repository wrapper only if it preserves the same contract.
+
+The agent may fill only script-created files and script-created document slots.
+The agent must not manually create the initial package directory tree, initial
+package files, initial task state, or plan digest. Do not add or rename
+fields, headings, files, identifiers, or directories manually.
+
+If any script or validator reports invalid UTF-8, a UTF-8 BOM, or suspicious
+encoding markers, immediately correct the corrupted content and rerun the
+relevant script until the package is clean.
 
 ## Package Contract
 
@@ -140,8 +151,8 @@ python scripts/validate_plan.py --repo-root <root> --plan <name>
 ```
 
 Do not redesign the package after a validation failure. Stop, inspect the
-reported evidence, correct the package from approved inputs, and validate
-again.
+reported evidence, correct the package from approved inputs, correct any
+encoding corruption immediately if reported, and validate again.
 
 ## Completion Standard
 

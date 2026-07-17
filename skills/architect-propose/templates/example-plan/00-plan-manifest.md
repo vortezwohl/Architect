@@ -6,7 +6,7 @@
 - PlanName: reference-plan-example
 - CreatedAt: 2026-07-17:14:53:04.486
 - DocumentLanguage: en
-- PlanDigest: 9e265f3959e122896c60d535bbd93c1618e7cff9d8009444c8c45902481f5d2b
+- PlanDigest: 11092016d0b82846efefd004e6f8f152ddb7d44bbfe9c3b988c2ad7e20283d8a
 
 ## Objective
 - Record one approved design bundle as one sealed execution plan that replaces
@@ -19,8 +19,9 @@
 - Do not change persistence, storage schema, or deployment topology.
 
 ## ApprovedDesignBundle
-- ApprovalSet: APPROVAL-001
 - DesignIds: D-001, D-002
+- ApprovalEvidence: The first user turn after the displayed bundle requested
+  packaging to continue and did not reject any displayed subdesign.
 - BundleSummary: The approved bundle separates dispatch selection from request
   entry wiring and freezes one explicit error-result contract for every
   registry-dispatched handler.
