@@ -1,0 +1,18 @@
+{
+  "CurrentTask": null,
+  "PlanDigest": "9e265f3959e122896c60d535bbd93c1618e7cff9d8009444c8c45902481f5d2b",
+  "Tasks": {
+    "T-001": {
+      "RecordedExecutionResults": [],
+      "State": "pending"
+    },
+    "T-002": {
+      "RecordedExecutionResults": [],
+      "State": "pending"
+    },
+    "T-003": {
+      "RecordedExecutionResults": [],
+      "State": "pending"
+    }
+  }
+}

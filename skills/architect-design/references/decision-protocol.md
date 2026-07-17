@@ -8,27 +8,38 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
 
 1. Read this file first for the gates, approval boundaries, and non-negotiable output requirements.
 2. Treat Architect Design as a read-only stage. Inspect repository files and think through the design, but do not edit, create, or overwrite files at this stage.
-3. Read `source-article.md` before the first design decision for methodology, pattern framing, and AI-era misuse warnings.
-4. Read `gof-patterns.md` for candidate patterns and neighboring comparisons before selecting, rejecting, or reviewing a GoF pattern.
-5. Convert what those references teach into explicit reasoning. Do not cite them mechanically or treat a pattern name as sufficient evidence.
+3. Build the minimum required understanding of the current codebase before design is recommended. At minimum, identify the relevant entry points, callers, state flow, dependencies, tests, ownership boundaries, and operational constraints.
+4. Read `source-article.md` before the first design decision for methodology, pattern framing, and AI-era misuse warnings.
+5. Read `gof-patterns.md` for candidate patterns and neighboring comparisons before selecting, rejecting, or reviewing a GoF pattern.
+6. Convert what those references teach into explicit reasoning. Do not cite them mechanically or treat a pattern name as sufficient evidence.
+
+## Defined Terms
+
+- `architect-design`: the manual stage that produces one approved design bundle.
+- `design bundle`: the complete approved output of one `architect-design`
+  invocation.
+- `D-xxx subdesign`: one independently explainable architectural decision inside
+  the approved design bundle.
+- `independent plan`: one new future `.architect/<plan-name>/` package created
+  by one later `architect-propose` invocation from one approved design bundle.
 
 ## Gate 0: Compatibility Intent
 
-Before repository inspection or design work that can affect behavior, contracts, data, configuration, integrations, or extension points, ask the user to choose:
+After the minimum required repository understanding is established and before any design recommendation that can affect behavior, contracts, data, configuration, integrations, or extension points, ask the user to choose:
 
 1. Preserve the affected existing contracts.
 2. Allow intentional breaking changes for a better long-term design.
 3. Describe a custom compatibility boundary.
 
-Do not infer an answer from repository age, deployment status, silence, or task wording. Restate the answer as preserved behavior, intentionally breakable behavior, consumers, migration obligations, and rollback limits.
+Do not infer an answer from repository age, deployment status, silence, or task wording. Restate the answer as preserved behavior, intentionally breakable behavior, consumers, migration obligations, and rollback limits. Do not recommend the design before this boundary is explicit.
 
 ## Evidence and Design Units
 
-After Gate 0, inspect only evidence relevant to the change: callers, existing tests, ownership, dependencies, state, lifecycle, error paths, transactions, concurrency, framework rules, and operational constraints.
+After Gate 0, inspect and deepen only the evidence relevant to the change: callers, existing tests, ownership, dependencies, state, lifecycle, error paths, transactions, concurrency, framework rules, and operational constraints.
 
 Design remains read-only while collecting this evidence. You may read, inspect, compare, and reason about repository files, but you must not edit code, tests, configuration, documentation, plans, or generated artifacts in this stage.
 
-Choose the best justified architecture for the stated evolution horizon. Compare the direct alternative, but do not grant it automatic priority merely because it is smaller. Every chosen decision must be one `D-xxx` design unit with:
+Choose the globally best justified architecture for the stated evolution horizon under the current code reality, the user-approved compatibility boundary, and the strongest supporting external evidence. Compare the direct alternative, but do not grant it automatic priority merely because it is smaller. The approved design bundle may contain multiple `D-xxx` subdesigns. Every chosen `D-xxx` subdesign must include:
 - A recognized engineering concept or pattern, canonical name, category, and reliable reference.
 - The stable core, actual variation, collaborators, ownership, dependency direction, lifecycle, and failure semantics.
 - Concrete alternatives and rejected neighboring concepts.
@@ -39,7 +50,7 @@ Do not introduce an unnamed abstraction, speculative extension point, hidden glo
 
 ## Teaching Output Contract
 
-Before asking for approval, teach the design instead of only presenting a conclusion. For every non-trivial `D-xxx` unit, explain at least:
+Before asking for approval, teach the design instead of only presenting a conclusion. For every non-trivial `D-xxx` subdesign, explain at least:
 
 - The concrete problem this concept solves in the current repository or request.
 - The stable core and the real variation that justify the concept.
@@ -52,10 +63,10 @@ When possible, map the teaching explanation directly onto the design-unit fields
 
 ## Gate 1: Design Approval
 
-Present the full design bundle and ask the user to approve or request changes. Approval must identify the covered `D-xxx` units directly or unambiguously refer to the displayed bundle. Silence is not approval. If feedback changes one decision, revisit the affected design unit and obtain approval again.
+Present the full design bundle and ask the user to approve or request changes. Approval must identify the covered `D-xxx` subdesigns directly or unambiguously refer to the displayed bundle. Silence is not approval. If feedback changes one decision, revisit the affected `D-xxx` subdesign and obtain approval again.
 
-Record approval evidence and a digest of the approved bundle. Architect Propose may copy approved design content into a plan but may not change, add, or infer a design unit.
+Record approval evidence and a digest of the approved bundle. One later `architect-propose` invocation must copy the approved bundle into one new independent plan package. It may record multiple approved `D-xxx` subdesigns and later derive multiple `T-xxx` tasks from them, but it may not change, add, or infer a subdesign.
 
 ## Handoff Gate
 
-Do not hand off to Propose when any `D-xxx` unit lacks a concept, rationale, counterexample, anti-pattern, design boundary, MUST rule, teaching explanation, or approval coverage. If Plan or Build discovers a new design decision, it must return here rather than improvise.
+Do not hand off to Propose when any `D-xxx` subdesign lacks a concept, rationale, counterexample, anti-pattern, design boundary, MUST rule, teaching explanation, or approval coverage. If a later independent cycle needs a new design decision, that new decision belongs to a new Architect Design stage and a new independent plan cycle, not to improvisation inside the current Propose or Build run.

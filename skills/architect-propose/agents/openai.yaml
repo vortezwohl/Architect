@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Propose"
-  short_description: "Manual-only: seal an approved plan package"
-  default_prompt: "Run only when the user explicitly invokes $architect-propose. Turn an already approved D-xxx design bundle into a sealed package under .architect/. Do not auto-invoke $architect-build."
+  short_description: "Manual-only: record one approved bundle into one new plan"
+  default_prompt: "Run only when the user explicitly invokes $architect-propose. Record one already approved design bundle, including one or more D-xxx subdesigns, into one new independent package under .architect/, preserve the approved design exactly, and initialize state and execution log without adding new design content. Do not auto-invoke $architect-build."

@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Build"
-  short_description: "Manual-only: execute one sealed task safely"
-  default_prompt: "Run only when the user explicitly invokes $architect-build. Execute one sealed T-xxx task with scope checks and checkpoint recovery. Do not auto-invoke $architect-design or $architect-propose."
+  short_description: "Manual-only: execute one sealed plan"
+  default_prompt: "Run only when the user explicitly invokes $architect-build. Execute the full sealed plan in order, continue through the recorded task sequence, restore required design context when the live conversation drops it, and keep execution state and log strictly factual. Do not auto-invoke $architect-design or $architect-propose."

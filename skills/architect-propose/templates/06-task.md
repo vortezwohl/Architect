@@ -8,7 +8,7 @@
 - DocumentLanguage: {{GENERATED:DocumentLanguage}}
 
 ## DesignSources
-- DesignRefs: {{AGENT:DesignRefs}}
+- SubdesignRefs: {{AGENT:SubdesignRefs}}
 - RuleRefs: {{AGENT:RuleRefs}}
 - ProhibitedNewConcepts: {{AGENT:ProhibitedNewConcepts}}
 
@@ -16,9 +16,9 @@
 {{AGENT:Preconditions}}
 
 ## ExactChangeBoundary
-| Path | Symbol | Operation | AllowedDesignChange |
+| Path | Symbol | Operation | AllowedImplementationDetail |
 | --- | --- | --- | --- |
-| {{AGENT:Path}} | {{AGENT:Symbol}} | {{AGENT:Operation}} | {{AGENT:AllowedDesignChange}} |
+| {{AGENT:Path}} | {{AGENT:Symbol}} | {{AGENT:Operation}} | {{AGENT:AllowedImplementationDetail}} |
 
 ## ExplicitlyOutOfScope
 {{AGENT:ExplicitlyOutOfScope}}
@@ -32,12 +32,12 @@
 ## AtomicSteps
 1. {{AGENT:AtomicStep}}
 
-## ScopeCheckAndBreachRecovery
-{{AGENT:ScopeCheckAndBreachRecovery}}
+## ExecutionBoundaryRules
+{{AGENT:ExecutionBoundaryRules}}
 
-## LocalVerification
-- Command: {{AGENT:VerificationCommand}}
-- ExpectedResult: {{AGENT:ExpectedResult}}
+## TaskDeclaredExecutionResults
+- CommandOrProcedure: {{AGENT:ExecutionResultCommandOrProcedure}}
+- ExpectedRecordedResult: {{AGENT:ExpectedRecordedResult}}
 
 ## CompletionCondition
 {{AGENT:CompletionCondition}}

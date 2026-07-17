@@ -1,4 +1,4 @@
-# Verification Plan
+# Execution Result Plan
 
 ## Metadata
 - DocumentType: VerificationPlan
@@ -7,10 +7,10 @@
 - CreatedAt: {{GENERATED:CreatedAt}}
 - DocumentLanguage: {{GENERATED:DocumentLanguage}}
 
-## VerificationMatrix
-| Category | Scenario | CommandOrProcedure | ExpectedResult | TaskIds |
+## TaskDeclaredExecutionResultMatrix
+| Category | Scenario | CommandOrProcedure | ExpectedRecordedResult | TaskIds |
 | --- | --- | --- | --- | --- |
-| {{AGENT:Category}} | {{AGENT:Scenario}} | {{AGENT:CommandOrProcedure}} | {{AGENT:ExpectedResult}} | {{AGENT:TaskIds}} |
+| {{AGENT:Category}} | {{AGENT:Scenario}} | {{AGENT:CommandOrProcedure}} | {{AGENT:ExpectedRecordedResult}} | {{AGENT:TaskIds}} |
 
-## CompatibilityMigrationConcurrencyAndRollback
-{{AGENT:CompatibilityMigrationConcurrencyAndRollback}}
+## CompatibilityMigrationConcurrencyAndExecutionNotes
+{{AGENT:CompatibilityMigrationConcurrencyAndExecutionNotes}}

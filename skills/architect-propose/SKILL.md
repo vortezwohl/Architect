@@ -1,31 +1,46 @@
 ---
 name: architect-propose
-description: "Manual-only skill. Use only when the user explicitly invokes the architect-propose skill to turn an already approved design bundle into a sealed plan package under `.architect/`. Do not auto-trigger from a design or implementation request."
+description: "Manual-only skill. Use only when the user explicitly invokes the architect-propose skill to turn one already approved design bundle into one new independent sealed plan package under `.architect/`. One approved design bundle may contain multiple D-xxx subdesigns, and one resulting plan may contain multiple T-xxx tasks. Do not auto-trigger from a design or implementation request."
 ---
 
 # Architect Propose
 
 Use this skill only as a manually selected plan-packaging stage. Its job is to
-convert an already approved design bundle into deterministic Markdown artifacts,
-not to redesign, implement code, or invoke sibling skills automatically.
+store an already approved design bundle as a structured execution package and
+initialize the package state and execution log. It does not redesign, implement
+code, or invoke sibling skills automatically. It is stage 2 of the one-way
+flow `architect-design -> architect-propose -> architect-build`.
+
+## Defined Terms
+
+- `approved design bundle`: the complete approved output from one
+  `architect-design` invocation.
+- `D-xxx subdesign`: one approved architectural decision inside that bundle.
+- `independent plan`: one new future `.architect/<plan-name>/` package created
+  from exactly one approved design bundle.
+- `T-xxx task`: one recorded execution task inside that independent plan. A
+  single independent plan may contain multiple `T-xxx` tasks derived from one
+  or more approved `D-xxx` subdesigns.
 
 ## Manual Invocation Only
 
 - Run this skill only when the user explicitly asks for `architect-propose`.
 - Do not auto-switch into `architect-build`.
-- If planning finishes and the next step is implementation, stop and tell the
-  user to invoke the architect-build skill manually.
+- If planning finishes and the user wants to continue, the only forward next
+  stage is `architect-build`, invoked manually by the user.
 
 ## Strict Boundary
 
 - Create or update only `.architect/<plan-name>/` after user authorization.
 - Do not edit application code, tests, runtime configuration, or unrelated
   documentation.
-- Do not invent a design unit, concept, boundary, anti-pattern, or rule.
+- Do not invent or revise a design unit, concept, boundary, anti-pattern, or
+  rule.
+- Do not reopen, revise, or repair the approved design from this skill.
 - Do not create a task that cannot cite approved `D-xxx` design units and their
   concrete rules.
-- Do not mark a package buildable while a placeholder, encoding error, unknown
-  decision, incomplete boundary, or unresolved approval remains.
+- Do not seal a package while any required design input, task boundary, state
+  initialization, or log initialization is incomplete.
 
 ## Required Input
 
@@ -39,11 +54,27 @@ Before creating a package, require all of the following:
 5. The user's document language, inferred from the current interaction unless
    the user explicitly requests another language.
 
+## Core Outcome
+
+Create one structured package that later execution can follow without
+reinterpreting design intent:
+
+- store the full approved design bundle in stable package files;
+- record every approved `D-xxx` subdesign from that bundle inside the new
+  independent plan;
+- translate the approved `D-xxx` subdesigns into one or more atomic `T-xxx`
+  tasks without adding new design decisions;
+- order the tasks as one complete execution sequence for a later Build run;
+- initialize centralized task state before Build starts;
+- initialize the execution log before Build starts;
+- leave a sealed package whose content, state, and log all agree on what is
+  ready to execute.
+
 ## Deterministic Package Creation
 
 Use repository-provided plan tooling rather than manually creating identifiers,
 timestamps, directories, state records, or hashes. In this repository's native
-Codex setup, the helper commands are:
+setup, the helper commands are:
 
 ```text
 python scripts/make_plan.py --repo-root <root> --plan <name> --language <tag>
@@ -51,12 +82,10 @@ python scripts/plan_control.py add-design --repo-root <root> --plan <name> --slu
 python scripts/plan_control.py add-task --repo-root <root> --plan <name> --slug <slug>
 ```
 
-These commands generate metadata fields, IDs, filenames, timestamps, state
-records, and content digests. Agent-authored prose fills only `{{AGENT:...}}`
-areas in the user's document language. In another runtime, use an equivalent
-repository wrapper if one exists, but preserve the same package contract. Do
-not add or rename fields, headings, files, identifiers, or directories
-manually.
+Use the tooling to create the package structure, task records, initial state,
+and initial log entries. In another runtime, use an equivalent repository
+wrapper if one exists, but preserve the same package contract. Do not add or
+rename fields, headings, files, identifiers, or directories manually.
 
 ## Package Contract
 
@@ -65,6 +94,11 @@ The package root is:
 ```text
 .architect/<plan-name>/
 ```
+
+For a concrete directory-level reference, inspect `templates/example-plan/`.
+That example mirrors one complete sealed plan package file-for-file and
+directory-for-directory, except that it lives under `templates/` for study
+rather than under `.architect/` for live execution.
 
 It must contain these artifacts:
 
@@ -78,16 +112,23 @@ It must contain these artifacts:
 - `07-verification-plan.md`
 - `08-execution-log.md`
 - `.state/execution-state.json`
-- `.state/checkpoints/`
+
+Initialize `.state/execution-state.json` and `08-execution-log.md` as part of
+package creation. Build should start from these recorded artifacts, not infer
+missing state from memory.
 
 Every `T-xxx` document must state exact paths, symbols, operations, approved
-design references, approved rule references, task-specific `MUST DO`,
-task-specific `MUST NOT DO`, atomic steps, scope recovery, local verification,
-and a completion condition.
+subdesign references, approved rule references, task-specific `MUST DO`,
+task-specific `MUST NOT DO`, atomic steps, status update expectations, log
+expectations, task-declared execution-result steps, and a completion
+condition. Together, the task set must form one complete execution path that
+Build can run through in order.
 
-If a task needs a new pattern, dependency direction, state transition, error
-contract, or file outside the approved boundary, stop and tell the user that
-the work must return to the architect-design skill manually.
+If packaging reveals a need for a new pattern, dependency direction, state
+transition, error contract, or file outside the approved boundary, preserve the
+approved inputs as they are. Do not invent the missing decision, do not reopen
+earlier stages from this skill, do not silently redesign the package, and do
+not record unapproved design content as if it were approved.
 
 ## Sealing and Validation
 
@@ -98,12 +139,13 @@ python scripts/plan_control.py seal --repo-root <root> --plan <name>
 python scripts/validate_plan.py --repo-root <root> --plan <name>
 ```
 
-Do not auto-rewrite semantic prose after a validation failure. Stop, inspect
-the reported evidence, correct the package from approved inputs, and validate
+Do not redesign the package after a validation failure. Stop, inspect the
+reported evidence, correct the package from approved inputs, and validate
 again.
 
 ## Completion Standard
 
 Finish only after validation succeeds. Report the package path, actual
-validation result, remaining risk, and whether the user may manually invoke
-the architect-build skill for the selected plan next.
+validation result, initialized state/log artifacts, remaining risk, and whether
+the user may manually invoke `architect-build` as the next stage for the
+selected plan.

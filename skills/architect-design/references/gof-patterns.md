@@ -8,7 +8,7 @@ This catalog teaches all 23 Gang of Four patterns: 5 creational, 7 structural, a
 
 - Read this file after `source-article.md` has already framed the design problem.
 - Read neighboring candidates together whenever their structure is visually similar or their responsibilities are often confused.
-- Extract teaching material, not just labels: stable core, true variation, cost, rejected neighbors, misuse risk, and required verification.
+- Extract teaching material, not just labels: stable core, true variation, cost, rejected neighbors, misuse risk, and required task-declared checks.
 - Treat this file as a routing and comparison reference; do not force every task into a GoF pattern when a direct design remains better justified.
 
 ## Quick Routing by Design Question
@@ -36,11 +36,11 @@ When a GoF pattern is selected or rejected, map what you learned into the design
 - `Rationale`: why the pattern beats the direct design here.
 - `Alternatives`: the neighboring patterns or simpler structures that were rejected.
 - `Counterexamples` and `AntiPatterns`: what would make the pattern a bad fit.
-- `Rules`: lifecycle, dependency, ownership, transaction, error, and verification constraints that Build must obey.
+- `Rules`: lifecycle, dependency, ownership, transaction, error, and task-declared implementation/check constraints that Build must obey.
 
 ## Creational Patterns
 
-| Pattern | Intent and use | Cost, boundary, verification |
+| Pattern | Intent and use | Cost, boundary, task-declared checks |
 | --- | --- | --- |
 | Abstract Factory | Create compatible product families when platform, theme, or vendor families switch together. | More types; adding a product kind changes every factory. Factory Method creates one product, Builder assembles one complex product. Test every family combination and forbid mixed families. |
 | Builder | Assemble a complex object through ordered or optional steps while preserving construction invariants. | Ceremony is wasteful for small values. Unlike Abstract Factory, it constructs one object step by step. Test incomplete sequences, defaults, and final immutability. |
@@ -50,7 +50,7 @@ When a GoF pattern is selected or rejected, map what you learned into the design
 
 ## Structural Patterns
 
-| Pattern | Intent and use | Cost, boundary, verification |
+| Pattern | Intent and use | Cost, boundary, task-declared checks |
 | --- | --- | --- |
 | Adapter | Translate an incompatible legacy or third-party interface into the target interface. | It can conceal a wrong model. Facade simplifies, Decorator enhances, and Proxy controls. Contract-test data, error, and version translation. |
 | Bridge | Split two independent axes of variation to avoid a subclass cross-product. | Indirection is unjustified if axes do not vary independently. Strategy swaps one algorithm; Bridge separates durable abstraction and implementation axes. |
@@ -62,7 +62,7 @@ When a GoF pattern is selected or rejected, map what you learned into the design
 
 ## Behavioral Patterns
 
-| Pattern | Intent and use | Cost, boundary, verification |
+| Pattern | Intent and use | Cost, boundary, task-declared checks |
 | --- | --- | --- |
 | Chain of Responsibility | Pass a request through ordered optional handlers until handled or exhausted. | Requests may vanish and ordering is policy. Test no-handler, order, short-circuit, errors, and cycles. |
 | Command | Represent an operation for queueing, audit, retry, scheduling, remote dispatch, or undo. | Many small types and idempotency ambiguity; a callable may suffice. Test serialization, retry, authorization, and compensation. |

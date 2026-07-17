@@ -10,8 +10,8 @@
 ## ObservedFacts
 {{AGENT:ObservedFacts}}
 
-## Assumptions
-{{AGENT:Assumptions}}
+## ApprovedInputLimits
+{{AGENT:ApprovedInputLimits}}
 
 ## CompatibilityIntent
 {{AGENT:CompatibilityIntent}}
@@ -22,5 +22,5 @@
 ## ExplicitlyBreakableContracts
 {{AGENT:ExplicitlyBreakableContracts}}
 
-## StopConditions
-{{AGENT:StopConditions}}
+## ExecutionConstraints
+{{AGENT:ExecutionConstraints}}

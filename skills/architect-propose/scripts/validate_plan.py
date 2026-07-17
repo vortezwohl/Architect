@@ -2,7 +2,7 @@
 
 Validation is intentionally fail-closed. It verifies deterministic structure,
 English metadata fields, cross-document references, centralized execution state,
-and encoding safety before Build can interpret any agent-authored prose.
+and encoding safety before Build can consume any agent-authored package content.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ def table_rows(content: str, heading: str) -> list[list[str]]:
         if not collecting or not line.startswith("|"):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if not cells or cells[0] in {"ApprovalId", "DesignId", "TaskId", "---"}:
+        if not cells or cells[0] in {"ApprovalId", "DesignId", "SubdesignId", "TaskId", "---"}:
             continue
         if set(cells[0]) == {"-"}:
             continue
@@ -151,7 +151,7 @@ def validate_package(package_root: Path) -> list[str]:
     task_catalog_rows = {
         row[0]: row
         for row in table_rows(task_catalog, "## Tasks")
-        if len(row) == 5
+        if len(row) == 6
     }
     design_ids: set[str] = set()
     design_rule_ids: set[str] = set()
@@ -233,8 +233,8 @@ def validate_package(package_root: Path) -> list[str]:
                         "## ExactChangeBoundary",
                         "## MUST DO",
                         "## MUST NOT DO",
-                        "## ScopeCheckAndBreachRecovery",
-                        "## LocalVerification",
+                        "## ExecutionBoundaryRules",
+                        "## TaskDeclaredExecutionResults",
                     ),
                 ),
             )
@@ -250,11 +250,11 @@ def validate_package(package_root: Path) -> list[str]:
                         f"Task rule does not belong to {task_id} in {path.name}: {rule_id}",
                     )
             references: set[str] = set()
-            if not re.search(r"^- DesignRefs: D-\d{3}(?:, D-\d{3})*$", content, re.MULTILINE):
-                errors.append(f"Invalid DesignRefs in {path.name}")
+            if not re.search(r"^- SubdesignRefs: D-\d{3}(?:, D-\d{3})*$", content, re.MULTILINE):
+                errors.append(f"Invalid SubdesignRefs in {path.name}")
             else:
                 design_reference_line = re.search(
-                    r"^- DesignRefs: (.+)$",
+                    r"^- SubdesignRefs: (.+)$",
                     content,
                     re.MULTILINE,
                 )
@@ -266,7 +266,7 @@ def validate_package(package_root: Path) -> list[str]:
                     unknown_designs = references - design_ids
                     if unknown_designs:
                         errors.append(
-                            f"Task references unknown designs in {path.name}: "
+                            f"Task references unknown subdesigns in {path.name}: "
                             f"{', '.join(sorted(unknown_designs))}",
                         )
             rule_reference_line = re.search(
@@ -294,7 +294,7 @@ def validate_package(package_root: Path) -> list[str]:
                 }
                 if unrelated_rules:
                     errors.append(
-                        f"Task references rules outside DesignRefs in {path.name}: "
+                        f"Task references rules outside SubdesignRefs in {path.name}: "
                         f"{', '.join(sorted(unrelated_rules))}",
                     )
             if not re.search(r"^\| [^|]+ \| [^|]+ \| (?:create|modify|delete) \| [^|]+ \|$", content, re.MULTILINE):
@@ -302,7 +302,7 @@ def validate_package(package_root: Path) -> list[str]:
             catalog_row = task_catalog_rows.get(task_id)
             if catalog_row is None:
                 errors.append(f"Task catalog does not reference {path.name}")
-            elif catalog_row[1] != path.relative_to(package_root).as_posix():
+            elif catalog_row[2] != path.relative_to(package_root).as_posix():
                 errors.append(f"Task catalog path mismatch for {task_id}")
         except PlanProtocolError as error:
             errors.append(str(error))

@@ -8,6 +8,6 @@
 - DocumentLanguage: {{GENERATED:DocumentLanguage}}
 
 ## Tasks
-| TaskId | Path | DependsOn | DesignRefs | Summary |
-| --- | --- | --- | --- | --- |
-| {{AGENT:TaskId}} | {{AGENT:Path}} | {{AGENT:DependsOn}} | {{AGENT:DesignRefs}} | {{AGENT:Summary}} |
+| TaskId | ExecutionOrder | Path | DependsOn | SubdesignRefs | Summary |
+| --- | --- | --- | --- | --- | --- |
+| {{AGENT:TaskId}} | {{AGENT:ExecutionOrder}} | {{AGENT:Path}} | {{AGENT:DependsOn}} | {{AGENT:SubdesignRefs}} | {{AGENT:Summary}} |

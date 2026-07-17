@@ -66,7 +66,6 @@ def create_plan(
     package_root.mkdir(parents=True)
     (package_root / "03-designs").mkdir()
     (package_root / "06-tasks").mkdir()
-    (package_root / ".state" / "checkpoints").mkdir(parents=True)
 
     replacements = {
         "PlanName": allocated_name,

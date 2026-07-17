@@ -1,4 +1,4 @@
-# Design: {{GENERATED:DocumentId}}-{{GENERATED:Slug}}
+# Subdesign: {{GENERATED:DocumentId}}-{{GENERATED:Slug}}
 
 ## Metadata
 - DocumentType: Design

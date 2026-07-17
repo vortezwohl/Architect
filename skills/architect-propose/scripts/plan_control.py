@@ -2,7 +2,8 @@
 
 Agents use this command to allocate immutable identifiers and to seal a plan
 after they fill the approved Markdown placeholders. It intentionally does not
-invent design content, approval evidence, task boundaries, or verification.
+invent design content, approval evidence, task boundaries, or task-declared
+execution-result steps.
 """
 
 from __future__ import annotations
@@ -102,10 +103,8 @@ def add_document(package: Path, kind: str, slug: str) -> Path:
         if not isinstance(tasks, dict):
             raise PlanProtocolError("Execution state Tasks must be an object.")
         tasks[document_id] = {
-            "Attempt": 0,
-            "CheckpointId": None,
             "State": "pending",
-            "VerificationEvidence": [],
+            "RecordedExecutionResults": [],
         }
         write_state(package, state)
     return target
