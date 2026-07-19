@@ -10,7 +10,7 @@
 
 [![Architect Workflow](https://img.shields.io/static/v1?label=Architect&message=design%20%E2%86%92%20propose%20%E2%86%92%20build&color=111827&style=flat-square)](skills/architect-design/)
 [![MIT License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
-[![Architect Repo](https://img.shields.io/badge/GitHub-open%20repo-181717?style=flat-square)](.)
+[![GitHub Stars](https://img.shields.io/github/stars/vortezwohl/Agent-Architect?style=flat-square&label=Stars)](https://github.com/vortezwohl/Agent-Architect/stargazers)
 
 <br />
 
