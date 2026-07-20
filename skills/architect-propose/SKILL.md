@@ -185,8 +185,12 @@ task-specific `MUST NOT DO`, atomic steps, status update expectations, log
 expectations, task-declared execution-result steps, a completion condition,
 and an explicit cross-boundary escalation protocol that tells the
 `architect-build` stage when to stop and how to ask the user for immediate
-numbered approval. Together, the task set must form one complete execution
-path that the `architect-build` stage can run through in order.
+numbered approval. The default protocol must provide Option `1` for only the
+described temporary cross-boundary scope, Option `2` for rejection and stop,
+and Option `3` for standing approval of all later truly necessary minimal
+cross-boundary changes during the current `architect-build` invocation.
+Together, the task set must form one complete execution path that the
+`architect-build` stage can run through in order.
 
 If packaging reveals a need for a new pattern, dependency direction, state
 transition, error contract, or file outside the approved boundary, first

@@ -36,5 +36,5 @@
 ## BuildBlockingBoundaryGapsClosed
 - The package records exact production and test paths per task.
 - The package records preserved caller-visible contracts as stable boundaries.
-- Every task records a numbered `1` / `2` cross-boundary approval path for real
-  runtime overruns.
+- Every task records a numbered `1` / `2` / `3` cross-boundary approval path
+  for real runtime overruns.

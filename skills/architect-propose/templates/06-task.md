@@ -42,6 +42,7 @@
 - ApprovalQuestion: {{AGENT:ApprovalQuestion}}
 - Option1: {{AGENT:Option1}}
 - Option2: {{AGENT:Option2}}
+- Option3: {{AGENT:Option3}}
 - TemporaryOverrideScope: {{AGENT:TemporaryOverrideScope}}
 
 ## TaskDeclaredExecutionResults

@@ -59,11 +59,16 @@
   outside `src/service/entry.py` and `src/service/error_contract.py`.
 - ApprovalQuestion: The `architect-build` stage discovered work outside the sealed boundary for
   T-002. Reply with `1` to approve only the described temporary
-  cross-boundary change, or `2` to reject it and stop the `architect-build` stage.
+  cross-boundary change, `2` to reject it and stop the `architect-build`
+  stage, or `3` to approve all later truly necessary minimal cross-boundary
+  changes during the current `architect-build` invocation.
 - Option1: Approve only the described temporary cross-boundary change for
   T-002.
 - Option2: Reject the temporary cross-boundary change and stop the `architect-build` stage for new
   `architect-design` / `architect-propose` guidance.
+- Option3: Approve all later truly necessary minimal cross-boundary changes for
+  T-002 and later tasks during the current `architect-build` invocation, with
+  each actual overrun still described and logged factually when it occurs.
 - TemporaryOverrideScope: The smallest explicitly described path, symbol, and
   operation outside the sealed T-002 boundary.
 

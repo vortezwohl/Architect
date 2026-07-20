@@ -460,9 +460,14 @@ def validate_package(package_root: Path) -> list[str]:
                     f"{', '.join(missing_cross_boundary_fields)}",
                 )
             approval_question = cross_boundary_fields.get("ApprovalQuestion", "")
+            option3 = cross_boundary_fields.get("Option3", "").strip()
             if approval_question and ("`1`" not in approval_question or "`2`" not in approval_question):
                 errors.append(
                     f"CrossBoundaryEscalation ApprovalQuestion must include numbered choices 1 and 2 in {path.name}",
+                )
+            if option3 and approval_question and "`3`" not in approval_question:
+                errors.append(
+                    f"CrossBoundaryEscalation ApprovalQuestion must include numbered choice 3 when Option3 is present in {path.name}",
                 )
             catalog_row = task_catalog_rows.get(task_id)
             if catalog_row is None:

@@ -101,6 +101,7 @@ def read_utf8(path: Path) -> str:
         content = payload.decode("utf-8", errors="strict")
     except UnicodeDecodeError as error:
         raise PlanProtocolError(f"Invalid UTF-8 text: {path}") from error
+    content = content.replace("\r\n", "\n").replace("\r", "\n")
 
     for marker in SUSPICIOUS_TEXT_MARKERS:
         if marker in content:
@@ -157,7 +158,12 @@ def parse_metadata(path: Path) -> DocumentMetadata:
         PlanProtocolError: Raised when a required field is absent or invalid.
     """
 
-    fields = dict(FIELD_PATTERN.findall(read_utf8(path)))
+    # Strip metadata values so CRLF line endings do not leak `\r` into
+    # deterministic identifiers such as PLAN, CONTEXT, D-001, or T-001.
+    fields = {
+        key: value.strip()
+        for key, value in FIELD_PATTERN.findall(read_utf8(path))
+    }
     required_fields = (
         "DocumentType",
         "DocumentId",

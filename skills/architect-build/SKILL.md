@@ -27,7 +27,8 @@ architect-propose -> architect-build`.
   executed.
 - If execution would require a path, symbol, operation, or side effect outside
   the recorded task boundary, stop before making that cross-boundary change and
-  ask the user for immediate approval with numbered choices `1` and `2`.
+  ask the user for immediate approval with the numbered choices recorded in the
+  task document. The default protocol is `1`, `2`, and `3`.
 - Do not perform a temporary cross-boundary change unless the user explicitly
   approves it for the described scope.
 - Do not silently skip a required status update or log update.
@@ -85,10 +86,14 @@ manual `architect-build` invocation:
 3. Perform the declared atomic steps for that task. Do not add an unapproved
    helper, wrapper, pattern, file, state transition, or error behavior.
 4. If the recorded task boundary proves insufficient for the real work, stop
-   and ask the user the recorded approval question with numbered options `1`
-   and `2`. Option `1` approves only the described temporary cross-boundary
-   scope. Option `2` rejects the change and leaves the `architect-build` stage
-   stopped. Do not cross the boundary unless the user chooses `1`.
+   and ask the user the recorded approval question with the numbered options
+   recorded in the sealed task. In the default protocol, Option `1` approves
+   only the described temporary cross-boundary scope, Option `2` rejects the
+   change and leaves the `architect-build` stage stopped, and Option `3`
+   grants standing approval for all later truly necessary minimal
+   cross-boundary changes during the current `architect-build` invocation. Do
+   not cross the boundary unless the user chooses an approving option recorded
+   for that scope.
 5. Immediately update task state when the task meaningfully changes status:
    started, in progress, or completed.
 6. Immediately append log entries that record actual actions taken, affected
