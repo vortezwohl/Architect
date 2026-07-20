@@ -45,9 +45,27 @@
 4. Keep the public request and error contract unchanged.
 
 ## ExecutionBoundaryRules
-- Keep routing and error normalization explicit in code.
-- Do not alter storage, deployment, or transport configuration.
-- Do not redesign the approved registry pattern during implementation.
+- BoundaryCompleteness: The exact boundary fully covers entry wiring and shared
+  error normalization for this task.
+- BuildBlockingGapCheck: No unresolved path, symbol, or preserved-surface gap
+  remains for this task.
+- AdditionalRules: Keep routing and error normalization explicit in code. Do
+  not alter storage, deployment, or transport configuration. Do not redesign
+  the approved registry pattern during implementation.
+
+## CrossBoundaryEscalation
+- TriggerCondition: A required implementation step would touch storage,
+  deployment, transport configuration, handler business rules, or any path
+  outside `src/service/entry.py` and `src/service/error_contract.py`.
+- ApprovalQuestion: Build discovered work outside the sealed boundary for
+  T-002. Reply with `1` to approve only the described temporary
+  cross-boundary change, or `2` to reject it and stop Build.
+- Option1: Approve only the described temporary cross-boundary change for
+  T-002.
+- Option2: Reject the temporary cross-boundary change and stop Build for new
+  Design/Propose guidance.
+- TemporaryOverrideScope: The smallest explicitly described path, symbol, and
+  operation outside the sealed T-002 boundary.
 
 ## TaskDeclaredExecutionResults
 - CommandOrProcedure: Inspect `handle_request` and verify that selection goes

@@ -65,6 +65,9 @@ without guessing:
   pattern, multiple patterns, or rejects GoF patterns entirely;
 - define one or more explicit `D-xxx` subdesigns with boundaries,
   counterexamples, anti-patterns, rules, and verification seams;
+- make every approved boundary clear, explicit, and complete enough for
+  `architect-propose` to package and for `architect-build` to execute without
+  guessing, silent inference, or missing edge details;
 - obtain approval for the displayed design bundle under the default
   non-rejection rule defined by this skill.
 
@@ -78,6 +81,8 @@ without guessing:
   design bundle.
 - Do not continue while compatibility intent, design detail, or approval
   coverage remains unresolved.
+- Do not approve or present a design bundle as complete while any build-relevant
+  boundary is still ambiguous, implicit, contradictory, or obviously missing.
 - Do not begin `source-article.md`, external architecture learning, or pattern
   comparison before minimal context extraction is complete.
 - Do not treat a vague feeling of familiarity with the repository as basic
@@ -200,7 +205,11 @@ competing alternatives.
     evidence decision, reliable references, rejected direct design, rejected
     neighboring patterns, counterexamples, anti-patterns, design boundaries,
     verification seams, and design-level `MUST DO` / `MUST NOT DO` rules.
-16. Present the complete design bundle. The user's first subsequent turn counts
+16. Perform one explicit boundary-completeness pass before presenting the
+    bundle. Confirm that each approved subdesign clearly states what later
+    stages may change, must preserve, must not touch, and must verify, and
+    that no obvious build-blocking boundary gap remains.
+17. Present the complete design bundle. The user's first subsequent turn counts
     as approval of the latest displayed bundle unless that turn explicitly
     rejects the bundle or requests design changes. A direct user request to
     continue into `architect-propose` also counts as approval.
@@ -228,6 +237,8 @@ Before asking for approval, explain for every non-trivial decision:
   was preserved;
 - which misuse, counterexample, or operational failure would make the concept a
   poor fit;
+- which exact boundaries later stages may change, must preserve, and must not
+  cross without new approval;
 - which verification seams Build must later preserve.
 
 Do not cite the references mechanically. Convert them into reasoning that the
@@ -284,6 +295,12 @@ requests a different language.
 
 Rules must constrain implementation details, not merely desired outcomes.
 
+`DesignBoundaries` and `VerificationSeams` must be concrete enough that
+`architect-propose` can package a complete execution boundary and
+`architect-build` can execute without guessing. If a later stage would still
+need to infer touched paths, preserved surfaces, forbidden changes, or likely
+approval-trigger edges, the design bundle is not complete yet.
+
 ## Completion Standard
 
 Finish only when the user can inspect the approved design bundle, understand
@@ -294,3 +311,6 @@ design is the globally best supported option rather than merely the smallest
 one, how the full GoF comparison informed the decision, how external evidence
 was accepted or rejected, and see which one or more `D-xxx` subdesigns will
 later be recorded into one new independent plan by `architect-propose`.
+The design is not complete unless its boundaries are clear, explicit, and
+complete enough that `architect-propose` can finish packaging and
+`architect-build` can execute without boundary guesswork.

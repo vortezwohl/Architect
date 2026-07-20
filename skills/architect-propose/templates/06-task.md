@@ -33,7 +33,16 @@
 1. {{AGENT:AtomicStep}}
 
 ## ExecutionBoundaryRules
-{{AGENT:ExecutionBoundaryRules}}
+- BoundaryCompleteness: {{AGENT:BoundaryCompleteness}}
+- BuildBlockingGapCheck: {{AGENT:BuildBlockingGapCheck}}
+- AdditionalRules: {{AGENT:AdditionalRules}}
+
+## CrossBoundaryEscalation
+- TriggerCondition: {{AGENT:TriggerCondition}}
+- ApprovalQuestion: {{AGENT:ApprovalQuestion}}
+- Option1: {{AGENT:Option1}}
+- Option2: {{AGENT:Option2}}
+- TemporaryOverrideScope: {{AGENT:TemporaryOverrideScope}}
 
 ## TaskDeclaredExecutionResults
 - CommandOrProcedure: {{AGENT:ExecutionResultCommandOrProcedure}}

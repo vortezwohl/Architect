@@ -159,6 +159,21 @@ def validate_package(package_root: Path) -> list[str]:
         except PlanProtocolError as error:
             errors.append(str(error))
 
+    impact_path = package_root / "04-impact-and-boundaries.md"
+    if impact_path.is_file():
+        errors.extend(
+            validate_required_headings(
+                impact_path,
+                (
+                    "## ImpactMap",
+                    "## StableBoundaries",
+                    "## ProhibitedCrossBoundaryChanges",
+                    "## BoundaryAuditFindings",
+                    "## BuildBlockingBoundaryGapsClosed",
+                ),
+            ),
+        )
+
     design_directory = package_root / "03-designs"
     task_directory = package_root / "06-tasks"
     if not design_directory.is_dir():
@@ -329,11 +344,16 @@ def validate_package(package_root: Path) -> list[str]:
                     path,
                     (
                         "## DesignSources",
+                        "## Preconditions",
                         "## ExactChangeBoundary",
+                        "## ExplicitlyOutOfScope",
                         "## MUST DO",
                         "## MUST NOT DO",
+                        "## AtomicSteps",
                         "## ExecutionBoundaryRules",
+                        "## CrossBoundaryEscalation",
                         "## TaskDeclaredExecutionResults",
+                        "## CompletionCondition",
                     ),
                 ),
             )
@@ -398,6 +418,51 @@ def validate_package(package_root: Path) -> list[str]:
                     )
             if not re.search(r"^\| [^|]+ \| [^|]+ \| (?:create|modify|delete) \| [^|]+ \|$", content, re.MULTILINE):
                 errors.append(f"Missing exact path/symbol/operation boundary in {path.name}")
+            execution_boundary_fields = section_fields(
+                content,
+                "## ExecutionBoundaryRules",
+            )
+            required_execution_boundary_fields = (
+                "BoundaryCompleteness",
+                "BuildBlockingGapCheck",
+                "AdditionalRules",
+            )
+            missing_execution_boundary_fields = [
+                field_name
+                for field_name in required_execution_boundary_fields
+                if not execution_boundary_fields.get(field_name, "").strip()
+            ]
+            if missing_execution_boundary_fields:
+                errors.append(
+                    f"ExecutionBoundaryRules is missing required fields in {path.name}: "
+                    f"{', '.join(missing_execution_boundary_fields)}",
+                )
+            cross_boundary_fields = section_fields(
+                content,
+                "## CrossBoundaryEscalation",
+            )
+            required_cross_boundary_fields = (
+                "TriggerCondition",
+                "ApprovalQuestion",
+                "Option1",
+                "Option2",
+                "TemporaryOverrideScope",
+            )
+            missing_cross_boundary_fields = [
+                field_name
+                for field_name in required_cross_boundary_fields
+                if not cross_boundary_fields.get(field_name, "").strip()
+            ]
+            if missing_cross_boundary_fields:
+                errors.append(
+                    f"CrossBoundaryEscalation is missing required fields in {path.name}: "
+                    f"{', '.join(missing_cross_boundary_fields)}",
+                )
+            approval_question = cross_boundary_fields.get("ApprovalQuestion", "")
+            if approval_question and ("`1`" not in approval_question or "`2`" not in approval_question):
+                errors.append(
+                    f"CrossBoundaryEscalation ApprovalQuestion must include numbered choices 1 and 2 in {path.name}",
+                )
             catalog_row = task_catalog_rows.get(task_id)
             if catalog_row is None:
                 errors.append(f"Task catalog does not reference {path.name}")

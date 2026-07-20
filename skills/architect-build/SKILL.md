@@ -25,6 +25,11 @@ architect-propose -> architect-build`.
 - Do not edit task or design Markdown files after the plan is sealed.
 - Do not modify a source path outside the boundary of the tasks currently being
   executed.
+- If execution would require a path, symbol, operation, or side effect outside
+  the recorded task boundary, stop before making that cross-boundary change and
+  ask the user for immediate approval with numbered choices `1` and `2`.
+- Do not perform a temporary cross-boundary change unless the user explicitly
+  approves it for the described scope.
 - Do not silently skip a required status update or log update.
 - Do not claim progress, completion, or task-declared execution result that did
   not actually happen.
@@ -40,6 +45,8 @@ Execute the stored package as one engineering run, not as a new design pass:
   units;
 - proactively restate the core design context needed by the current tasks when
   the live context has been compressed or diluted;
+- escalate real cross-boundary execution needs to the user immediately instead
+  of silently expanding the task scope;
 - update task status as work actually advances;
 - update the execution log with actual actions, results, and task-declared
   execution results as they happen;
@@ -66,20 +73,26 @@ Run through the remaining task sequence in recorded order within the same
 manual `architect-build` invocation:
 
 1. Announce the next `T-xxx` task, its cited `D-xxx` units, allowed paths,
-   symbols, operations, `MUST DO`, and `MUST NOT DO` rules.
+   symbols, operations, `MUST DO`, `MUST NOT DO` rules, and the recorded
+   cross-boundary escalation trigger.
 2. Restate the task's required design context before editing. That restated
    context must include the task objective, the cited `D-xxx` rules, the
    allowed change boundary, the current execution state, and the latest
    relevant factual log entry.
 3. Perform the declared atomic steps for that task. Do not add an unapproved
    helper, wrapper, pattern, file, state transition, or error behavior.
-4. Immediately update task state when the task meaningfully changes status:
+4. If the recorded task boundary proves insufficient for the real work, stop
+   and ask the user the recorded approval question with numbered options `1`
+   and `2`. Option `1` approves only the described temporary cross-boundary
+   scope. Option `2` rejects the change and leaves Build stopped. Do not cross
+   the boundary unless the user chooses `1`.
+5. Immediately update task state when the task meaningfully changes status:
    started, in progress, or completed.
-5. Immediately append log entries that record actual actions taken, affected
+6. Immediately append log entries that record actual actions taken, affected
    scope, actual results, and actual task-declared execution results.
-6. Perform only the task-declared execution-result steps already recorded in the sealed
+7. Perform only the task-declared execution-result steps already recorded in the sealed
    task, then record the real result in state and log without embellishment.
-7. Continue directly to the next recorded task until all remaining tasks in the
+8. Continue directly to the next recorded task until all remaining tasks in the
    plan have been executed.
 
 ## Completion Standard
@@ -88,4 +101,6 @@ Finish only after the full recorded task sequence has been executed, every
 required task-declared execution result has been recorded truthfully, and the
 state and log accurately reflect what actually happened across the entire run.
 The final report must distinguish completed evidence from remaining risk,
-without reopening design judgment during Build.
+without reopening design judgment during Build. Any temporary cross-boundary
+approval must be reported as explicit user-approved scope rather than as if it
+were part of the original sealed boundary.

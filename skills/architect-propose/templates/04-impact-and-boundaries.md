@@ -17,3 +17,9 @@
 
 ## ProhibitedCrossBoundaryChanges
 {{AGENT:ProhibitedCrossBoundaryChanges}}
+
+## BoundaryAuditFindings
+{{AGENT:BoundaryAuditFindings}}
+
+## BuildBlockingBoundaryGapsClosed
+{{AGENT:BuildBlockingBoundaryGapsClosed}}

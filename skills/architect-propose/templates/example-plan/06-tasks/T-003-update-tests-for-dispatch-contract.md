@@ -44,9 +44,27 @@
 3. Keep internal-structure assertions secondary to caller-visible behavior.
 
 ## ExecutionBoundaryRules
-- Tests must reflect the approved design and the preserved contracts.
-- Do not add a new test harness framework.
-- Keep assertions deterministic and easy to map back to D-001 and D-002.
+- BoundaryCompleteness: The exact boundary fully covers the required test
+  updates and focused registry coverage for this task.
+- BuildBlockingGapCheck: No unresolved path, symbol, or preserved-surface gap
+  remains for this task.
+- AdditionalRules: Tests must reflect the approved design and the preserved
+  contracts. Do not add a new test harness framework. Keep assertions
+  deterministic and easy to map back to D-001 and D-002.
+
+## CrossBoundaryEscalation
+- TriggerCondition: A required implementation step would touch production code,
+  introduce a new test harness framework, or modify any path outside
+  `tests/test_dispatch_flow.py` and `tests/test_dispatch_registry.py`.
+- ApprovalQuestion: Build discovered work outside the sealed boundary for
+  T-003. Reply with `1` to approve only the described temporary
+  cross-boundary change, or `2` to reject it and stop Build.
+- Option1: Approve only the described temporary cross-boundary change for
+  T-003.
+- Option2: Reject the temporary cross-boundary change and stop Build for new
+  Design/Propose guidance.
+- TemporaryOverrideScope: The smallest explicitly described path, symbol, and
+  operation outside the sealed T-003 boundary.
 
 ## TaskDeclaredExecutionResults
 - CommandOrProcedure: Run the dispatch-related test suite or the equivalent

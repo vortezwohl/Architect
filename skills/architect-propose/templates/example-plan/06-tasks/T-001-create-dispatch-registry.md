@@ -44,9 +44,27 @@
 4. Leave entry wiring unchanged so the next task can switch over cleanly.
 
 ## ExecutionBoundaryRules
-- Only create the registry boundary described by D-001.
-- If a helper is needed, keep it inside the new registry module.
-- Do not touch transport-facing code in this task.
+- BoundaryCompleteness: The exact boundary fully covers the registry module and
+  deterministic lookup function required by this task.
+- BuildBlockingGapCheck: No unresolved path, symbol, or preserved-surface gap
+  remains for this task.
+- AdditionalRules: Only create the registry boundary described by D-001. If a
+  helper is needed, keep it inside the new registry module. Do not touch
+  transport-facing code in this task.
+
+## CrossBoundaryEscalation
+- TriggerCondition: A required implementation step would touch request entry
+  wiring, handler business logic, transport-facing code, or any path outside
+  `src/service/dispatch_registry.py`.
+- ApprovalQuestion: Build discovered work outside the sealed boundary for
+  T-001. Reply with `1` to approve only the described temporary
+  cross-boundary change, or `2` to reject it and stop Build.
+- Option1: Approve only the described temporary cross-boundary change for
+  T-001.
+- Option2: Reject the temporary cross-boundary change and stop Build for new
+  Design/Propose guidance.
+- TemporaryOverrideScope: The smallest explicitly described path, symbol, and
+  operation outside the sealed T-001 boundary.
 
 ## TaskDeclaredExecutionResults
 - CommandOrProcedure: Inspect the created registry module and confirm that all
