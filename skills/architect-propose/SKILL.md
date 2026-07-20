@@ -5,7 +5,7 @@ description: "Manual-only skill. Use only when the user explicitly invokes the a
 
 # Architect Propose
 
-Use this skill only as a manually selected plan-packaging stage. Its job is to
+Use this skill only as the manually selected `architect-propose` stage. Its job is to
 store an already approved design bundle as a structured execution package and
 initialize the package state and execution log. It does not redesign, implement
 code, or invoke sibling skills automatically. It is stage 2 of the one-way
@@ -21,10 +21,10 @@ flow `architect-design -> architect-propose -> architect-build`.
 - `T-xxx task`: one recorded execution task inside that independent plan. A
   single independent plan may contain multiple `T-xxx` tasks derived from one
   or more approved `D-xxx` subdesigns.
-- `execution boundary completion`: the packaging pass that turns approved design
-  intent into explicit change surfaces, preserved surfaces, forbidden surfaces,
-  verification edges, and escalation triggers that Build can execute without
-  guessing.
+- `execution boundary completion`: the `architect-propose` packaging pass that
+  turns approved design intent into explicit change surfaces, preserved
+  surfaces, forbidden surfaces, verification edges, and escalation triggers
+  that the `architect-build` stage can execute without guessing.
 - `boundary gap`: a detail that later execution would have to guess, such as an
   unstated touched path, an unstated preserved surface, an unstated forbidden
   change, or an unstated approval trigger.
@@ -50,7 +50,8 @@ flow `architect-design -> architect-propose -> architect-build`.
   concrete rules.
 - Do not seal a package while any required design input, task boundary, state
   initialization, or log initialization is incomplete.
-- Do not leave a known boundary gap for Build to discover during execution if
+- Do not leave a known boundary gap for the `architect-build` stage to
+  discover during execution if
   that gap can be resolved from the approved design, repository evidence, and
   current request without changing the approved core design.
 
@@ -77,13 +78,16 @@ reinterpreting design intent:
 - translate the approved `D-xxx` subdesigns into one or more atomic `T-xxx`
   tasks without adding new design decisions;
 - act as a mock `architect-build` boundary audit before sealing so every task
-  boundary is explicit enough for Build to execute without guessing;
+  boundary is explicit enough for the `architect-build` stage to execute
+  without guessing;
 - fill missing execution-boundary detail when that detail is required for
-  Build, is consistent with the approved design, and does not alter the
+  the `architect-build` stage, is consistent with the approved design, and
+  does not alter the
   approved core architecture;
-- order the tasks as one complete execution sequence for a later Build run;
-- initialize centralized task state before Build starts;
-- initialize the execution log before Build starts;
+- order the tasks as one complete execution sequence for one later
+  `architect-build` run;
+- initialize centralized task state before the `architect-build` stage starts;
+- initialize the execution log before the `architect-build` stage starts;
 - leave a sealed package whose content, state, and log all agree on what is
   ready to execute.
 
@@ -157,8 +161,8 @@ It must contain these artifacts:
 - `.state/execution-state.json`
 
 Initialize `.state/execution-state.json` and `08-execution-log.md` as part of
-package creation. Build should start from these recorded artifacts, not infer
-missing state from memory.
+package creation. The `architect-build` stage should start from these recorded
+artifacts, not infer missing state from memory.
 
 Every `03-designs/D-xxx-<slug>.md` document must preserve the approved design
 contract exactly. Each design document must contain the fixed headings
@@ -171,17 +175,18 @@ approved design bundle without inventing new structure or omitting approved
 fields.
 
 `04-impact-and-boundaries.md` must record the stable boundaries, prohibited
-cross-boundary changes, the boundary-audit findings from the mock Build pass,
-and which build-blocking boundary gaps were closed during packaging.
+cross-boundary changes, the boundary-audit findings from the mock
+`architect-build` pass, and which `architect-build`-blocking boundary gaps
+were closed during packaging.
 
 Every `T-xxx` document must state exact paths, symbols, operations, approved
 subdesign references, approved rule references, task-specific `MUST DO`,
 task-specific `MUST NOT DO`, atomic steps, status update expectations, log
 expectations, task-declared execution-result steps, a completion condition,
-and an explicit cross-boundary escalation protocol that tells Build when to
-stop and how to ask the user for immediate numbered approval. Together, the
-task set must form one complete execution path that Build can run through in
-order.
+and an explicit cross-boundary escalation protocol that tells the
+`architect-build` stage when to stop and how to ask the user for immediate
+numbered approval. Together, the task set must form one complete execution
+path that the `architect-build` stage can run through in order.
 
 If packaging reveals a need for a new pattern, dependency direction, state
 transition, error contract, or file outside the approved boundary, first
@@ -190,8 +195,8 @@ the approved core design, preserve the approved inputs as they are, do not
 invent the missing decision, do not reopen earlier stages from this skill, and
 do not record unapproved design content as if it were approved. If the issue is
 an execution-boundary gap that can be resolved without changing the approved
-core design, add the missing boundary detail explicitly so Build does not have
-to guess later.
+core design, add the missing boundary detail explicitly so the
+`architect-build` stage does not have to guess later.
 
 ## Sealing and Validation
 
@@ -211,6 +216,7 @@ encoding corruption immediately if reported, and validate again.
 Finish only after validation succeeds. Report the package path, actual
 validation result, initialized state/log artifacts, remaining risk, and whether
 the user may manually invoke `architect-build` as the next stage for the
-selected plan. Do not report the package as Build-ready unless the boundary
-audit confirms that Build can execute it without missing boundary detail and
-with an explicit cross-boundary approval path for true runtime overruns.
+selected plan. Do not report the package as `architect-build`-ready unless the
+boundary audit confirms that the `architect-build` stage can execute it
+without missing boundary detail and with an explicit cross-boundary approval
+path for true runtime overruns.

@@ -17,5 +17,5 @@
 ## ApprovedDesignBundle
 {{AGENT:ApprovedDesignBundle}}
 
-## BuildEntryConditions
-{{AGENT:BuildEntryConditions}}
+## ArchitectBuildEntryConditions
+{{AGENT:ArchitectBuildEntryConditions}}

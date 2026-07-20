@@ -5,16 +5,18 @@ description: "Manual-only skill. Use only when the user explicitly invokes the a
 
 # Architect Design
 
-Use this skill only as a manually selected architecture decision stage. Its job
+Use this skill only as the manually selected `architect-design` stage. Its job
 is to extract the minimum required repository context first, then learn the
 required architecture knowledge, then produce one approved architecture design
-bundle that later stages can execute without guessing. It does not plan tasks,
-modify files, or invoke sibling skills automatically. It is stage 1 of the
+bundle that later `architect-propose` and `architect-build` work can execute
+without guessing. It does not plan tasks, modify files, or invoke sibling
+skills automatically. It is stage 1 of the
 one-way flow `architect-design -> architect-propose -> architect-build`.
 
 ## Defined Terms
 
-- `architect-design`: the manual stage that studies the codebase, learns the
+- `architect-design`: the manual `architect-design` stage that studies the
+  codebase, learns the
   relevant architecture knowledge, asks for the compatibility boundary, and
   produces one approved design bundle.
 - `minimal context extraction`: the smallest repository-focused evidence pass
@@ -36,7 +38,8 @@ one-way flow `architect-design -> architect-propose -> architect-build`.
   by one later `architect-propose` invocation from one approved design bundle.
 - `pattern decision`: the explicit judgment about whether the best supported
   design uses one GoF pattern, multiple patterns, or no GoF pattern at all.
-- `verification seam`: the concrete boundary Build must later test or preserve,
+- `verification seam`: the concrete boundary the `architect-build` stage must
+  later test or preserve,
   such as an interface, lifecycle transition, error path, transaction edge,
   concurrency contract, ownership rule, or compatibility surface.
 
@@ -49,7 +52,8 @@ one-way flow `architect-design -> architect-propose -> architect-build`.
 
 ## Core Outcome
 
-Produce an approved, bounded design bundle that later stages can consume
+Produce an approved, bounded design bundle that later `architect-propose` and
+`architect-build` work can consume
 without guessing:
 
 - establish the minimum required understanding of the current system and
@@ -65,8 +69,9 @@ without guessing:
   pattern, multiple patterns, or rejects GoF patterns entirely;
 - define one or more explicit `D-xxx` subdesigns with boundaries,
   counterexamples, anti-patterns, rules, and verification seams;
-- make every approved boundary clear, explicit, and complete enough for
-  `architect-propose` to package and for `architect-build` to execute without
+- make every approved boundary clear, explicit, and complete enough for the
+  `architect-propose` stage to package and for the `architect-build` stage to
+  execute without
   guessing, silent inference, or missing edge details;
 - obtain approval for the displayed design bundle under the default
   non-rejection rule defined by this skill.
@@ -162,8 +167,8 @@ competing alternatives.
    points, affected modules, current behavior owner, caller path, state flow,
    constraints, and current tests for the requested change.
 4. Read `references/decision-protocol.md` after basic repository understanding
-   is established and use it as the binding rule set for the remaining Design
-   stage.
+   is established and use it as the binding rule set for the remaining
+   `architect-design` stage.
 5. Read `references/source-article.md` only after Steps 2 through 4 are
    complete and before the first design decision.
 6. Read the routing tables and distinction matrices in
@@ -207,8 +212,9 @@ competing alternatives.
     verification seams, and design-level `MUST DO` / `MUST NOT DO` rules.
 16. Perform one explicit boundary-completeness pass before presenting the
     bundle. Confirm that each approved subdesign clearly states what later
-    stages may change, must preserve, must not touch, and must verify, and
-    that no obvious build-blocking boundary gap remains.
+    `architect-propose` or `architect-build` work may change, must preserve,
+    must not touch, and must verify, and that no obvious
+    `architect-build`-blocking boundary gap remains.
 17. Present the complete design bundle. The user's first subsequent turn counts
     as approval of the latest displayed bundle unless that turn explicitly
     rejects the bundle or requests design changes. A direct user request to
@@ -237,12 +243,13 @@ Before asking for approval, explain for every non-trivial decision:
   was preserved;
 - which misuse, counterexample, or operational failure would make the concept a
   poor fit;
-- which exact boundaries later stages may change, must preserve, and must not
-  cross without new approval;
-- which verification seams Build must later preserve.
+- which exact boundaries later `architect-propose` or `architect-build` work
+  may change, must preserve, and must not cross without new approval;
+- which verification seams the `architect-build` stage must later preserve.
 
-Do not cite the references mechanically. Convert them into reasoning that the
-later stages can reapply. Every external paper, pattern, or best practice must
+Do not cite the references mechanically. Convert them into reasoning that
+later `architect-propose` and `architect-build` work can reapply. Every
+external paper, pattern, or best practice must
 be translated through first-principles reasoning about the current repository,
 the current request, the actual constraints, the true stable core, the real
 variation, and the likely failure modes here.
@@ -295,11 +302,12 @@ requests a different language.
 
 Rules must constrain implementation details, not merely desired outcomes.
 
-`DesignBoundaries` and `VerificationSeams` must be concrete enough that
-`architect-propose` can package a complete execution boundary and
-`architect-build` can execute without guessing. If a later stage would still
-need to infer touched paths, preserved surfaces, forbidden changes, or likely
-approval-trigger edges, the design bundle is not complete yet.
+`DesignBoundaries` and `VerificationSeams` must be concrete enough that the
+`architect-propose` stage can package a complete execution boundary and the
+`architect-build` stage can execute without guessing. If later packaging or
+execution work would still need to infer touched paths, preserved surfaces,
+forbidden changes, or likely approval-trigger edges, the design bundle is not
+complete yet.
 
 ## Completion Standard
 

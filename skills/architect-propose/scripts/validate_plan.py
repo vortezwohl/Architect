@@ -1,8 +1,9 @@
-"""Validate a sealed Markdown-first Architect plan package before Build.
+"""Validate a sealed Markdown-first Architect plan package before `architect-build`.
 
 Validation is intentionally fail-closed. It verifies deterministic structure,
 English metadata fields, cross-document references, centralized execution state,
-and encoding safety before Build can consume any agent-authored package content.
+and encoding safety before the `architect-build` stage can consume any
+agent-authored package content.
 """
 
 from __future__ import annotations

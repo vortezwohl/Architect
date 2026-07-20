@@ -68,7 +68,7 @@ or inspect dispatch behavior.
 - Keep the current conditional chain: rejected because dispatch rules stay
   duplicated and entry logic remains hard to audit.
 - Introduce reflection-based auto-discovery: rejected because it adds implicit
-  behavior and weakens boundary clarity for Build.
+  behavior and weakens boundary clarity for the `architect-build` stage.
 
 ## DesignBoundaries
 - The registry owns only handler selection.

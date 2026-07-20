@@ -195,7 +195,7 @@ def find_placeholders(path: Path) -> list[str]:
         path: Markdown document path.
 
     Returns:
-        Placeholder tokens that require resolution before Build.
+        Placeholder tokens that require resolution before `architect-build`.
     """
 
     return PLACEHOLDER_PATTERN.findall(read_utf8(path))
@@ -221,7 +221,8 @@ def markdown_documents(package_root: Path) -> list[Path]:
 def compute_plan_digest(package_root: Path) -> str:
     """Compute a stable digest for immutable plan documents.
 
-    The execution log is intentionally excluded because Build appends facts after
+    The execution log is intentionally excluded because the `architect-build`
+    stage appends facts after
     the plan is sealed. The manifest digest field is normalized before hashing to
     avoid a self-referential digest.
 

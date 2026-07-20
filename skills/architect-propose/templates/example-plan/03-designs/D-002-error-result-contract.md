@@ -28,7 +28,7 @@ not silently change caller-visible failure behavior.
 - Internal refactoring will move dispatch control flow, which creates a real
   risk of drifting status mapping or field placement.
 - Current failure handling is distributed enough that one explicit preservation
-  rule is needed before Build starts restructuring internals.
+  rule is needed before the `architect-build` stage starts restructuring internals.
 
 ## CompatibilityBoundary
 - Preserve the existing external error envelope for all current callers.
@@ -59,7 +59,7 @@ not silently change caller-visible failure behavior.
 ## Rationale
 Dispatch refactoring can accidentally change failure shape, message placement,
 or status mapping. Recording the contract as a separate approved subdesign
-prevents Build from changing external error behavior while it restructures
+prevents the `architect-build` stage from changing external error behavior while it restructures
 internal control flow.
 
 ## Alternatives

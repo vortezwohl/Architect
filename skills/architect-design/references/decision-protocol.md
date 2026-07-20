@@ -7,7 +7,7 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
 ## How to Use This Protocol
 
 1. Read this file first for the gates, approval boundaries, and non-negotiable output requirements.
-2. Treat Architect Design as a read-only stage. Inspect repository files and think through the design, but do not edit, create, or overwrite files at this stage.
+2. Treat `architect-design` as a read-only stage. Inspect repository files and think through the architecture, but do not edit, create, or overwrite files at this stage.
 3. Perform minimal context extraction before any knowledge injection. Extract only the repository facts needed to identify the system purpose, relevant entry points, affected modules, current behavior owner, caller path, state flow, current tests, and operational constraints for the requested change.
 4. Establish basic repository understanding from that extracted context before design is recommended. This gate is satisfied only when you can explicitly state the system purpose, relevant entry points, affected modules, current behavior owner, caller path, state flow, constraints, and current tests for the requested change.
 5. Read `source-article.md` only after Step 4 is satisfied and before the first design decision for methodology, pattern framing, and AI-era misuse warnings.
@@ -35,7 +35,7 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
 - `external evidence decision`: the explicit record of which external sources,
   patterns, papers, framework examples, or best-practice claims were accepted
   or rejected and why.
-- `verification seam`: the concrete boundary that later Build work must test or
+- `verification seam`: the concrete boundary that later `architect-build` work must test or
   preserve, such as an interface, lifecycle transition, error path,
   transaction edge, concurrency contract, ownership rule, or compatibility
   surface.
@@ -83,7 +83,7 @@ Before asking for approval, teach the design instead of only presenting a conclu
 - The simplest direct design that was considered, and why it was accepted or rejected.
 - The nearest neighboring pattern or abstraction that was rejected, and why.
 - The likely misuse, counterexample, or operational failure that would make this concept a poor fit.
-- The verification seam that must hold if Build later implements the design.
+- The verification seam that must hold if `architect-build` later implements the design.
 
 When possible, map the teaching explanation directly onto the design-unit fields: `Intent`, `StableCoreAndVariation`, `RepositoryEvidence`, `CompatibilityBoundary`, `PatternDecision`, `ExternalEvidenceDecision`, `Rationale`, `Alternatives`, `VerificationSeams`, `Counterexamples`, `AntiPatterns`, and `Rules`.
 
@@ -95,4 +95,4 @@ Record approval evidence and a digest of the approved bundle. One later `archite
 
 ## Handoff Gate
 
-Do not hand off to Propose when any `D-xxx` subdesign lacks a concept, repository evidence, compatibility boundary, pattern decision, external evidence decision, rationale, verification seam, counterexample, anti-pattern, design boundary, MUST rule, teaching explanation, or approval coverage. If a later independent cycle needs a new design decision, that new decision belongs to a new Architect Design stage and a new independent plan cycle, not to improvisation inside the current Propose or Build run.
+Do not hand off to `architect-propose` when any `D-xxx` subdesign lacks a concept, repository evidence, compatibility boundary, pattern decision, external evidence decision, rationale, verification seam, counterexample, anti-pattern, design boundary, MUST rule, teaching explanation, or approval coverage. If a later independent cycle needs a new design decision, that new decision belongs to a new `architect-design` stage and a new independent plan cycle, not to improvisation inside the current `architect-propose` or `architect-build` run.

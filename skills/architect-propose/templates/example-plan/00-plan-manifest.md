@@ -26,8 +26,8 @@
   entry wiring and freezes one explicit error-result contract for every
   registry-dispatched handler.
 
-## BuildEntryConditions
+## ArchitectBuildEntryConditions
 - All design documents are fully recorded and approved.
 - Every task cites only approved subdesigns and approved design rules.
-- Centralized execution state is initialized before Build starts.
-- The execution log exists before Build starts.
+- Centralized execution state is initialized before the `architect-build` stage starts.
+- The execution log exists before the `architect-build` stage starts.

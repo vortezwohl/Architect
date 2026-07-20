@@ -56,13 +56,13 @@
 - TriggerCondition: A required implementation step would touch production code,
   introduce a new test harness framework, or modify any path outside
   `tests/test_dispatch_flow.py` and `tests/test_dispatch_registry.py`.
-- ApprovalQuestion: Build discovered work outside the sealed boundary for
+- ApprovalQuestion: The `architect-build` stage discovered work outside the sealed boundary for
   T-003. Reply with `1` to approve only the described temporary
-  cross-boundary change, or `2` to reject it and stop Build.
+  cross-boundary change, or `2` to reject it and stop the `architect-build` stage.
 - Option1: Approve only the described temporary cross-boundary change for
   T-003.
-- Option2: Reject the temporary cross-boundary change and stop Build for new
-  Design/Propose guidance.
+- Option2: Reject the temporary cross-boundary change and stop the `architect-build` stage for new
+  `architect-design` / `architect-propose` guidance.
 - TemporaryOverrideScope: The smallest explicitly described path, symbol, and
   operation outside the sealed T-003 boundary.
 

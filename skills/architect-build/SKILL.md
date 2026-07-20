@@ -5,7 +5,7 @@ description: "Manual-only skill. Use only when the user explicitly invokes the a
 
 # Architect Build
 
-Use this skill only as a manually selected implementation stage. Its job is to
+Use this skill only as the manually selected `architect-build` stage. Its job is to
 execute the sealed plan from start to finish and keep execution state and logs
 truthfully aligned with actual progress. It does not redesign the plan,
 question the stored solution, or invoke sibling skills automatically. It is
@@ -33,17 +33,20 @@ architect-propose -> architect-build`.
 - Do not silently skip a required status update or log update.
 - Do not claim progress, completion, or task-declared execution result that did
   not actually happen.
-- Do not reinterpret execution friction as a reason to redesign during Build.
+- Do not reinterpret execution friction as a reason to redesign during the
+  `architect-build` stage.
 
 ## Core Outcome
 
-Execute the stored package as one engineering run, not as a new design pass:
+Execute the stored package as one engineering run, not as a new
+`architect-design` pass:
 
 - load the sealed plan, full task sequence, current state, and current log;
 - execute all recorded tasks in order until the stored plan is fully run;
 - perform only the work allowed by each `T-xxx` task and its cited `D-xxx`
   units;
-- proactively restate the core design context needed by the current tasks when
+- proactively restate the core `architect-design` context needed by the current
+  tasks when
   the live context has been compressed or diluted;
 - escalate real cross-boundary execution needs to the user immediately instead
   of silently expanding the task scope;
@@ -84,8 +87,8 @@ manual `architect-build` invocation:
 4. If the recorded task boundary proves insufficient for the real work, stop
    and ask the user the recorded approval question with numbered options `1`
    and `2`. Option `1` approves only the described temporary cross-boundary
-   scope. Option `2` rejects the change and leaves Build stopped. Do not cross
-   the boundary unless the user chooses `1`.
+   scope. Option `2` rejects the change and leaves the `architect-build` stage
+   stopped. Do not cross the boundary unless the user chooses `1`.
 5. Immediately update task state when the task meaningfully changes status:
    started, in progress, or completed.
 6. Immediately append log entries that record actual actions taken, affected
@@ -101,6 +104,7 @@ Finish only after the full recorded task sequence has been executed, every
 required task-declared execution result has been recorded truthfully, and the
 state and log accurately reflect what actually happened across the entire run.
 The final report must distinguish completed evidence from remaining risk,
-without reopening design judgment during Build. Any temporary cross-boundary
-approval must be reported as explicit user-approved scope rather than as if it
-were part of the original sealed boundary.
+without reopening `architect-design` judgment during the `architect-build`
+stage. Any temporary cross-boundary approval must be reported as explicit
+user-approved scope rather than as if it were part of the original sealed
+boundary.

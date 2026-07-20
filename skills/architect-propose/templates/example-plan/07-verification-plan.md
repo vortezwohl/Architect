@@ -18,4 +18,4 @@
 - This plan preserves the existing external contract and does not require a
   migration step.
 - No concurrency design change is approved in this bundle.
-- Build executes one ordered implementation path from T-001 through T-003.
+- The `architect-build` stage executes one ordered implementation path from T-001 through T-003.

@@ -27,8 +27,8 @@
 - No plugin framework, reflection loader, or dynamic registration side channel.
 
 ## BoundaryAuditFindings
-- Build can identify every touched production and test path without guessing.
-- Build must preserve the public request payload and response envelopes while
+- The `architect-build` stage can identify every touched production and test path without guessing.
+- The `architect-build` stage must preserve the public request payload and response envelopes while
   changing only the internal dispatch path.
 - The only plausible over-boundary risk is an unexpected helper or fixture
   dependency outside the recorded task paths.

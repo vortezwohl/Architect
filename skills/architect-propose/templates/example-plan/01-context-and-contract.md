@@ -13,7 +13,7 @@
 - Handler selection rules are duplicated across multiple conditional branches.
 - Existing callers already depend on the current request payload shape and the
   current error envelope shape.
-- The approved design bundle requires one future Build run to execute multiple
+- The approved design bundle requires one future `architect-build` run to execute multiple
   ordered tasks, not one isolated patch.
 
 ## ApprovedInputLimits
@@ -36,6 +36,6 @@
 - None approved in this design bundle.
 
 ## ExecutionConstraints
-- Build must execute tasks in recorded order.
-- Build must not redesign the dispatch approach during implementation.
-- Build must update task state and execution log truthfully as work progresses.
+- The `architect-build` stage must execute tasks in recorded order.
+- The `architect-build` stage must not redesign the dispatch approach during implementation.
+- The `architect-build` stage must update task state and execution log truthfully as work progresses.
