@@ -75,7 +75,7 @@ def table_rows(content: str, heading: str) -> list[list[str]]:
         if not collecting or not line.startswith("|"):
             continue
         cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if not cells or cells[0] in {"DesignId", "SubdesignId", "TaskId", "---"}:
+        if not cells or cells[0] in {"Design ID", "Source Design ID", "Task ID", "---"}:
             continue
         if set(cells[0]) == {"-"}:
             continue
@@ -147,13 +147,13 @@ def validate_package(package_root: Path) -> list[str]:
         try:
             metadata = parse_metadata(path)
             if metadata.document_type != document_type:
-                errors.append(f"Invalid DocumentType in {filename}")
+                errors.append(f"Invalid Document Type in {filename}")
             if metadata.document_id != document_id:
-                errors.append(f"Invalid DocumentId in {filename}")
+                errors.append(f"Invalid Document ID in {filename}")
             if metadata.plan_name != manifest.plan_name:
-                errors.append(f"PlanName mismatch in {filename}")
+                errors.append(f"Plan Name mismatch in {filename}")
             if metadata.document_language != manifest.document_language:
-                errors.append(f"DocumentLanguage mismatch in {filename}")
+                errors.append(f"Document Language mismatch in {filename}")
             if path.name != "08-execution-log.md" and find_placeholders(path):
                 errors.append(f"Unresolved placeholders in {filename}")
         except PlanProtocolError as error:
@@ -162,11 +162,11 @@ def validate_package(package_root: Path) -> list[str]:
     impact_path = package_root / "04-impact-and-boundaries.md"
     if impact_path.is_file():
         impact_headings = (
-            "## FunctionalBoundary",
-            "## ProtectedRelatedFunctionality",
-            "## CodeImpactScope",
-            "## ImpactScopeAuditFindings",
-            "## FunctionalBoundaryEscalationReadiness",
+            "## Functional Boundary",
+            "## Protected Functionality",
+            "## Code Impact Scope",
+            "## Impact Scope Audit Findings",
+            "## Functional Boundary Conflict Readiness",
         )
         errors.extend(
             validate_required_headings(
@@ -195,9 +195,9 @@ def validate_package(package_root: Path) -> list[str]:
         return errors + [str(error)]
     approved_bundle_fields = section_fields(
         design_catalog,
-        "## ApprovedDesignBundle",
+        "## Approved Design Bundle",
     )
-    required_bundle_fields = ("DesignIds", "ApprovalEvidence", "BundleDigest")
+    required_bundle_fields = ("Design IDs", "Approval Evidence", "Bundle Digest")
     missing_bundle_fields = [
         field_name
         for field_name in required_bundle_fields
@@ -205,12 +205,12 @@ def validate_package(package_root: Path) -> list[str]:
     ]
     if missing_bundle_fields:
         errors.append(
-            "ApprovedDesignBundle is missing required fields: "
+            "Approved Design Bundle is missing required fields: "
             f"{', '.join(missing_bundle_fields)}",
         )
     declared_design_ids = {
         item.strip()
-        for item in approved_bundle_fields.get("DesignIds", "").split(",")
+        for item in approved_bundle_fields.get("Design IDs", "").split(",")
         if item.strip()
     }
     invalid_declared_design_ids = {
@@ -220,7 +220,7 @@ def validate_package(package_root: Path) -> list[str]:
     }
     if invalid_declared_design_ids:
         errors.append(
-            "ApprovedDesignBundle contains invalid DesignIds: "
+            "Approved Design Bundle contains invalid Design IDs: "
             f"{', '.join(sorted(invalid_declared_design_ids))}",
         )
     design_catalog_rows = {
@@ -249,7 +249,7 @@ def validate_package(package_root: Path) -> list[str]:
             if metadata.document_type != "Design" or metadata.document_id != design_id:
                 errors.append(f"Design metadata mismatch: {path.name}")
             if metadata.plan_name != manifest.plan_name:
-                errors.append(f"PlanName mismatch: {path.name}")
+                errors.append(f"Plan Name mismatch: {path.name}")
             if find_placeholders(path):
                 errors.append(f"Unresolved placeholders in {path.name}")
             errors.extend(
@@ -258,18 +258,18 @@ def validate_package(package_root: Path) -> list[str]:
                     (
                         "## Concept",
                         "## Intent",
-                        "## StableCoreAndVariation",
-                        "## RepositoryEvidence",
-                        "## CompatibilityBoundary",
-                        "## PatternDecision",
-                        "## ExternalEvidenceDecision",
+                        "## Stable Core and Variation",
+                        "## Repository Evidence",
+                        "## Compatibility Boundary",
+                        "## Pattern Decision",
+                        "## External Evidence Decision",
                         "## Rationale",
                         "## Alternatives",
-                        "## FunctionalBoundary",
-                        "## CodeImpactScope",
-                        "## VerificationSeams",
+                        "## Functional Boundary",
+                        "## Code Impact Scope",
+                        "## Verification Seams",
                         "## Counterexamples",
-                        "## AntiPatterns",
+                        "## Anti-Patterns",
                         "### MUST DO",
                         "### MUST NOT DO",
                     ),
@@ -293,7 +293,7 @@ def validate_package(package_root: Path) -> list[str]:
             elif catalog_row[1] != path.relative_to(package_root).as_posix():
                 errors.append(f"Design catalog path mismatch for {design_id}")
             elif not catalog_row[3].strip():
-                errors.append(f"Design catalog is missing DesignDigest for {design_id}")
+                errors.append(f"Design catalog is missing Design Digest for {design_id}")
             if design_id not in design_catalog or path.relative_to(package_root).as_posix() not in design_catalog:
                 errors.append(f"Design catalog does not reference {path.name}")
         except PlanProtocolError as error:
@@ -317,12 +317,12 @@ def validate_package(package_root: Path) -> list[str]:
         extra_in_bundle = declared_design_ids - design_ids
         if missing_from_bundle:
             errors.append(
-                "ApprovedDesignBundle DesignIds are missing design documents for: "
+                "Approved Design Bundle Design IDs are missing design documents for: "
                 f"{', '.join(sorted(missing_from_bundle))}",
             )
         if extra_in_bundle:
             errors.append(
-                "ApprovedDesignBundle DesignIds reference unknown designs: "
+                "Approved Design Bundle Design IDs reference unknown designs: "
                 f"{', '.join(sorted(extra_in_bundle))}",
             )
 
@@ -338,24 +338,24 @@ def validate_package(package_root: Path) -> list[str]:
             if metadata.document_type != "Task" or metadata.document_id != task_id:
                 errors.append(f"Task metadata mismatch: {path.name}")
             if metadata.plan_name != manifest.plan_name:
-                errors.append(f"PlanName mismatch: {path.name}")
+                errors.append(f"Plan Name mismatch: {path.name}")
             if find_placeholders(path):
                 errors.append(f"Unresolved placeholders in {path.name}")
             errors.extend(
                 validate_required_headings(
                     path,
                     (
-                        "## DesignSources",
+                        "## Design Sources",
                         "## Preconditions",
-                        "## FunctionalBoundary",
-                        "## CodeImpactScope",
-                        "## ImpactScopeAdaptationRules",
+                        "## Functional Boundary",
+                        "## Code Impact Scope",
+                        "## Impact Scope Expansion Procedure",
                         "## MUST DO",
                         "## MUST NOT DO",
-                        "## AtomicSteps",
-                        "## FunctionalBoundaryEscalation",
-                        "## TaskDeclaredExecutionResults",
-                        "## CompletionCondition",
+                        "## Atomic Steps",
+                        "## Functional Boundary Conflict Protocol",
+                        "## Required Verification Evidence",
+                        "## Completion Criteria",
                     ),
                 ),
             )
@@ -371,11 +371,11 @@ def validate_package(package_root: Path) -> list[str]:
                         f"Task rule does not belong to {task_id} in {path.name}: {rule_id}",
                     )
             references: set[str] = set()
-            if not re.search(r"^- SubdesignRefs: D-\d{3}(?:, D-\d{3})*$", content, re.MULTILINE):
-                errors.append(f"Invalid SubdesignRefs in {path.name}")
+            if not re.search(r"^- Source Design References: D-\d{3}(?:, D-\d{3})*$", content, re.MULTILINE):
+                errors.append(f"Invalid Source Design References in {path.name}")
             else:
                 design_reference_line = re.search(
-                    r"^- SubdesignRefs: (.+)$",
+                    r"^- Source Design References: (.+)$",
                     content,
                     re.MULTILINE,
                 )
@@ -391,12 +391,12 @@ def validate_package(package_root: Path) -> list[str]:
                             f"{', '.join(sorted(unknown_designs))}",
                         )
             rule_reference_line = re.search(
-                r"^- RuleRefs: (.+)$",
+                r"^- Design Rule References: (.+)$",
                 content,
                 re.MULTILINE,
             )
             if not rule_reference_line:
-                errors.append(f"Missing RuleRefs in {path.name}")
+                errors.append(f"Missing Design Rule References in {path.name}")
             else:
                 rule_references = {
                     item.strip()
@@ -415,16 +415,16 @@ def validate_package(package_root: Path) -> list[str]:
                 }
                 if unrelated_rules:
                     errors.append(
-                        f"Task references rules outside SubdesignRefs in {path.name}: "
+                        f"Task references rules outside Source Design References in {path.name}: "
                         f"{', '.join(sorted(unrelated_rules))}",
                     )
-            functional_boundary_fields = section_fields(content, "## FunctionalBoundary")
+            functional_boundary_fields = section_fields(content, "## Functional Boundary")
             required_functional_boundary_fields = (
-                "TargetFunctionality",
-                "ProtectedRelatedFunctionality",
-                "ExplicitNonGoals",
-                "CompatibilityObligations",
-                "HardStopCondition",
+                "Requested Functionality",
+                "Protected Functionality",
+                "Explicit Non-Goals",
+                "Compatibility Guarantees",
+                "Mandatory Stop Condition",
             )
             missing_functional_boundary_fields = [
                 field_name
@@ -433,17 +433,17 @@ def validate_package(package_root: Path) -> list[str]:
             ]
             if missing_functional_boundary_fields:
                 errors.append(
-                    f"FunctionalBoundary is missing required fields in {path.name}: "
+                    f"Functional Boundary is missing required fields in {path.name}: "
                     f"{', '.join(missing_functional_boundary_fields)}",
                 )
-            impact_rows = table_rows(content, "## CodeImpactScope")
+            impact_rows = table_rows(content, "## Code Impact Scope")
             if not any(len(row) == 4 and all(cell.strip() for cell in row) for row in impact_rows):
-                errors.append(f"CodeImpactScope must contain one complete reference row in {path.name}")
-            adaptation_fields = section_fields(content, "## ImpactScopeAdaptationRules")
+                errors.append(f"Code Impact Scope must contain one complete reference row in {path.name}")
+            adaptation_fields = section_fields(content, "## Impact Scope Expansion Procedure")
             required_adaptation_fields = (
-                "CoverageIntent",
-                "AdaptiveExpansionRule",
-                "AssessmentAndLogRequirement",
+                "Initial Scope Rationale",
+                "Scope Expansion Decision Rule",
+                "Required Assessment and Record",
             )
             missing_adaptation_fields = [
                 field_name
@@ -452,17 +452,18 @@ def validate_package(package_root: Path) -> list[str]:
             ]
             if missing_adaptation_fields:
                 errors.append(
-                    f"ImpactScopeAdaptationRules is missing required fields in {path.name}: "
+                    f"Impact Scope Expansion Procedure is missing required fields in {path.name}: "
                     f"{', '.join(missing_adaptation_fields)}",
                 )
-            escalation_fields = section_fields(content, "## FunctionalBoundaryEscalation")
+            escalation_fields = section_fields(content, "## Functional Boundary Conflict Protocol")
             required_escalation_fields = (
-                "TriggerCondition",
-                "RequiredAnalysis",
-                "Recommendation",
-                "ApprovalQuestion",
-                "DecisionScope",
-                "RecordRequirement",
+                "Escalation Trigger",
+                "Required Conflict Analysis",
+                "Recommended Option",
+                "Recommendation Rationale",
+                "Decision Prompt",
+                "Decision Limit",
+                "Required Decision Record",
             )
             missing_escalation_fields = [
                 field_name
@@ -471,31 +472,31 @@ def validate_package(package_root: Path) -> list[str]:
             ]
             if missing_escalation_fields:
                 errors.append(
-                    f"FunctionalBoundaryEscalation is missing required fields in {path.name}: "
+                    f"Functional Boundary Conflict Protocol is missing required fields in {path.name}: "
                     f"{', '.join(missing_escalation_fields)}",
                 )
-            decision_rows = table_rows(content, "### DecisionOptions")
+            decision_rows = table_rows(content, "### Resolution Options")
             valid_decision_rows = [
                 row
                 for row in decision_rows
-                if len(row) == 5 and all(cell.strip() for cell in row) and row[0].isdigit()
+                if len(row) == 6 and all(cell.strip() for cell in row) and row[0].isdigit()
             ]
             option_numbers = [row[0] for row in valid_decision_rows]
             expected_numbers = [str(number) for number in range(1, len(option_numbers) + 1)]
             if len(option_numbers) < 2 or option_numbers != expected_numbers:
                 errors.append(
-                    f"DecisionOptions must contain at least two complete consecutively numbered paths in {path.name}",
+                    f"Resolution Options must contain at least two complete consecutively numbered paths in {path.name}",
                 )
-            approval_question = escalation_fields.get("ApprovalQuestion", "")
+            approval_question = escalation_fields.get("Decision Prompt", "")
             if option_numbers and any(f"`{number}`" not in approval_question for number in option_numbers):
                 errors.append(
-                    f"ApprovalQuestion must include every DecisionOptions number in {path.name}",
+                    f"Decision Prompt must include every Resolution Options number in {path.name}",
                 )
-            recommendation = escalation_fields.get("Recommendation", "")
-            recommended_numbers = re.findall(r"`(\d+)`", recommendation)
+            recommended_option = escalation_fields.get("Recommended Option", "")
+            recommended_numbers = re.findall(r"`(\d+)`", recommended_option)
             if len(recommended_numbers) != 1 or recommended_numbers[0] not in option_numbers:
                 errors.append(
-                    f"Recommendation must identify one available DecisionOptions number in {path.name}",
+                    f"Recommended Option must identify one available Resolution Options number in {path.name}",
                 )
             catalog_row = task_catalog_rows.get(task_id)
             if catalog_row is None:
@@ -507,24 +508,24 @@ def validate_package(package_root: Path) -> list[str]:
 
     try:
         state = load_state(package_root)
-        if state.get("PlanDigest") != compute_plan_digest(package_root):
-            errors.append("Execution state PlanDigest does not match immutable documents.")
-        tasks = state.get("Tasks")
+        if state.get("plan_digest") != compute_plan_digest(package_root):
+            errors.append("Execution state Plan Digest does not match immutable documents.")
+        tasks = state.get("tasks")
         if not isinstance(tasks, dict) or set(tasks) != task_ids:
             errors.append("Execution state Tasks do not exactly match task documents.")
-        if not isinstance(state.get("ImpactScopeAdaptations"), list):
-            errors.append("Execution state ImpactScopeAdaptations must be a list.")
-        if not isinstance(state.get("FunctionalBoundaryDecisions"), list):
-            errors.append("Execution state FunctionalBoundaryDecisions must be a list.")
+        if not isinstance(state.get("impact_scope_adaptations"), list):
+            errors.append("Execution state impact_scope_adaptations must be a list.")
+        if not isinstance(state.get("functional_boundary_decisions"), list):
+            errors.append("Execution state functional_boundary_decisions must be a list.")
     except PlanProtocolError as error:
         errors.append(str(error))
 
     manifest_content = read_utf8(manifest_path)
-    match = re.search(r"^- PlanDigest: ([0-9a-f]{64})$", manifest_content, re.MULTILINE)
+    match = re.search(r"^- Plan Digest: ([0-9a-f]{64})$", manifest_content, re.MULTILINE)
     if not match:
-        errors.append("PlanManifest must contain a sealed SHA-256 PlanDigest.")
+        errors.append("Plan Manifest must contain a sealed SHA-256 Plan Digest.")
     elif match.group(1) != compute_plan_digest(package_root):
-        errors.append("PlanManifest PlanDigest does not match immutable documents.")
+        errors.append("Plan Manifest Plan Digest does not match immutable documents.")
     return errors
 
 

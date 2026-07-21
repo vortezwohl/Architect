@@ -290,23 +290,23 @@ requests a different language.
 # Design: D-001-<slug>
 
 ## Concept
-- CanonicalName:
+- Canonical Name:
 - Category:
 - Reference:
 
 ## Intent
-## StableCoreAndVariation
-## RepositoryEvidence
-## CompatibilityBoundary
-## PatternDecision
-## ExternalEvidenceDecision
+## Stable Core and Variation
+## Repository Evidence
+## Compatibility Boundary
+## Pattern Decision
+## External Evidence Decision
 ## Rationale
 ## Alternatives
-## FunctionalBoundary
-## CodeImpactScope
-## VerificationSeams
+## Functional Boundary
+## Code Impact Scope
+## Verification Seams
 ## Counterexamples
-## AntiPatterns
+## Anti-Patterns
 ## Rules
 ### MUST DO
 ### MUST NOT DO
@@ -314,10 +314,10 @@ requests a different language.
 
 Rules must constrain implementation details, not merely desired outcomes.
 
-`FunctionalBoundary` must be complete enough that `architect-propose` can seal
-an unambiguous hard execution constraint. `CodeImpactScope` must cover known
+`Functional Boundary` must be complete enough that `architect-propose` can seal
+an unambiguous hard execution constraint. `Code Impact Scope` must cover known
 likely locations, but build may expand it only after cautious assessment,
-minimal design, and factual logging. `VerificationSeams` must prove the target
+minimal design, and factual logging. `Verification Seams` must prove the target
 functionality while protecting the recorded related functionality and non-goals.
 
 ## Completion Standard

@@ -1,16 +1,16 @@
 # Execution Result Plan
 
 ## Metadata
-- DocumentType: VerificationPlan
-- DocumentId: VERIFICATION
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Verification Plan
+- Document ID: VERIFICATION
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
-## TaskDeclaredExecutionResultMatrix
-| Category | Scenario | CommandOrProcedure | ExpectedRecordedResult | TaskIds |
+## Required Verification Evidence Matrix
+| Category | Scenario | Verification Procedure | Required Evidence | Task IDs |
 | --- | --- | --- | --- | --- |
-| {{AGENT:Category}} | {{AGENT:Scenario}} | {{AGENT:CommandOrProcedure}} | {{AGENT:ExpectedRecordedResult}} | {{AGENT:TaskIds}} |
+| {{AGENT:Category}} | {{AGENT:Scenario}} | {{AGENT:Verification Procedure}} | {{AGENT:Required Evidence}} | {{AGENT:Task IDs}} |
 
-## CompatibilityMigrationConcurrencyAndExecutionNotes
-{{AGENT:CompatibilityMigrationConcurrencyAndExecutionNotes}}
+## Compatibility, Migration, Concurrency, and Execution Notes
+{{AGENT:Compatibility, Migration, Concurrency, and Execution Notes}}

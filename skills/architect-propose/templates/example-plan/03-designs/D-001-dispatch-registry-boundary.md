@@ -1,14 +1,14 @@
 # Subdesign: D-001-dispatch-registry-boundary
 
 ## Metadata
-- DocumentType: Design
-- DocumentId: D-001
-- PlanName: reference-plan-example
-- CreatedAt: 2026-07-17:14:53:04.486
-- DocumentLanguage: en
+- Document Type: Design
+- Document ID: D-001
+- Plan Name: reference-plan-example
+- Created At: 2026-07-17:14:53:04.486
+- Document Language: en
 
 ## Concept
-- CanonicalName: Registry
+- Canonical Name: Registry
 - Category: Behavioral Coordination Boundary
 - Reference: A registry centralizes stable lookup rules while keeping concrete
   handler implementations independent from entry wiring.
@@ -17,20 +17,20 @@
 Create one stable dispatch-selection boundary so request entry code stops owning
 handler routing policy directly.
 
-## StableCoreAndVariation
+## Stable Core and Variation
 - Stable core: the request entry path delegates handler selection to one
   registry interface.
 - Variation: new handlers may be added by extending the registry mapping
   without rewriting the entry branch structure.
 
-## RepositoryEvidence
+## Repository Evidence
 - Current request entry logic owns both request parsing and dispatch selection.
 - Existing branching rules are duplicated in the entry path rather than
   isolated behind one inspectable boundary.
 - The current repository already treats handlers as separate business units, so
   the missing seam is selection ownership rather than handler implementation.
 
-## CompatibilityBoundary
+## Compatibility Boundary
 - Preserve the current external request contract and the currently supported
   dispatch outcomes.
 - Allow internal routing structure to change as long as caller-visible request
@@ -38,7 +38,7 @@ handler routing policy directly.
 - Do not add a runtime plugin mechanism or any new public extension surface in
   this plan.
 
-## PatternDecision
+## Pattern Decision
 - Decision: Reject GoF for the primary decision and record this subdesign as a
   direct architectural boundary.
 - Why: the repository needs one explicit ownership boundary for handler
@@ -47,7 +47,7 @@ handler routing policy directly.
   is selected at runtime by a caller-owned slot; Facade was rejected because
   the issue is not repeated subsystem choreography.
 
-## ExternalEvidenceDecision
+## External Evidence Decision
 - Considered evidence: registry-style coordination guidance, GoF comparison
   material, and framework examples that centralize dispatch ownership.
 - Accepted evidence: the external guidance that recommends one explicit lookup
@@ -70,7 +70,7 @@ or inspect dispatch behavior.
 - Introduce reflection-based auto-discovery: rejected because it adds implicit
   behavior and weakens boundary clarity for the `architect-build` stage.
 
-## FunctionalBoundary
+## Functional Boundary
 - Target functionality: move handler selection out of request entry code.
 - Protected related functionality: request parsing, handler business rules, and
   caller-visible request and error behavior remain unchanged.
@@ -78,13 +78,13 @@ or inspect dispatch behavior.
 - Hard-stop condition: stop if explicit registry selection requires changing a
   protected caller-visible behavior or non-goal.
 
-## CodeImpactScope
+## Code Impact Scope
 - Expected locations: the new registry module, request entry wiring, and
   focused dispatch tests.
 - The surface is a reference; build may add a helper or fixture only after an
   impact assessment confirms the functional boundary remains intact.
 
-## VerificationSeams
+## Verification Seams
 - Verify that request entry delegates selection through one registry boundary.
 - Verify that no duplicate branch-owned routing logic remains after the
   refactor.
@@ -95,7 +95,7 @@ or inspect dispatch behavior.
 - A single fixed handler with no branching need does not justify a registry.
 - Highly dynamic runtime plugin discovery would require a different design.
 
-## AntiPatterns
+## Anti-Patterns
 - Rebuilding conditional dispatch logic beside the registry.
 - Making the registry responsible for request mutation or business execution.
 - Hiding dispatch entries behind reflection or import side effects.

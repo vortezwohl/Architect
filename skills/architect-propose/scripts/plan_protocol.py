@@ -19,16 +19,19 @@ from typing import Iterable
 PLAN_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 DOCUMENT_ID_PATTERN = re.compile(r"^(?:PLAN|CONTEXT|DESIGN-CATALOG|IMPACT|TASK-CATALOG|VERIFICATION|EXECUTION-LOG|D-\d{3}|T-\d{3})$")
 PLACEHOLDER_PATTERN = re.compile(r"\{\{(?:AGENT|GENERATED|RULE):[^}]+}}")
-FIELD_PATTERN = re.compile(r"^- ([A-Za-z][A-Za-z0-9]*): (.+)$", re.MULTILINE)
+FIELD_PATTERN = re.compile(
+    r"^- ([A-Za-z][A-Za-z0-9]*(?: [A-Za-z][A-Za-z0-9]*)*): (.+)$",
+    re.MULTILINE,
+)
 SUSPICIOUS_TEXT_MARKERS = ("\ufffd", "????", "鈥", "锟", "蹇")
 ROOT_DOCUMENTS = {
-    "00-plan-manifest.md": ("PlanManifest", "PLAN"),
-    "01-context-and-contract.md": ("ContextAndContract", "CONTEXT"),
-    "02-design-catalog.md": ("DesignCatalog", "DESIGN-CATALOG"),
-    "04-impact-and-boundaries.md": ("ImpactAndBoundaries", "IMPACT"),
-    "05-task-catalog.md": ("TaskCatalog", "TASK-CATALOG"),
-    "07-verification-plan.md": ("VerificationPlan", "VERIFICATION"),
-    "08-execution-log.md": ("ExecutionLog", "EXECUTION-LOG"),
+    "00-plan-manifest.md": ("Plan Manifest", "PLAN"),
+    "01-context-and-contract.md": ("Context and Contract", "CONTEXT"),
+    "02-design-catalog.md": ("Design Catalog", "DESIGN-CATALOG"),
+    "04-impact-and-boundaries.md": ("Impact and Boundaries", "IMPACT"),
+    "05-task-catalog.md": ("Task Catalog", "TASK-CATALOG"),
+    "07-verification-plan.md": ("Verification Plan", "VERIFICATION"),
+    "08-execution-log.md": ("Execution Log", "EXECUTION-LOG"),
 }
 
 
@@ -77,7 +80,7 @@ def validate_plan_name(plan_name: str) -> None:
 
     if not PLAN_NAME_PATTERN.fullmatch(plan_name):
         raise PlanProtocolError(
-            "PlanName must use lower-case kebab-case letters, numbers, and hyphens.",
+            "Plan Name must use lower-case kebab-case letters, numbers, and hyphens.",
         )
 
 
@@ -165,32 +168,32 @@ def parse_metadata(path: Path) -> DocumentMetadata:
         for key, value in FIELD_PATTERN.findall(read_utf8(path))
     }
     required_fields = (
-        "DocumentType",
-        "DocumentId",
-        "PlanName",
-        "CreatedAt",
-        "DocumentLanguage",
+        "Document Type",
+        "Document ID",
+        "Plan Name",
+        "Created At",
+        "Document Language",
     )
     missing = [field_name for field_name in required_fields if field_name not in fields]
     if missing:
         raise PlanProtocolError(f"Missing metadata fields in {path}: {', '.join(missing)}")
-    if not DOCUMENT_ID_PATTERN.fullmatch(fields["DocumentId"]):
-        raise PlanProtocolError(f"Invalid DocumentId in {path}: {fields['DocumentId']}")
+    if not DOCUMENT_ID_PATTERN.fullmatch(fields["Document ID"]):
+        raise PlanProtocolError(f"Invalid Document ID in {path}: {fields['Document ID']}")
     try:
-        datetime.strptime(fields["CreatedAt"], "%Y-%m-%d:%H:%M:%S.%f")
+        datetime.strptime(fields["Created At"], "%Y-%m-%d:%H:%M:%S.%f")
     except ValueError as error:
         raise PlanProtocolError(
-            f"CreatedAt must use YYYY-MM-DD:hh:mm:ss.sss in {path}",
+            f"Created At must use YYYY-MM-DD:hh:mm:ss.sss in {path}",
         ) from error
-    validate_plan_name(fields["PlanName"])
-    if not fields["DocumentLanguage"].strip():
-        raise PlanProtocolError(f"DocumentLanguage must not be empty in {path}")
+    validate_plan_name(fields["Plan Name"])
+    if not fields["Document Language"].strip():
+        raise PlanProtocolError(f"Document Language must not be empty in {path}")
     return DocumentMetadata(
-        document_type=fields["DocumentType"],
-        document_id=fields["DocumentId"],
-        plan_name=fields["PlanName"],
-        created_at=fields["CreatedAt"],
-        document_language=fields["DocumentLanguage"],
+        document_type=fields["Document Type"],
+        document_id=fields["Document ID"],
+        plan_name=fields["Plan Name"],
+        created_at=fields["Created At"],
+        document_language=fields["Document Language"],
     )
 
 
@@ -247,8 +250,8 @@ def compute_plan_digest(package_root: Path) -> str:
         content = read_utf8(path)
         if path.name == "00-plan-manifest.md":
             content = re.sub(
-                r"^- PlanDigest: .+$",
-                "- PlanDigest: {{GENERATED:PlanDigest}}",
+                r"^- Plan Digest: .+$",
+                "- Plan Digest: {{GENERATED:Plan Digest}}",
                 content,
                 flags=re.MULTILINE,
             )

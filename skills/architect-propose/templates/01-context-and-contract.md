@@ -1,33 +1,33 @@
 # Context and Contract
 
 ## Metadata
-- DocumentType: ContextAndContract
-- DocumentId: CONTEXT
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Context and Contract
+- Document ID: CONTEXT
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
-## ObservedFacts
-{{AGENT:ObservedFacts}}
+## Observed Facts
+{{AGENT:Observed Facts}}
 
-## ApprovedInputLimits
-{{AGENT:ApprovedInputLimits}}
+## Approved Input Limits
+{{AGENT:Approved Input Limits}}
 
-## CompatibilityIntent
-{{AGENT:CompatibilityIntent}}
+## Compatibility Intent
+{{AGENT:Compatibility Intent}}
 
-## FunctionalBoundary
-- TargetFunctionality: {{AGENT:TargetFunctionality}}
-- ProtectedRelatedFunctionality: {{AGENT:ProtectedRelatedFunctionality}}
-- ExplicitNonGoals: {{AGENT:ExplicitNonGoals}}
-- CompatibilityObligations: {{AGENT:CompatibilityObligations}}
-- HardStopCondition: {{AGENT:HardStopCondition}}
+## Functional Boundary
+- Requested Functionality: {{AGENT:Requested Functionality}}
+- Protected Functionality: {{AGENT:Protected Functionality}}
+- Explicit Non-Goals: {{AGENT:Explicit Non-Goals}}
+- Compatibility Guarantees: {{AGENT:Compatibility Guarantees}}
+- Mandatory Stop Condition: {{AGENT:Mandatory Stop Condition}}
 
-## PreservedContracts
-{{AGENT:PreservedContracts}}
+## Preserved Contracts
+{{AGENT:Preserved Contracts}}
 
-## ExplicitlyBreakableContracts
-{{AGENT:ExplicitlyBreakableContracts}}
+## Explicitly Permitted Contract Changes
+{{AGENT:Explicitly Permitted Contract Changes}}
 
-## ExecutionConstraints
-{{AGENT:ExecutionConstraints}}
+## Execution Constraints
+{{AGENT:Execution Constraints}}

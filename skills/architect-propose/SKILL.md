@@ -168,11 +168,11 @@ artifacts, not infer missing state from memory.
 
 Every `03-designs/D-xxx-<slug>.md` document must preserve the approved design
 contract exactly. Each design document must contain the fixed headings
-`Concept`, `Intent`, `StableCoreAndVariation`, `RepositoryEvidence`,
-`CompatibilityBoundary`, `PatternDecision`, `ExternalEvidenceDecision`,
-`Rationale`, `Alternatives`, `FunctionalBoundary`, `CodeImpactScope`,
-`VerificationSeams`,
-`Counterexamples`, `AntiPatterns`, and `Rules` with both `MUST DO` and
+`Concept`, `Intent`, `Stable Core and Variation`, `Repository Evidence`,
+`Compatibility Boundary`, `Pattern Decision`, `External Evidence Decision`,
+`Rationale`, `Alternatives`, `Functional Boundary`, `Code Impact Scope`,
+`Verification Seams`,
+`Counterexamples`, `Anti-Patterns`, and `Rules` with both `MUST DO` and
 `MUST NOT DO` subsections. Populate those script-created placeholders from the
 approved design bundle without inventing new structure or omitting approved
 fields.

@@ -88,23 +88,23 @@ def add_document(package: Path, kind: str, slug: str) -> Path:
     content = replace_generated_fields(
         template.read_text(encoding="utf-8"),
         {
-            "DocumentId": document_id,
+            "Document ID": document_id,
             "Slug": slug,
-            "PlanName": settings.plan_name,
-            "CreatedAt": settings.created_at,
-            "DocumentLanguage": settings.document_language,
+            "Plan Name": settings.plan_name,
+            "Created At": settings.created_at,
+            "Document Language": settings.document_language,
         },
     )
     write_utf8(target, content)
 
     if kind == "task":
         state = load_state(package)
-        tasks = state.setdefault("Tasks", {})
+        tasks = state.setdefault("tasks", {})
         if not isinstance(tasks, dict):
             raise PlanProtocolError("Execution state Tasks must be an object.")
         tasks[document_id] = {
-            "State": "pending",
-            "RecordedExecutionResults": [],
+            "state": "pending",
+            "recorded_execution_results": [],
         }
         write_state(package, state)
     return target
@@ -192,7 +192,7 @@ def seal_plan(package: Path) -> str:
             tokens = [
                 token
                 for token in tokens
-                if token != "{{GENERATED:PlanDigest}}"
+                if token != "{{GENERATED:Plan Digest}}"
             ]
         if tokens:
             unresolved[path] = tokens
@@ -207,14 +207,14 @@ def seal_plan(package: Path) -> str:
     manifest_path = package / "00-plan-manifest.md"
     manifest = read_utf8(manifest_path)
     manifest = re.sub(
-        r"^- PlanDigest: .+$",
-        f"- PlanDigest: {digest}",
+        r"^- Plan Digest: .+$",
+        f"- Plan Digest: {digest}",
         manifest,
         flags=re.MULTILINE,
     )
     write_utf8(manifest_path, manifest)
     state = load_state(package)
-    state["PlanDigest"] = digest
+    state["plan_digest"] = digest
     write_state(package, state)
     return digest
 

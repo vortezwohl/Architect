@@ -1,18 +1,18 @@
 # Design Catalog
 
 ## Metadata
-- DocumentType: DesignCatalog
-- DocumentId: DESIGN-CATALOG
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Design Catalog
+- Document ID: DESIGN-CATALOG
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
-## ApprovedDesignBundle
-- DesignIds: {{AGENT:DesignIds}}
-- ApprovalEvidence: {{AGENT:ApprovalEvidence}}
-- BundleDigest: {{AGENT:BundleDigest}}
+## Approved Design Bundle
+- Design IDs: {{AGENT:Design IDs}}
+- Approval Evidence: {{AGENT:Approval Evidence}}
+- Bundle Digest: {{AGENT:Bundle Digest}}
 
 ## Designs
-| DesignId | Path | CanonicalConcept | DesignDigest |
+| Design ID | Path | Canonical Concept | Design Digest |
 | --- | --- | --- | --- |
-| {{AGENT:DesignId}} | {{AGENT:Path}} | {{AGENT:CanonicalConcept}} | {{AGENT:DesignDigest}} |
+| {{AGENT:Design ID}} | {{AGENT:Path}} | {{AGENT:Canonical Concept}} | {{AGENT:Design Digest}} |

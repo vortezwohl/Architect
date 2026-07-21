@@ -1,34 +1,34 @@
-# Subdesign: {{GENERATED:DocumentId}}-{{GENERATED:Slug}}
+# Subdesign: {{GENERATED:Document ID}}-{{GENERATED:Slug}}
 
 ## Metadata
-- DocumentType: Design
-- DocumentId: {{GENERATED:DocumentId}}
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Design
+- Document ID: {{GENERATED:Document ID}}
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
 ## Concept
-- CanonicalName: {{AGENT:CanonicalName}}
+- Canonical Name: {{AGENT:Canonical Name}}
 - Category: {{AGENT:Category}}
 - Reference: {{AGENT:Reference}}
 
 ## Intent
 {{AGENT:Intent}}
 
-## StableCoreAndVariation
-{{AGENT:StableCoreAndVariation}}
+## Stable Core and Variation
+{{AGENT:Stable Core and Variation}}
 
-## RepositoryEvidence
-{{AGENT:RepositoryEvidence}}
+## Repository Evidence
+{{AGENT:Repository Evidence}}
 
-## CompatibilityBoundary
-{{AGENT:CompatibilityBoundary}}
+## Compatibility Boundary
+{{AGENT:Compatibility Boundary}}
 
-## PatternDecision
-{{AGENT:PatternDecision}}
+## Pattern Decision
+{{AGENT:Pattern Decision}}
 
-## ExternalEvidenceDecision
-{{AGENT:ExternalEvidenceDecision}}
+## External Evidence Decision
+{{AGENT:External Evidence Decision}}
 
 ## Rationale
 {{AGENT:Rationale}}
@@ -36,20 +36,20 @@
 ## Alternatives
 {{AGENT:Alternatives}}
 
-## FunctionalBoundary
-{{AGENT:FunctionalBoundary}}
+## Functional Boundary
+{{AGENT:Functional Boundary}}
 
-## CodeImpactScope
-{{AGENT:CodeImpactScope}}
+## Code Impact Scope
+{{AGENT:Code Impact Scope}}
 
-## VerificationSeams
-{{AGENT:VerificationSeams}}
+## Verification Seams
+{{AGENT:Verification Seams}}
 
 ## Counterexamples
 {{AGENT:Counterexamples}}
 
-## AntiPatterns
-{{AGENT:AntiPatterns}}
+## Anti-Patterns
+{{AGENT:Anti-Patterns}}
 
 ## Rules
 

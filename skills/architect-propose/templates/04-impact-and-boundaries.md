@@ -1,30 +1,25 @@
 # Impact and Boundaries
 
 ## Metadata
-- DocumentType: ImpactAndBoundaries
-- DocumentId: IMPACT
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Impact and Boundaries
+- Document ID: IMPACT
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
-## ImpactMap
-| Path | SymbolOrContract | ChangeType | AffectedCallers | Evidence |
-| --- | --- | --- | --- | --- |
-| {{AGENT:Path}} | {{AGENT:SymbolOrContract}} | {{AGENT:ChangeType}} | {{AGENT:AffectedCallers}} | {{AGENT:Evidence}} |
+## Functional Boundary
+{{AGENT:Functional Boundary}}
 
-## FunctionalBoundary
-{{AGENT:FunctionalBoundary}}
+## Protected Functionality
+{{AGENT:Protected Functionality}}
 
-## ProtectedRelatedFunctionality
-{{AGENT:ProtectedRelatedFunctionality}}
-
-## CodeImpactScope
-| ExpectedPath | SymbolOrArea | ExpectedChange | EvidenceOrReason |
+## Code Impact Scope
+| Likely Code Location | Relevant Symbol or Area | Expected Work | Evidence or Rationale |
 | --- | --- | --- | --- |
-| {{AGENT:ExpectedPath}} | {{AGENT:SymbolOrArea}} | {{AGENT:ExpectedChange}} | {{AGENT:EvidenceOrReason}} |
+| {{AGENT:Likely Code Location}} | {{AGENT:Relevant Symbol or Area}} | {{AGENT:Expected Work}} | {{AGENT:Evidence or Rationale}} |
 
-## ImpactScopeAuditFindings
-{{AGENT:ImpactScopeAuditFindings}}
+## Impact Scope Audit Findings
+{{AGENT:Impact Scope Audit Findings}}
 
-## FunctionalBoundaryEscalationReadiness
-{{AGENT:FunctionalBoundaryEscalationReadiness}}
+## Functional Boundary Conflict Readiness
+{{AGENT:Functional Boundary Conflict Readiness}}

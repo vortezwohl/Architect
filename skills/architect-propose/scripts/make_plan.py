@@ -68,9 +68,9 @@ def create_plan(
     (package_root / "06-tasks").mkdir()
 
     replacements = {
-        "PlanName": allocated_name,
-        "CreatedAt": created_at,
-        "DocumentLanguage": document_language,
+        "Plan Name": allocated_name,
+        "Created At": created_at,
+        "Document Language": document_language,
     }
     for template_name in ROOT_TEMPLATE_FILES:
         content = (templates_root / template_name).read_text(encoding="utf-8")
@@ -82,11 +82,11 @@ def create_plan(
     write_state(
         package_root,
         {
-            "CurrentTask": None,
-            "PlanDigest": "",
-            "ImpactScopeAdaptations": [],
-            "FunctionalBoundaryDecisions": [],
-            "Tasks": {},
+            "current_task": None,
+            "plan_digest": "",
+            "impact_scope_adaptations": [],
+            "functional_boundary_decisions": [],
+            "tasks": {},
         },
     )
     return allocated_name, package_root

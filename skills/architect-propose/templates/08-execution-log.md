@@ -1,11 +1,11 @@
 # Execution Log
 
 ## Metadata
-- DocumentType: ExecutionLog
-- DocumentId: EXECUTION-LOG
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
+- Document Type: Execution Log
+- Document ID: EXECUTION-LOG
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
 
 This document is append-only. The `architect-build` stage records only observed
 execution, task-declared execution results, state transitions, impact-scope

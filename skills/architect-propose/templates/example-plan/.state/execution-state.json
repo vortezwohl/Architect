@@ -1,20 +1,20 @@
 {
-  "CurrentTask": null,
-  "FunctionalBoundaryDecisions": [],
-  "ImpactScopeAdaptations": [],
-  "PlanDigest": "e6a551fccbb1cc5171b22240c07860ce3cd7147fa37e956408bcd47ec0194c33",
-  "Tasks": {
+  "current_task": null,
+  "functional_boundary_decisions": [],
+  "impact_scope_adaptations": [],
+  "plan_digest": "d29b3083adabb7678c4294f3922d7f6031ca160b152162eb0df336b514c8d01e",
+  "tasks": {
     "T-001": {
-      "RecordedExecutionResults": [],
-      "State": "pending"
+      "recorded_execution_results": [],
+      "state": "pending"
     },
     "T-002": {
-      "RecordedExecutionResults": [],
-      "State": "pending"
+      "recorded_execution_results": [],
+      "state": "pending"
     },
     "T-003": {
-      "RecordedExecutionResults": [],
-      "State": "pending"
+      "recorded_execution_results": [],
+      "state": "pending"
     }
   }
 }

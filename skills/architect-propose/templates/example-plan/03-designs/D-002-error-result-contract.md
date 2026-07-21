@@ -1,14 +1,14 @@
 # Subdesign: D-002-error-result-contract
 
 ## Metadata
-- DocumentType: Design
-- DocumentId: D-002
-- PlanName: reference-plan-example
-- CreatedAt: 2026-07-17:14:53:04.486
-- DocumentLanguage: en
+- Document Type: Design
+- Document ID: D-002
+- Plan Name: reference-plan-example
+- Created At: 2026-07-17:14:53:04.486
+- Document Language: en
 
 ## Concept
-- CanonicalName: Error Contract
+- Canonical Name: Error Contract
 - Category: Interface Contract
 - Reference: Stable error contracts preserve caller expectations when internal
   execution boundaries are refactored.
@@ -17,12 +17,12 @@
 Freeze one explicit error-result contract so internal dispatch refactoring does
 not silently change caller-visible failure behavior.
 
-## StableCoreAndVariation
+## Stable Core and Variation
 - Stable core: the externally visible error envelope and meaning stay fixed.
 - Variation: internal code may normalize errors before returning the stable
   contract.
 
-## RepositoryEvidence
+## Repository Evidence
 - The repository already exposes a caller-visible error envelope that existing
   tests and callers depend on.
 - Internal refactoring will move dispatch control flow, which creates a real
@@ -30,14 +30,14 @@ not silently change caller-visible failure behavior.
 - Current failure handling is distributed enough that one explicit preservation
   rule is needed before the `architect-build` stage starts restructuring internals.
 
-## CompatibilityBoundary
+## Compatibility Boundary
 - Preserve the existing external error envelope for all current callers.
 - Allow internal normalization and error-routing changes as long as outward
   field names, meaning, and status mapping remain compatible.
 - Do not broaden this subdesign into a new exception taxonomy or transport
   redesign.
 
-## PatternDecision
+## Pattern Decision
 - Decision: Reject GoF for the primary decision and record this subdesign as an
   interface-contract preservation boundary.
 - Why: the repository needs an explicit compatibility rule for outward failure
@@ -46,7 +46,7 @@ not silently change caller-visible failure behavior.
   access; Template Method was rejected because the contract risk is envelope
   preservation, not fixed step sequencing.
 
-## ExternalEvidenceDecision
+## External Evidence Decision
 - Considered evidence: compatibility-preservation guidance, interface-contract
   examples, and error-normalization patterns from framework practice.
 - Accepted evidence: the external guidance that recommends freezing caller
@@ -68,7 +68,7 @@ internal control flow.
 - Collapse all failures into one generic exception output: rejected because it
   weakens compatibility for existing callers.
 
-## FunctionalBoundary
+## Functional Boundary
 - Target functionality: normalize internal handler failures before returning the
   existing external error envelope.
 - Protected related functionality: external field names, meanings, and status
@@ -78,13 +78,13 @@ internal control flow.
 - Hard-stop condition: stop if one normalization point cannot preserve the
   protected external error behavior.
 
-## CodeImpactScope
+## Code Impact Scope
 - Expected locations: request entry wiring, one error normalization module, and
   contract-focused tests.
 - The surface is a reference; build may adapt internal helper placement only
   after assessing and logging the preserved caller-visible behavior.
 
-## VerificationSeams
+## Verification Seams
 - Verify that the external error envelope shape remains unchanged for existing
   callers.
 - Verify that handler failures pass through one normalization point before
@@ -98,7 +98,7 @@ internal control flow.
 - Pure batch tooling with no stable caller-facing protocol may choose simpler
   failure reporting.
 
-## AntiPatterns
+## Anti-Patterns
 - Returning branch-specific error shapes from different handlers.
 - Allowing raw internal exceptions to leak through the external contract.
 - Changing field names or status mapping during the refactor.

@@ -100,7 +100,7 @@ Before asking for approval, teach the design instead of only presenting a conclu
   surface it may cautiously adapt, and the verification seam that must hold if
   `architect-build` later implements the design.
 
-When possible, map the teaching explanation directly onto the design-unit fields: `Intent`, `StableCoreAndVariation`, `RepositoryEvidence`, `CompatibilityBoundary`, `PatternDecision`, `ExternalEvidenceDecision`, `Rationale`, `Alternatives`, `VerificationSeams`, `Counterexamples`, `AntiPatterns`, and `Rules`.
+When possible, map the teaching explanation directly onto the design-unit fields: `Intent`, `Stable Core and Variation`, `Repository Evidence`, `Compatibility Boundary`, `Pattern Decision`, `External Evidence Decision`, `Rationale`, `Alternatives`, `Verification Seams`, `Counterexamples`, `Anti-Patterns`, and `Rules`.
 
 ## Gate 1: Design Approval
 

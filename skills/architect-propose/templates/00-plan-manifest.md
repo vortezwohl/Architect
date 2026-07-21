@@ -1,21 +1,21 @@
 # Plan Manifest
 
 ## Metadata
-- DocumentType: PlanManifest
-- DocumentId: PLAN
-- PlanName: {{GENERATED:PlanName}}
-- CreatedAt: {{GENERATED:CreatedAt}}
-- DocumentLanguage: {{GENERATED:DocumentLanguage}}
-- PlanDigest: {{GENERATED:PlanDigest}}
+- Document Type: Plan Manifest
+- Document ID: PLAN
+- Plan Name: {{GENERATED:Plan Name}}
+- Created At: {{GENERATED:Created At}}
+- Document Language: {{GENERATED:Document Language}}
+- Plan Digest: {{GENERATED:Plan Digest}}
 
 ## Objective
 {{AGENT:Objective}}
 
-## NonGoals
-{{AGENT:NonGoals}}
+## Non-Goals
+{{AGENT:Non-Goals}}
 
-## ApprovedDesignBundle
-{{AGENT:ApprovedDesignBundle}}
+## Approved Design Bundle
+{{AGENT:Approved Design Bundle}}
 
-## ArchitectBuildEntryConditions
-{{AGENT:ArchitectBuildEntryConditions}}
+## Architect Build Entry Conditions
+{{AGENT:Architect Build Entry Conditions}}
