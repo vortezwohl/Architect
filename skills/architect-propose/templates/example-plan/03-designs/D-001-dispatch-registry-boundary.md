@@ -70,10 +70,19 @@ or inspect dispatch behavior.
 - Introduce reflection-based auto-discovery: rejected because it adds implicit
   behavior and weakens boundary clarity for the `architect-build` stage.
 
-## DesignBoundaries
-- The registry owns only handler selection.
-- Request parsing and handler business logic stay outside the registry.
-- Registry extension is explicit and code-declared, not dynamic.
+## FunctionalBoundary
+- Target functionality: move handler selection out of request entry code.
+- Protected related functionality: request parsing, handler business rules, and
+  caller-visible request and error behavior remain unchanged.
+- Explicit non-goals: runtime plugins, reflection, and a public extension model.
+- Hard-stop condition: stop if explicit registry selection requires changing a
+  protected caller-visible behavior or non-goal.
+
+## CodeImpactScope
+- Expected locations: the new registry module, request entry wiring, and
+  focused dispatch tests.
+- The surface is a reference; build may add a helper or fixture only after an
+  impact assessment confirms the functional boundary remains intact.
 
 ## VerificationSeams
 - Verify that request entry delegates selection through one registry boundary.

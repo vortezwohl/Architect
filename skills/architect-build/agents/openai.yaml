@@ -1,4 +1,4 @@
 interface:
   display_name: "Architect Build"
-  short_description: "Manual-only: execute one sealed plan"
-  default_prompt: "Run only when the user explicitly invokes $architect-build. Execute the full sealed plan in order, continue through the recorded task sequence, restore required `architect-design` context when the live conversation drops it, and keep execution state and log strictly factual. Do not auto-invoke $architect-design or $architect-propose."
+  short_description: "Manual-only: execute one sealed functional plan"
+  default_prompt: "Run only when the user explicitly invokes $architect-build. Execute the sealed plan in order, preserve its hard functional boundary, and treat the recorded code impact scope as a cautious reference rather than a hard path limit. When the impact scope expands within the functional boundary, make and record the smallest justified execution-time design decision. Stop only when the functional boundary cannot be preserved, then present evidence, a recommendation, and numbered user choices. Keep state and log factual. Do not auto-invoke or reopen $architect-design or $architect-propose."

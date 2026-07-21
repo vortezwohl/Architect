@@ -42,6 +42,12 @@ one-way flow `architect-design -> architect-propose -> architect-build`.
   later test or preserve,
   such as an interface, lifecycle transition, error path, transaction edge,
   concurrency contract, ownership rule, or compatibility surface.
+- `functional boundary`: the approved target functionality, protected related
+  functionality, explicit non-goals, compatibility obligations, and hard-stop
+  condition that later execution must not autonomously change.
+- `code impact scope`: the expected paths, symbols, configuration, tests, and
+  callers likely to be affected. It is an execution reference rather than a
+  hard implementation limit.
 
 ## Manual Invocation Only
 
@@ -67,12 +73,13 @@ without guessing:
 - integrate GoF as an explicit decision framework rather than a loose appendix;
 - choose the best supported design, whether that best design uses one GoF
   pattern, multiple patterns, or rejects GoF patterns entirely;
-- define one or more explicit `D-xxx` subdesigns with boundaries,
+- define one or more explicit `D-xxx` subdesigns with functional boundaries,
+  code impact scopes,
   counterexamples, anti-patterns, rules, and verification seams;
-- make every approved boundary clear, explicit, and complete enough for the
-  `architect-propose` stage to package and for the `architect-build` stage to
-  execute without
-  guessing, silent inference, or missing edge details;
+- make every functional boundary clear and complete enough for the
+  `architect-propose` stage to seal and for the `architect-build` stage to
+  enforce, while making every code impact scope broad enough to guide
+  execution without pretending that it is a complete path-level prohibition;
 - obtain approval for the displayed design bundle under the default
   non-rejection rule defined by this skill.
 
@@ -86,8 +93,8 @@ without guessing:
   design bundle.
 - Do not continue while compatibility intent, design detail, or approval
   coverage remains unresolved.
-- Do not approve or present a design bundle as complete while any build-relevant
-  boundary is still ambiguous, implicit, contradictory, or obviously missing.
+- Do not approve or present a design bundle as complete while any functional
+  boundary is ambiguous, implicit, contradictory, or obviously missing.
 - Do not begin `source-article.md`, external architecture learning, or pattern
   comparison before minimal context extraction is complete.
 - Do not treat a vague feeling of familiarity with the repository as basic
@@ -191,10 +198,11 @@ competing alternatives.
 10. Ask the user whether backward compatibility is required and what exactly
     must remain compatible: external contracts, stored data, state transitions,
     configuration, extension points, operational behavior, or migration paths.
-    Do this before recommending the design.
-11. Define the compatibility boundary, evolution horizon, real variation,
-    stable core, collaborators, lifecycle, and likely failure mode from
-    evidence, not imagination.
+    At the same gate, confirm the target functionality, protected related
+    functionality, explicit non-goals, and the later build hard-stop condition.
+11. Define the compatibility boundary, functional boundary, code impact
+    surface, evolution horizon, real variation, stable core, collaborators,
+    lifecycle, and likely failure mode from evidence, not imagination.
 12. Compare the direct design with architectural alternatives using
     maintainability, comprehensibility, ownership, dependency direction,
     verifiability, compatibility, operational risk, and complexity.
@@ -208,13 +216,15 @@ competing alternatives.
 15. For every `D-xxx` subdesign, record the supporting concept or pattern,
     repository evidence, compatibility boundary, pattern decision, external
     evidence decision, reliable references, rejected direct design, rejected
-    neighboring patterns, counterexamples, anti-patterns, design boundaries,
-    verification seams, and design-level `MUST DO` / `MUST NOT DO` rules.
+    neighboring patterns, counterexamples, anti-patterns, functional boundary,
+    code impact scope, verification seams, and design-level `MUST DO` /
+    `MUST NOT DO` rules.
 16. Perform one explicit boundary-completeness pass before presenting the
-    bundle. Confirm that each approved subdesign clearly states what later
-    `architect-propose` or `architect-build` work may change, must preserve,
-    must not touch, and must verify, and that no obvious
-    `architect-build`-blocking boundary gap remains.
+    bundle. Confirm that each subdesign states target functionality, protected
+    related functionality, explicit non-goals, compatibility obligations, and
+    a hard-stop condition. Confirm that the code impact scope covers known
+    likely locations and uncertainties without treating unknown implementation
+    locations as a sealing failure.
 17. Present the complete design bundle. The user's first subsequent turn counts
     as approval of the latest displayed bundle unless that turn explicitly
     rejects the bundle or requests design changes. A direct user request to
@@ -243,8 +253,9 @@ Before asking for approval, explain for every non-trivial decision:
   was preserved;
 - which misuse, counterexample, or operational failure would make the concept a
   poor fit;
-- which exact boundaries later `architect-propose` or `architect-build` work
-  may change, must preserve, and must not cross without new approval;
+- which functionality later `architect-propose` or `architect-build` work must
+  change, must preserve, and must not autonomously cross; and which code impact
+  surface is expected but may be cautiously expanded during execution;
 - which verification seams the `architect-build` stage must later preserve.
 
 Do not cite the references mechanically. Convert them into reasoning that
@@ -291,7 +302,8 @@ requests a different language.
 ## ExternalEvidenceDecision
 ## Rationale
 ## Alternatives
-## DesignBoundaries
+## FunctionalBoundary
+## CodeImpactScope
 ## VerificationSeams
 ## Counterexamples
 ## AntiPatterns
@@ -302,12 +314,11 @@ requests a different language.
 
 Rules must constrain implementation details, not merely desired outcomes.
 
-`DesignBoundaries` and `VerificationSeams` must be concrete enough that the
-`architect-propose` stage can package a complete execution boundary and the
-`architect-build` stage can execute without guessing. If later packaging or
-execution work would still need to infer touched paths, preserved surfaces,
-forbidden changes, or likely approval-trigger edges, the design bundle is not
-complete yet.
+`FunctionalBoundary` must be complete enough that `architect-propose` can seal
+an unambiguous hard execution constraint. `CodeImpactScope` must cover known
+likely locations, but build may expand it only after cautious assessment,
+minimal design, and factual logging. `VerificationSeams` must prove the target
+functionality while protecting the recorded related functionality and non-goals.
 
 ## Completion Standard
 
@@ -319,6 +330,7 @@ design is the globally best supported option rather than merely the smallest
 one, how the full GoF comparison informed the decision, how external evidence
 was accepted or rejected, and see which one or more `D-xxx` subdesigns will
 later be recorded into one new independent plan by `architect-propose`.
-The design is not complete unless its boundaries are clear, explicit, and
-complete enough that `architect-propose` can finish packaging and
-`architect-build` can execute without boundary guesswork.
+The design is not complete unless its functional boundary is clear, explicit,
+and complete enough that `architect-propose` can seal it and
+`architect-build` can enforce it. The code impact scope must be evidence-
+based and broad, but it is not a hard path-level execution boundary.

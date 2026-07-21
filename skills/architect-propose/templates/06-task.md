@@ -15,13 +15,22 @@
 ## Preconditions
 {{AGENT:Preconditions}}
 
-## ExactChangeBoundary
-| Path | Symbol | Operation | AllowedImplementationDetail |
-| --- | --- | --- | --- |
-| {{AGENT:Path}} | {{AGENT:Symbol}} | {{AGENT:Operation}} | {{AGENT:AllowedImplementationDetail}} |
+## FunctionalBoundary
+- TargetFunctionality: {{AGENT:TargetFunctionality}}
+- ProtectedRelatedFunctionality: {{AGENT:ProtectedRelatedFunctionality}}
+- ExplicitNonGoals: {{AGENT:ExplicitNonGoals}}
+- CompatibilityObligations: {{AGENT:CompatibilityObligations}}
+- HardStopCondition: {{AGENT:HardStopCondition}}
 
-## ExplicitlyOutOfScope
-{{AGENT:ExplicitlyOutOfScope}}
+## CodeImpactScope
+| ExpectedPath | SymbolOrArea | ExpectedChange | EvidenceOrReason |
+| --- | --- | --- | --- |
+| {{AGENT:ExpectedPath}} | {{AGENT:SymbolOrArea}} | {{AGENT:ExpectedChange}} | {{AGENT:EvidenceOrReason}} |
+
+## ImpactScopeAdaptationRules
+- CoverageIntent: {{AGENT:CoverageIntent}}
+- AdaptiveExpansionRule: {{AGENT:AdaptiveExpansionRule}}
+- AssessmentAndLogRequirement: {{AGENT:AssessmentAndLogRequirement}}
 
 ## MUST DO
 - {{RULE:MUST_DO}}
@@ -32,18 +41,19 @@
 ## AtomicSteps
 1. {{AGENT:AtomicStep}}
 
-## ExecutionBoundaryRules
-- BoundaryCompleteness: {{AGENT:BoundaryCompleteness}}
-- BuildBlockingGapCheck: {{AGENT:BuildBlockingGapCheck}}
-- AdditionalRules: {{AGENT:AdditionalRules}}
-
-## CrossBoundaryEscalation
+## FunctionalBoundaryEscalation
 - TriggerCondition: {{AGENT:TriggerCondition}}
+- RequiredAnalysis: {{AGENT:RequiredAnalysis}}
+- Recommendation: {{AGENT:Recommendation}}
 - ApprovalQuestion: {{AGENT:ApprovalQuestion}}
-- Option1: {{AGENT:Option1}}
-- Option2: {{AGENT:Option2}}
-- Option3: {{AGENT:Option3}}
-- TemporaryOverrideScope: {{AGENT:TemporaryOverrideScope}}
+- DecisionScope: {{AGENT:DecisionScope}}
+- RecordRequirement: {{AGENT:RecordRequirement}}
+
+### DecisionOptions
+| Number | Path | FunctionalImpact | CompatibilityImpact | Verification |
+| --- | --- | --- | --- | --- |
+| {{AGENT:Number}} | {{AGENT:Path}} | {{AGENT:FunctionalImpact}} | {{AGENT:CompatibilityImpact}} | {{AGENT:Verification}} |
+| {{AGENT:Number}} | {{AGENT:Path}} | {{AGENT:FunctionalImpact}} | {{AGENT:CompatibilityImpact}} | {{AGENT:Verification}} |
 
 ## TaskDeclaredExecutionResults
 - CommandOrProcedure: {{AGENT:ExecutionResultCommandOrProcedure}}

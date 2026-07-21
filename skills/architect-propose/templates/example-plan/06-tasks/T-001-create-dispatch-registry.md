@@ -10,24 +10,33 @@
 ## DesignSources
 - SubdesignRefs: D-001
 - RuleRefs: R-D001-001, R-D001-002, R-D001-N001, R-D001-N002
-- ProhibitedNewConcepts: No plugin framework, no reflection-based discovery, no
+- ProhibitedNewConcepts: No plugin framework, reflection-based discovery, or
   duplicate branch-owned dispatch table.
 
 ## Preconditions
-- D-001 is approved and recorded in this plan.
-- No registry module exists yet.
-- The `architect-build` stage has not started modifying request entry wiring.
+- D-001 is approved and no registry module exists yet.
 
-## ExactChangeBoundary
-| Path | Symbol | Operation | AllowedImplementationDetail |
+## FunctionalBoundary
+- TargetFunctionality: Create one explicit registry that owns handler selection.
+- ProtectedRelatedFunctionality: Request parsing, handler business rules, and
+  public request and error behavior remain unchanged.
+- ExplicitNonGoals: Request entry rewiring, runtime plugins, and transport
+  changes are outside this task.
+- CompatibilityObligations: Existing callers observe no public behavior change.
+- HardStopCondition: Stop if registry creation requires changing protected
+  behavior or adding a prohibited runtime extension mechanism.
+
+## CodeImpactScope
+| ExpectedPath | SymbolOrArea | ExpectedChange | EvidenceOrReason |
 | --- | --- | --- | --- |
-| src/service/dispatch_registry.py | DispatchRegistry | create | Define one explicit registry type and its stable registration/lookup API. |
-| src/service/dispatch_registry.py | select_handler | create | Implement deterministic lookup without reflection or runtime discovery. |
+| src/service/dispatch_registry.py | DispatchRegistry | Add registry and lookup | D-001 assigns selection ownership here. |
 
-## ExplicitlyOutOfScope
-- Do not modify request entry wiring in this task.
-- Do not change handler business logic.
-- Do not change the public error envelope.
+## ImpactScopeAdaptationRules
+- CoverageIntent: Cover the new registry module and likely focused test helpers.
+- AdaptiveExpansionRule: Add a necessary helper or fixture only after confirming
+  it preserves the functional boundary and is the smallest viable choice.
+- AssessmentAndLogRequirement: Record the evidence, alternatives, affected
+  locations, and verification for every impact-scope adaptation.
 
 ## MUST DO
 - M-T001-001: Create one explicit registry module that owns handler selection.
@@ -38,45 +47,28 @@
 - N-T001-002: Do not duplicate registry decisions inside the old entry branch flow.
 
 ## AtomicSteps
-1. Create `src/service/dispatch_registry.py`.
-2. Define the registry data structure and explicit registration API.
-3. Define deterministic selection logic for the existing handler keys.
-4. Leave entry wiring unchanged so the next task can switch over cleanly.
+1. Create the registry data structure and deterministic selection logic.
+2. Keep request entry wiring unchanged until T-002.
 
-## ExecutionBoundaryRules
-- BoundaryCompleteness: The exact boundary fully covers the registry module and
-  deterministic lookup function required by this task.
-- BuildBlockingGapCheck: No unresolved path, symbol, or preserved-surface gap
-  remains for this task.
-- AdditionalRules: Only create the registry boundary described by D-001. If a
-  helper is needed, keep it inside the new registry module. Do not touch
-  transport-facing code in this task.
+## FunctionalBoundaryEscalation
+- TriggerCondition: No compliant minimal implementation can preserve the stated functional boundary.
+- RequiredAnalysis: Show attempted in-boundary designs, protected functionality, code impact scope evidence, and why each rejected alternative fails.
+- Recommendation: Select `3` because it is the best supported path for this conflict.
+- ApprovalQuestion: Reply with `1` to preserve protected behavior and stop this task, `2` to approve the described behavior change, or `3` to approve the compatibility path.
+- DecisionScope: Only the explicitly analyzed functional conflict and its minimum necessary implementation scope.
+- RecordRequirement: Record the selected path, rationale, actual affected code, and verification in execution state and log.
 
-## CrossBoundaryEscalation
-- TriggerCondition: A required implementation step would touch request entry
-  wiring, handler business logic, transport-facing code, or any path outside
-  `src/service/dispatch_registry.py`.
-- ApprovalQuestion: The `architect-build` stage discovered work outside the sealed boundary for
-  T-001. Reply with `1` to approve only the described temporary
-  cross-boundary change, `2` to reject it and stop the `architect-build`
-  stage, or `3` to approve all later truly necessary minimal cross-boundary
-  changes during the current `architect-build` invocation.
-- Option1: Approve only the described temporary cross-boundary change for
-  T-001.
-- Option2: Reject the temporary cross-boundary change and stop the `architect-build` stage for new
-  `architect-design` / `architect-propose` guidance.
-- Option3: Approve all later truly necessary minimal cross-boundary changes for
-  T-001 and later tasks during the current `architect-build` invocation, with
-  each actual overrun still described and logged factually when it occurs.
-- TemporaryOverrideScope: The smallest explicitly described path, symbol, and
-  operation outside the sealed T-001 boundary.
+### DecisionOptions
+| Number | Path | FunctionalImpact | CompatibilityImpact | Verification |
+| --- | --- | --- | --- | --- |
+| 1 | Preserve protected behavior and leave T-001 blocked. | Target functionality remains incomplete. | No public behavior change. | Confirm no implementation change was applied. |
+| 2 | Approve the described protected-behavior change. | Changes the protected request behavior. | Existing callers may observe the new behavior. | Verify the approved new request behavior. |
+| 3 | Add the smallest compatibility path that preserves both behaviors. | Completes target functionality without changing the protected behavior. | Existing callers retain the current behavior. | Verify both behavior paths and focused regressions. |
 
 ## TaskDeclaredExecutionResults
-- CommandOrProcedure: Inspect the created registry module and confirm that all
-  current dispatch keys map through one explicit registry structure.
-- ExpectedRecordedResult: The registry module exists, contains deterministic
-  lookup logic, and introduces no reflection-based discovery path.
+- CommandOrProcedure: Inspect registry selection and its focused checks.
+- ExpectedRecordedResult: Selection is explicit and deterministic without
+  reflection-based discovery.
 
 ## CompletionCondition
-The repository contains one explicit registry boundary for dispatch selection,
-and request entry code is still untouched.
+The registry owns handler selection while protected functionality is unchanged.

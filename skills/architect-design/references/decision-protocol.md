@@ -39,10 +39,16 @@ Maintain this protocol and all skill instructions in English. Use the user's cur
   preserve, such as an interface, lifecycle transition, error path,
   transaction edge, concurrency contract, ownership rule, or compatibility
   surface.
+- `functional boundary`: the approved target functionality, protected related
+  functionality, explicit non-goals, compatibility obligations, and hard-stop
+  condition that build may not autonomously change.
+- `code impact scope`: the known likely paths, symbols, configuration, tests,
+  and callers affected by the design. It guides cautious execution but is not a
+  hard path-level limit.
 - `independent plan`: one new future `.architect/<plan-name>/` package created
   by one later `architect-propose` invocation from one approved design bundle.
 
-## Gate 0: Compatibility Intent
+## Gate 0: Compatibility and Functional Boundary Intent
 
 After basic repository understanding is established and before any design recommendation that can affect behavior, contracts, data, configuration, integrations, or extension points, ask the user to choose:
 
@@ -50,7 +56,13 @@ After basic repository understanding is established and before any design recomm
 2. Allow intentional breaking changes for a better long-term design.
 3. Describe a custom compatibility boundary.
 
-Do not infer an answer from repository age, deployment status, silence, or task wording. Restate the answer as preserved behavior, intentionally breakable behavior, consumers, migration obligations, and rollback limits. Do not recommend the design before this boundary is explicit.
+Do not infer an answer from repository age, deployment status, silence, or task wording. Restate the answer as preserved behavior, intentionally breakable behavior, consumers, migration obligations, and rollback limits.
+
+Before recommending the design, confirm the target functionality, protected
+related functionality, explicit non-goals, and the hard-stop condition proving
+when build cannot meet the target without changing protected functionality or a
+non-goal. Record a broad, evidence-based code impact scope, but do not treat
+its incompleteness as permission to leave the functional boundary ambiguous.
 
 ## Evidence and Design Units
 
@@ -65,7 +77,8 @@ Choose the globally best justified architecture for the stated evolution horizon
 - The stable core, actual variation, collaborators, ownership, dependency direction, lifecycle, and failure semantics.
 - Repository evidence, compatibility boundary, explicit pattern decision, and explicit external evidence decision.
 - Concrete alternatives and rejected neighboring concepts.
-- Explicit design boundaries, verification seams, counterexamples, and anti-patterns.
+- Explicit functional boundaries, code impact scopes, verification seams,
+  counterexamples, and anti-patterns.
 - Design-level `MUST DO` and `MUST NOT DO` rules that constrain implementation details rather than merely desired results.
 
 Do not introduce an unnamed abstraction, speculative extension point, hidden global dependency, event without delivery semantics, or inheritance hierarchy without evidence that it improves the stated decision criteria.
@@ -83,7 +96,9 @@ Before asking for approval, teach the design instead of only presenting a conclu
 - The simplest direct design that was considered, and why it was accepted or rejected.
 - The nearest neighboring pattern or abstraction that was rejected, and why.
 - The likely misuse, counterexample, or operational failure that would make this concept a poor fit.
-- The verification seam that must hold if `architect-build` later implements the design.
+- The functional boundary that build must preserve, the expected code impact
+  surface it may cautiously adapt, and the verification seam that must hold if
+  `architect-build` later implements the design.
 
 When possible, map the teaching explanation directly onto the design-unit fields: `Intent`, `StableCoreAndVariation`, `RepositoryEvidence`, `CompatibilityBoundary`, `PatternDecision`, `ExternalEvidenceDecision`, `Rationale`, `Alternatives`, `VerificationSeams`, `Counterexamples`, `AntiPatterns`, and `Rules`.
 
@@ -95,4 +110,4 @@ Record approval evidence and a digest of the approved bundle. One later `archite
 
 ## Handoff Gate
 
-Do not hand off to `architect-propose` when any `D-xxx` subdesign lacks a concept, repository evidence, compatibility boundary, pattern decision, external evidence decision, rationale, verification seam, counterexample, anti-pattern, design boundary, MUST rule, teaching explanation, or approval coverage. If a later independent cycle needs a new design decision, that new decision belongs to a new `architect-design` stage and a new independent plan cycle, not to improvisation inside the current `architect-propose` or `architect-build` run.
+Do not hand off to `architect-propose` when any `D-xxx` subdesign lacks a concept, repository evidence, compatibility boundary, functional boundary, code impact scope, pattern decision, external evidence decision, rationale, verification seam, counterexample, anti-pattern, MUST rule, teaching explanation, or approval coverage. A later build run may make a cautious local minimal design decision only inside this approved functional boundary; it must record that decision rather than reopen an earlier stage. If the functional boundary cannot be preserved, build must stop and obtain a user decision without returning to `architect-design` or `architect-propose`.

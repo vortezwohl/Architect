@@ -27,6 +27,19 @@
 - Internal branching may be restructured as long as external behavior remains
   contract-compatible.
 
+## FunctionalBoundary
+- TargetFunctionality: Replace branch-owned dispatch selection with an explicit
+  registry while preserving the current request and error behavior.
+- ProtectedRelatedFunctionality: Handler business rules, transport behavior,
+  storage behavior, and caller-visible request and error semantics remain
+  unchanged.
+- ExplicitNonGoals: Runtime plugins, storage/schema changes, transport redesign,
+  and a new public extension model are outside this plan.
+- CompatibilityObligations: Existing callers continue to send the same payload
+  and receive the same success and error envelope.
+- HardStopCondition: Stop if registry-based routing cannot be completed without
+  changing protected caller-visible behavior or an explicit non-goal.
+
 ## PreservedContracts
 - Request payload schema stays unchanged.
 - Public handler invocation contract stays unchanged.
@@ -37,5 +50,6 @@
 
 ## ExecutionConstraints
 - The `architect-build` stage must execute tasks in recorded order.
-- The `architect-build` stage must not redesign the dispatch approach during implementation.
+- The `architect-build` stage may make minimal local design decisions only when
+  they preserve the functional boundary.
 - The `architect-build` stage must update task state and execution log truthfully as work progresses.

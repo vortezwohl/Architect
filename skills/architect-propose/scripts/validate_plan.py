@@ -139,7 +139,6 @@ def validate_package(package_root: Path) -> list[str]:
         manifest = parse_metadata(manifest_path)
     except PlanProtocolError as error:
         return [str(error)]
-
     for filename, (document_type, document_id) in ROOT_DOCUMENTS.items():
         path = package_root / filename
         if not path.is_file():
@@ -162,16 +161,17 @@ def validate_package(package_root: Path) -> list[str]:
 
     impact_path = package_root / "04-impact-and-boundaries.md"
     if impact_path.is_file():
+        impact_headings = (
+            "## FunctionalBoundary",
+            "## ProtectedRelatedFunctionality",
+            "## CodeImpactScope",
+            "## ImpactScopeAuditFindings",
+            "## FunctionalBoundaryEscalationReadiness",
+        )
         errors.extend(
             validate_required_headings(
                 impact_path,
-                (
-                    "## ImpactMap",
-                    "## StableBoundaries",
-                    "## ProhibitedCrossBoundaryChanges",
-                    "## BoundaryAuditFindings",
-                    "## BuildBlockingBoundaryGapsClosed",
-                ),
+                impact_headings,
             ),
         )
 
@@ -265,7 +265,8 @@ def validate_package(package_root: Path) -> list[str]:
                         "## ExternalEvidenceDecision",
                         "## Rationale",
                         "## Alternatives",
-                        "## DesignBoundaries",
+                        "## FunctionalBoundary",
+                        "## CodeImpactScope",
                         "## VerificationSeams",
                         "## Counterexamples",
                         "## AntiPatterns",
@@ -346,13 +347,13 @@ def validate_package(package_root: Path) -> list[str]:
                     (
                         "## DesignSources",
                         "## Preconditions",
-                        "## ExactChangeBoundary",
-                        "## ExplicitlyOutOfScope",
+                        "## FunctionalBoundary",
+                        "## CodeImpactScope",
+                        "## ImpactScopeAdaptationRules",
                         "## MUST DO",
                         "## MUST NOT DO",
                         "## AtomicSteps",
-                        "## ExecutionBoundaryRules",
-                        "## CrossBoundaryEscalation",
+                        "## FunctionalBoundaryEscalation",
                         "## TaskDeclaredExecutionResults",
                         "## CompletionCondition",
                     ),
@@ -417,57 +418,84 @@ def validate_package(package_root: Path) -> list[str]:
                         f"Task references rules outside SubdesignRefs in {path.name}: "
                         f"{', '.join(sorted(unrelated_rules))}",
                     )
-            if not re.search(r"^\| [^|]+ \| [^|]+ \| (?:create|modify|delete) \| [^|]+ \|$", content, re.MULTILINE):
-                errors.append(f"Missing exact path/symbol/operation boundary in {path.name}")
-            execution_boundary_fields = section_fields(
-                content,
-                "## ExecutionBoundaryRules",
+            functional_boundary_fields = section_fields(content, "## FunctionalBoundary")
+            required_functional_boundary_fields = (
+                "TargetFunctionality",
+                "ProtectedRelatedFunctionality",
+                "ExplicitNonGoals",
+                "CompatibilityObligations",
+                "HardStopCondition",
             )
-            required_execution_boundary_fields = (
-                "BoundaryCompleteness",
-                "BuildBlockingGapCheck",
-                "AdditionalRules",
-            )
-            missing_execution_boundary_fields = [
+            missing_functional_boundary_fields = [
                 field_name
-                for field_name in required_execution_boundary_fields
-                if not execution_boundary_fields.get(field_name, "").strip()
+                for field_name in required_functional_boundary_fields
+                if not functional_boundary_fields.get(field_name, "").strip()
             ]
-            if missing_execution_boundary_fields:
+            if missing_functional_boundary_fields:
                 errors.append(
-                    f"ExecutionBoundaryRules is missing required fields in {path.name}: "
-                    f"{', '.join(missing_execution_boundary_fields)}",
+                    f"FunctionalBoundary is missing required fields in {path.name}: "
+                    f"{', '.join(missing_functional_boundary_fields)}",
                 )
-            cross_boundary_fields = section_fields(
-                content,
-                "## CrossBoundaryEscalation",
+            impact_rows = table_rows(content, "## CodeImpactScope")
+            if not any(len(row) == 4 and all(cell.strip() for cell in row) for row in impact_rows):
+                errors.append(f"CodeImpactScope must contain one complete reference row in {path.name}")
+            adaptation_fields = section_fields(content, "## ImpactScopeAdaptationRules")
+            required_adaptation_fields = (
+                "CoverageIntent",
+                "AdaptiveExpansionRule",
+                "AssessmentAndLogRequirement",
             )
-            required_cross_boundary_fields = (
+            missing_adaptation_fields = [
+                field_name
+                for field_name in required_adaptation_fields
+                if not adaptation_fields.get(field_name, "").strip()
+            ]
+            if missing_adaptation_fields:
+                errors.append(
+                    f"ImpactScopeAdaptationRules is missing required fields in {path.name}: "
+                    f"{', '.join(missing_adaptation_fields)}",
+                )
+            escalation_fields = section_fields(content, "## FunctionalBoundaryEscalation")
+            required_escalation_fields = (
                 "TriggerCondition",
+                "RequiredAnalysis",
+                "Recommendation",
                 "ApprovalQuestion",
-                "Option1",
-                "Option2",
-                "TemporaryOverrideScope",
+                "DecisionScope",
+                "RecordRequirement",
             )
-            missing_cross_boundary_fields = [
+            missing_escalation_fields = [
                 field_name
-                for field_name in required_cross_boundary_fields
-                if not cross_boundary_fields.get(field_name, "").strip()
+                for field_name in required_escalation_fields
+                if not escalation_fields.get(field_name, "").strip()
             ]
-            if missing_cross_boundary_fields:
+            if missing_escalation_fields:
                 errors.append(
-                    f"CrossBoundaryEscalation is missing required fields in {path.name}: "
-                    f"{', '.join(missing_cross_boundary_fields)}",
+                    f"FunctionalBoundaryEscalation is missing required fields in {path.name}: "
+                    f"{', '.join(missing_escalation_fields)}",
                 )
-            approval_question = cross_boundary_fields.get("ApprovalQuestion", "")
-            option3 = cross_boundary_fields.get("Option3", "").strip()
-            if approval_question and ("`1`" not in approval_question or "`2`" not in approval_question):
+            decision_rows = table_rows(content, "### DecisionOptions")
+            valid_decision_rows = [
+                row
+                for row in decision_rows
+                if len(row) == 5 and all(cell.strip() for cell in row) and row[0].isdigit()
+            ]
+            option_numbers = [row[0] for row in valid_decision_rows]
+            expected_numbers = [str(number) for number in range(1, len(option_numbers) + 1)]
+            if len(option_numbers) < 2 or option_numbers != expected_numbers:
                 errors.append(
-                    f"CrossBoundaryEscalation ApprovalQuestion must include numbered choices 1 and 2 in {path.name}",
+                    f"DecisionOptions must contain at least two complete consecutively numbered paths in {path.name}",
                 )
-            if option3 and approval_question and "`3`" not in approval_question:
+            approval_question = escalation_fields.get("ApprovalQuestion", "")
+            if option_numbers and any(f"`{number}`" not in approval_question for number in option_numbers):
                 errors.append(
-                    f"CrossBoundaryEscalation ApprovalQuestion must include numbered choice 3 when Option3 is present in {path.name}",
+                    f"ApprovalQuestion must include every DecisionOptions number in {path.name}",
+                )
+            recommendation = escalation_fields.get("Recommendation", "")
+            recommended_numbers = re.findall(r"`(\d+)`", recommendation)
+            if len(recommended_numbers) != 1 or recommended_numbers[0] not in option_numbers:
+                errors.append(
+                    f"Recommendation must identify one available DecisionOptions number in {path.name}",
                 )
             catalog_row = task_catalog_rows.get(task_id)
             if catalog_row is None:
@@ -484,6 +512,10 @@ def validate_package(package_root: Path) -> list[str]:
         tasks = state.get("Tasks")
         if not isinstance(tasks, dict) or set(tasks) != task_ids:
             errors.append("Execution state Tasks do not exactly match task documents.")
+        if not isinstance(state.get("ImpactScopeAdaptations"), list):
+            errors.append("Execution state ImpactScopeAdaptations must be a list.")
+        if not isinstance(state.get("FunctionalBoundaryDecisions"), list):
+            errors.append("Execution state FunctionalBoundaryDecisions must be a list.")
     except PlanProtocolError as error:
         errors.append(str(error))
 

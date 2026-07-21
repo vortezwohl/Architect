@@ -36,8 +36,11 @@
 ## Alternatives
 {{AGENT:Alternatives}}
 
-## DesignBoundaries
-{{AGENT:DesignBoundaries}}
+## FunctionalBoundary
+{{AGENT:FunctionalBoundary}}
+
+## CodeImpactScope
+{{AGENT:CodeImpactScope}}
 
 ## VerificationSeams
 {{AGENT:VerificationSeams}}

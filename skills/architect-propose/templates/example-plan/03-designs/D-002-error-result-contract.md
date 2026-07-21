@@ -68,11 +68,21 @@ internal control flow.
 - Collapse all failures into one generic exception output: rejected because it
   weakens compatibility for existing callers.
 
-## DesignBoundaries
-- This design controls the external error envelope only.
-- It does not prescribe internal exception class hierarchy.
-- It does require one consistent normalization point before returning to
-  callers.
+## FunctionalBoundary
+- Target functionality: normalize internal handler failures before returning the
+  existing external error envelope.
+- Protected related functionality: external field names, meanings, and status
+  mappings remain unchanged for current callers.
+- Explicit non-goals: a new exception taxonomy, transport redesign, or changed
+  public failure semantics.
+- Hard-stop condition: stop if one normalization point cannot preserve the
+  protected external error behavior.
+
+## CodeImpactScope
+- Expected locations: request entry wiring, one error normalization module, and
+  contract-focused tests.
+- The surface is a reference; build may adapt internal helper placement only
+  after assessing and logging the preserved caller-visible behavior.
 
 ## VerificationSeams
 - Verify that the external error envelope shape remains unchanged for existing

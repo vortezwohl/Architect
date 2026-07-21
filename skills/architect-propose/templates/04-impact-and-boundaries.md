@@ -12,14 +12,19 @@
 | --- | --- | --- | --- | --- |
 | {{AGENT:Path}} | {{AGENT:SymbolOrContract}} | {{AGENT:ChangeType}} | {{AGENT:AffectedCallers}} | {{AGENT:Evidence}} |
 
-## StableBoundaries
-{{AGENT:StableBoundaries}}
+## FunctionalBoundary
+{{AGENT:FunctionalBoundary}}
 
-## ProhibitedCrossBoundaryChanges
-{{AGENT:ProhibitedCrossBoundaryChanges}}
+## ProtectedRelatedFunctionality
+{{AGENT:ProtectedRelatedFunctionality}}
 
-## BoundaryAuditFindings
-{{AGENT:BoundaryAuditFindings}}
+## CodeImpactScope
+| ExpectedPath | SymbolOrArea | ExpectedChange | EvidenceOrReason |
+| --- | --- | --- | --- |
+| {{AGENT:ExpectedPath}} | {{AGENT:SymbolOrArea}} | {{AGENT:ExpectedChange}} | {{AGENT:EvidenceOrReason}} |
 
-## BuildBlockingBoundaryGapsClosed
-{{AGENT:BuildBlockingBoundaryGapsClosed}}
+## ImpactScopeAuditFindings
+{{AGENT:ImpactScopeAuditFindings}}
+
+## FunctionalBoundaryEscalationReadiness
+{{AGENT:FunctionalBoundaryEscalationReadiness}}

@@ -84,6 +84,8 @@ def create_plan(
         {
             "CurrentTask": None,
             "PlanDigest": "",
+            "ImpactScopeAdaptations": [],
+            "FunctionalBoundaryDecisions": [],
             "Tasks": {},
         },
     )

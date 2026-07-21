@@ -21,13 +21,15 @@ flow `architect-design -> architect-propose -> architect-build`.
 - `T-xxx task`: one recorded execution task inside that independent plan. A
   single independent plan may contain multiple `T-xxx` tasks derived from one
   or more approved `D-xxx` subdesigns.
-- `execution boundary completion`: the `architect-propose` packaging pass that
-  turns approved design intent into explicit change surfaces, preserved
-  surfaces, forbidden surfaces, verification edges, and escalation triggers
-  that the `architect-build` stage can execute without guessing.
-- `boundary gap`: a detail that later execution would have to guess, such as an
-  unstated touched path, an unstated preserved surface, an unstated forbidden
-  change, or an unstated approval trigger.
+- `functional boundary completion`: the packaging pass that turns approved
+  design intent into target functionality, protected related functionality,
+  explicit non-goals, compatibility obligations, and a hard-stop condition.
+- `code impact scope`: the expected paths, symbols, configuration, tests, and
+  callers likely to be affected. It is a broad execution reference, not a hard
+  source modification limit.
+- `functional boundary gap`: any missing target functionality, protected
+  related functionality, explicit non-goal, compatibility obligation, or
+  hard-stop condition that later execution would have to infer.
 
 ## Manual Invocation Only
 
@@ -43,17 +45,17 @@ flow `architect-design -> architect-propose -> architect-build`.
   documentation.
 - Do not invent or revise a new core design unit, concept, pattern choice,
   anti-pattern, or architectural rule that changes the approved solution.
-- You may add execution-boundary detail when the approved design intent is
-  clear but later execution would otherwise have to guess.
+- You may add functional-boundary detail and code-impact-scope evidence when
+  approved design intent is clear but later execution would otherwise infer
+  protected functionality or likely affected code.
 - Do not reopen, revise, or repair the approved design from this skill.
 - Do not create a task that cannot cite approved `D-xxx` design units and their
   concrete rules.
-- Do not seal a package while any required design input, task boundary, state
-  initialization, or log initialization is incomplete.
-- Do not leave a known boundary gap for the `architect-build` stage to
-  discover during execution if
-  that gap can be resolved from the approved design, repository evidence, and
-  current request without changing the approved core design.
+- Do not seal a package while any required design input, functional boundary,
+  state initialization, or log initialization is incomplete.
+- Do not leave a known functional boundary gap for `architect-build` to discover
+  during execution if it can be resolved from approved design, repository
+  evidence, and the current request without changing the approved core design.
 
 ## Required Input
 
@@ -61,7 +63,8 @@ Before creating a package, require all of the following:
 
 1. The complete approved design bundle with `D-xxx` identifiers.
 2. Recorded approval evidence that covers every referenced design unit.
-3. Compatibility intent, objective, non-goals, affected surfaces, and risks.
+3. Compatibility intent, objective, functional boundary, non-goals, affected
+   code impact scope, and risks.
 4. A kebab-case plan name, provided by the user or safely derived from the
    approved design.
 5. The user's document language, inferred from the current interaction unless
@@ -77,13 +80,12 @@ reinterpreting design intent:
   independent plan;
 - translate the approved `D-xxx` subdesigns into one or more atomic `T-xxx`
   tasks without adding new design decisions;
-- act as a mock `architect-build` boundary audit before sealing so every task
-  boundary is explicit enough for the `architect-build` stage to execute
-  without guessing;
-- fill missing execution-boundary detail when that detail is required for
-  the `architect-build` stage, is consistent with the approved design, and
-  does not alter the
-  approved core architecture;
+- act as a mock `architect-build` audit before sealing so every task's
+  functional boundary is explicit enough to enforce without guessing;
+- fill missing functional-boundary detail when it is required for build,
+  consistent with the approved design, and does not alter the core architecture;
+- record broad, evidence-based code impact scopes and known uncertainties so
+  build can adapt them cautiously without treating them as hard limits;
 - order the tasks as one complete execution sequence for one later
   `architect-build` run;
 - initialize centralized task state before the `architect-build` stage starts;
@@ -168,39 +170,29 @@ Every `03-designs/D-xxx-<slug>.md` document must preserve the approved design
 contract exactly. Each design document must contain the fixed headings
 `Concept`, `Intent`, `StableCoreAndVariation`, `RepositoryEvidence`,
 `CompatibilityBoundary`, `PatternDecision`, `ExternalEvidenceDecision`,
-`Rationale`, `Alternatives`, `DesignBoundaries`, `VerificationSeams`,
+`Rationale`, `Alternatives`, `FunctionalBoundary`, `CodeImpactScope`,
+`VerificationSeams`,
 `Counterexamples`, `AntiPatterns`, and `Rules` with both `MUST DO` and
 `MUST NOT DO` subsections. Populate those script-created placeholders from the
 approved design bundle without inventing new structure or omitting approved
 fields.
 
-`04-impact-and-boundaries.md` must record the stable boundaries, prohibited
-cross-boundary changes, the boundary-audit findings from the mock
-`architect-build` pass, and which `architect-build`-blocking boundary gaps
-were closed during packaging.
+`04-impact-and-boundaries.md` must record the plan-level functional boundary,
+protected related functionality, code impact scope, impact-scope audit
+findings, and functional-boundary escalation readiness.
 
-Every `T-xxx` document must state exact paths, symbols, operations, approved
-subdesign references, approved rule references, task-specific `MUST DO`,
-task-specific `MUST NOT DO`, atomic steps, status update expectations, log
-expectations, task-declared execution-result steps, a completion condition,
-and an explicit cross-boundary escalation protocol that tells the
-`architect-build` stage when to stop and how to ask the user for immediate
-numbered approval. The default protocol must provide Option `1` for only the
-described temporary cross-boundary scope, Option `2` for rejection and stop,
-and Option `3` for standing approval of all later truly necessary minimal
-cross-boundary changes during the current `architect-build` invocation.
-Together, the task set must form one complete execution path that the
-`architect-build` stage can run through in order.
+Every `T-xxx` document must state its functional boundary, a broad code impact
+surface, approved subdesign and rule references, task-specific rules, atomic
+steps, impact-scope adaptation rules, execution-result steps, completion
+condition, and a functional-boundary escalation protocol. The protocol must
+state when build stops, which analysis it presents, its recommendation, and
+a problem-specific numbered set of user options, with no fixed count or predefined paths.
 
-If packaging reveals a need for a new pattern, dependency direction, state
-transition, error contract, or file outside the approved boundary, first
-distinguish design intent from execution-boundary detail. If the issue changes
-the approved core design, preserve the approved inputs as they are, do not
-invent the missing decision, do not reopen earlier stages from this skill, and
-do not record unapproved design content as if it were approved. If the issue is
-an execution-boundary gap that can be resolved without changing the approved
-core design, add the missing boundary detail explicitly so the
-`architect-build` stage does not have to guess later.
+If packaging reveals an incomplete code impact scope, add known evidence and
+uncertainty without turning the surface into a hard path limit. If it reveals a
+functional boundary gap, resolve it from approved inputs when possible; do not
+seal when it remains unresolved. Do not invent new core functionality or record
+unapproved functionality as approved.
 
 ## Sealing and Validation
 
@@ -221,6 +213,6 @@ Finish only after validation succeeds. Report the package path, actual
 validation result, initialized state/log artifacts, remaining risk, and whether
 the user may manually invoke `architect-build` as the next stage for the
 selected plan. Do not report the package as `architect-build`-ready unless the
-boundary audit confirms that the `architect-build` stage can execute it
-without missing boundary detail and with an explicit cross-boundary approval
-path for true runtime overruns.
+functional-boundary audit confirms that build can enforce the approved
+functionality without missing detail and has an explicit decision path for a
+true runtime conflict.

@@ -16,6 +16,13 @@
 ## CompatibilityIntent
 {{AGENT:CompatibilityIntent}}
 
+## FunctionalBoundary
+- TargetFunctionality: {{AGENT:TargetFunctionality}}
+- ProtectedRelatedFunctionality: {{AGENT:ProtectedRelatedFunctionality}}
+- ExplicitNonGoals: {{AGENT:ExplicitNonGoals}}
+- CompatibilityObligations: {{AGENT:CompatibilityObligations}}
+- HardStopCondition: {{AGENT:HardStopCondition}}
+
 ## PreservedContracts
 {{AGENT:PreservedContracts}}
 

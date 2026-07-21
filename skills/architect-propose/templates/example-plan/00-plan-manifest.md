@@ -6,7 +6,7 @@
 - PlanName: reference-plan-example
 - CreatedAt: 2026-07-17:14:53:04.486
 - DocumentLanguage: en
-- PlanDigest: 39f6a70bd117e380894d0cd7699b889598b8292283ed8e71c77b9a6e3fe44687
+- PlanDigest: e6a551fccbb1cc5171b22240c07860ce3cd7147fa37e956408bcd47ec0194c33
 
 ## Objective
 - Record one approved design bundle as one sealed execution plan that replaces

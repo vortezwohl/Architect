@@ -10,73 +10,68 @@
 ## DesignSources
 - SubdesignRefs: D-001, D-002
 - RuleRefs: R-D001-001, R-D002-001, R-D002-002, R-D002-N001, R-D002-N002
-- ProhibitedNewConcepts: No new test-only dispatch behavior and no new public
-  error envelope variant.
+- ProhibitedNewConcepts: No test-only dispatch behavior or public error variant.
 
 ## Preconditions
-- T-001 and T-002 have completed.
-- Registry-based dispatch and shared error normalization are implemented.
-- Existing tests still reflect the old branch-owned behavior and must be
-  updated to the new internal structure without changing external assertions.
+- T-001 and T-002 have completed and preserve caller-visible behavior.
 
-## ExactChangeBoundary
-| Path | Symbol | Operation | AllowedImplementationDetail |
+## FunctionalBoundary
+- TargetFunctionality: Prove deterministic registry routing and preserved public
+  request and error behavior.
+- ProtectedRelatedFunctionality: Production behavior, public contract assertions,
+  and the existing test harness semantics remain unchanged.
+- ExplicitNonGoals: New production behavior and a new test framework are outside
+  this task.
+- CompatibilityObligations: Tests continue to assert existing caller-visible
+  success and error behavior.
+- HardStopCondition: Stop if required coverage needs production behavior changes
+  or a protected contract relaxation.
+
+## CodeImpactScope
+| ExpectedPath | SymbolOrArea | ExpectedChange | EvidenceOrReason |
 | --- | --- | --- | --- |
-| tests/test_dispatch_flow.py | dispatch success and failure coverage | modify | Update or add assertions that prove registry-based routing preserves caller-visible behavior. |
-| tests/test_dispatch_registry.py | registry lookup coverage | create | Add focused coverage for deterministic registry selection. |
+| tests/test_dispatch_flow.py | request/error assertions | Update contract coverage | D-002 requires stable external failures. |
+| tests/test_dispatch_registry.py | lookup coverage | Add focused selection tests | D-001 requires deterministic registry selection. |
 
-## ExplicitlyOutOfScope
-- Do not introduce new production behavior.
-- Do not relax existing public contract assertions.
-- Do not redesign task ordering or design rules.
+## ImpactScopeAdaptationRules
+- CoverageIntent: Cover request-flow and registry behavior with the existing test facilities.
+- AdaptiveExpansionRule: Add a fixture or helper only after confirming it does
+  not alter production behavior or test-harness semantics.
+- AssessmentAndLogRequirement: Record every adaptation, its evidence, and the
+  boundary-preservation verification.
 
 ## MUST DO
 - M-T003-001: Add focused coverage for the registry boundary.
-- M-T003-002: Preserve caller-visible success and error assertions in the updated tests.
+- M-T003-002: Preserve caller-visible success and error assertions in updated tests.
 
 ## MUST NOT DO
 - N-T003-001: Do not rewrite tests to assert only internal details.
 - N-T003-002: Do not remove caller-visible error contract assertions.
 
 ## AtomicSteps
-1. Update existing request-flow tests so they still assert the public contract.
-2. Add focused registry lookup tests for the new explicit boundary.
-3. Keep internal-structure assertions secondary to caller-visible behavior.
+1. Update request-flow tests without relaxing public assertions.
+2. Add focused deterministic registry lookup coverage.
 
-## ExecutionBoundaryRules
-- BoundaryCompleteness: The exact boundary fully covers the required test
-  updates and focused registry coverage for this task.
-- BuildBlockingGapCheck: No unresolved path, symbol, or preserved-surface gap
-  remains for this task.
-- AdditionalRules: Tests must reflect the approved design and the preserved
-  contracts. Do not add a new test harness framework. Keep assertions
-  deterministic and easy to map back to D-001 and D-002.
+## FunctionalBoundaryEscalation
+- TriggerCondition: No compliant minimal implementation can preserve the stated functional boundary.
+- RequiredAnalysis: Show attempted in-boundary designs, protected functionality, code impact scope evidence, and why each rejected alternative fails.
+- Recommendation: Select `2` because it is the best supported path for this conflict.
+- ApprovalQuestion: Reply with `1` to preserve current coverage and stop this task, `2` to add focused contract tests, `3` to approve the described compatibility fixture, or `4` to approve the described test-semantics change.
+- DecisionScope: Only the explicitly analyzed functional conflict and its minimum necessary implementation scope.
+- RecordRequirement: Record the selected path, rationale, actual affected code, and verification in execution state and log.
 
-## CrossBoundaryEscalation
-- TriggerCondition: A required implementation step would touch production code,
-  introduce a new test harness framework, or modify any path outside
-  `tests/test_dispatch_flow.py` and `tests/test_dispatch_registry.py`.
-- ApprovalQuestion: The `architect-build` stage discovered work outside the sealed boundary for
-  T-003. Reply with `1` to approve only the described temporary
-  cross-boundary change, `2` to reject it and stop the `architect-build`
-  stage, or `3` to approve all later truly necessary minimal cross-boundary
-  changes during the current `architect-build` invocation.
-- Option1: Approve only the described temporary cross-boundary change for
-  T-003.
-- Option2: Reject the temporary cross-boundary change and stop the `architect-build` stage for new
-  `architect-design` / `architect-propose` guidance.
-- Option3: Approve all later truly necessary minimal cross-boundary changes for
-  T-003 and later tasks during the current `architect-build` invocation, with
-  each actual overrun still described and logged factually when it occurs.
-- TemporaryOverrideScope: The smallest explicitly described path, symbol, and
-  operation outside the sealed T-003 boundary.
+### DecisionOptions
+| Number | Path | FunctionalImpact | CompatibilityImpact | Verification |
+| --- | --- | --- | --- | --- |
+| 1 | Preserve current coverage and leave T-003 blocked. | New contract remains unproven. | Existing tests remain unchanged. | Confirm no test behavior was changed. |
+| 2 | Add focused dispatch-contract tests. | Proves target behavior. | Existing test semantics remain unchanged. | Run focused and full relevant test suites. |
+| 3 | Add the smallest compatibility fixture for both paths. | Proves both contract paths. | Existing fixtures remain valid. | Verify both fixture modes and regression coverage. |
+| 4 | Change the described test semantics after approval. | Alters the protected test contract. | Existing expectations may change. | Verify the approved revised test contract. |
 
 ## TaskDeclaredExecutionResults
-- CommandOrProcedure: Run the dispatch-related test suite or the equivalent
-  repository test target that covers request routing and error normalization.
-- ExpectedRecordedResult: The relevant tests pass while preserving the caller-
-  visible request and error contract expectations.
+- CommandOrProcedure: Run dispatch-related request, error, and registry tests.
+- ExpectedRecordedResult: Tests prove deterministic selection and preserved
+  caller-visible behavior.
 
 ## CompletionCondition
-Test coverage proves that registry-based dispatch preserves the existing
-caller-visible contract and that deterministic registry selection is covered.
+Coverage proves the approved target functionality without changing protected behavior.

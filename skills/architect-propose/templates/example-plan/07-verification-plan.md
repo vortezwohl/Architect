@@ -19,3 +19,5 @@
   migration step.
 - No concurrency design change is approved in this bundle.
 - The `architect-build` stage executes one ordered implementation path from T-001 through T-003.
+- Any code impact scope expansion must be logged and verified against the
+  protected functional boundary.
